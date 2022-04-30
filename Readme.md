@@ -1,10 +1,10 @@
-# SETUP GUIDE
+# Setup Guide
 
 Begin by making sure you have mariadb server installed and running on your system,
-and procced to create an user called "user", with password "user" (This will change down the road,
+and proceed to create an user called "user", with password "user" (This will change down the road,
 but for now and for simplicity purposes lets go with this) .
 
-If you dont have it yet, create a database called "Harmony" and give user all permissions
+If you don't have it yet, create a database called "Harmony" and give user all permissions
 to that database.
 
 Now open IntelliJ and import the project, create a connection to the database to check its working
@@ -13,7 +13,7 @@ and execute testSetup.sql in `src/test/Connection`. If it executed without probl
 Now click on the "Maven" panel in the right and run `harmony-api->Lifecycle->install`. 
 A new package and new classes should appear in `src/main/java/HarmonyDatabase` including tables and routines.
 
-***Important!!*** -> This file will be removed when the database is set up an external device, do not execute it either at any other other moment but to test the connection at the beggining of the project, since it will reset the database
+***Important!!*** -> This file will be removed when the database is set up an external device, do not execute it either at any other moment but to test the connection at the beggining of the project, since it will reset the database
 
 ## Connection Test
 
@@ -151,7 +151,7 @@ Open the ConnectionTest.java class in `src/test/Connection` and execute it, the 
 
 ##  RestAPI inicialisation
 
-Last but not least, execute Application.java in the `com.example.harmonyapi` package, if the execution is succesful, meaning the are no errors,
+Last but not least, execute Application.java in the `com.example.harmonyapi` package, if the execution is successful, meaning the are no errors,
 there should be now an opened server in port 8080 of your machine. To check that go to `http://localhost:8080/` in your browser,
 you should be greeted a **Whitelabel Error Page**.
 

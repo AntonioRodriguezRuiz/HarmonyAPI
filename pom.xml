@@ -82,7 +82,7 @@
                     <!-- Configure the database connection here -->
                     <jdbc>
                         <driver>org.mariadb.jdbc.Driver</driver>
-                        <url>jdbc:mariadb://localhost:3306/Harmony</url>
+                        <url>jdbc:mariadb://localhost:3306/harmony</url>
                         <user>user</user>
                         <password>user</password>
                     </jdbc>
@@ -111,7 +111,7 @@
                             <includes>.*</includes>
 
                             <!-- Name of the Database schema on your machine -->
-                            <inputSchema>Harmony</inputSchema>
+                            <inputSchema>harmony</inputSchema>
                         </database>
 
                         <generate>

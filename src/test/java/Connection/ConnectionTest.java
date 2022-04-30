@@ -22,7 +22,7 @@ public class ConnectionTest {
 
         String userName = "user";
         String password = "user";
-        String url = "jdbc:mariadb://localhost:3306/Harmony";
+        String url = "jdbc:mariadb://localhost:3306/harmony";
 
         // Connection is the only JDBC resource that we need
         // PreparedStatement and ResultSet are handled by jOOQ, internally

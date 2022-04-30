@@ -1,30 +1,4 @@
-CREATE SCHEMA IF NOT EXISTS Harmony;
-
-DELETE FROM reports;
-DELETE FROM reviewlikes;
-DELETE FROM reviews;
-DELETE FROM listmedia;
-DELETE FROM lists;
-DELETE FROM trackers;
-DELETE FROM peopleEpisodes;
-DELETE FROM peopleVideogames;
-DELETE FROM peopleBooks;
-DELETE FROM peopleMovies;
-DELETE FROM people;
-DELETE FROM mediaGenres;
-DELETE FROM genres;
-DELETE FROM movies;
-DELETE FROM episodes;
-DELETE FROM seasons;
-DELETE FROM series;
-DELETE FROM books;
-DELETE FROM videogameplatforms;
-DELETE FROM platforms;
-DELETE FROM videogames;
-DELETE FROM media;
-DELETE FROM admins;
-DELETE FROM normals;
-DELETE FROM users;
+CREATE SCHEMA IF NOT EXISTS harmony;
 
 DROP TABLE IF EXISTS reports;
 DROP TABLE IF EXISTS reviewlikes;

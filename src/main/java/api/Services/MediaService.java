@@ -18,7 +18,7 @@ public class MediaService {
     public List<Media> getAllMedia(){
         String userName = "user";
         String password = "user";
-        String url = "jdbc:mariadb://localhost:3306/Harmony";
+        String url = "jdbc:mariadb://localhost:3306/harmony";
         DSLContext create;
         List<Media> result = null;
 

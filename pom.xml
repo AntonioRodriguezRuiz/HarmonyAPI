@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.6.7</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>com.example</groupId>
+    <artifactId>harmony-api</artifactId>
+    <packaging>war</packaging>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>harmony-api</name>
+    <description>harmony-api</description>
+    <properties>
+        <java.version>11</java.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq</artifactId>
+            <version>3.16.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-meta</artifactId>
+            <version>3.16.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-codegen</artifactId>
+            <version>3.16.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+
+                <groupId>org.jooq</groupId>
+                <artifactId>jooq-codegen-maven</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>
+                                generate
+                            </goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- Configure the database connection here -->
+                    <jdbc>
+                        <driver>org.mariadb.jdbc.Driver</driver>
+                        <url>jdbc:mariadb://localhost:3306/Harmony</url>
+                        <user>user</user>
+                        <password>user</password>
+                    </jdbc>
+
+                    <generator>
+                        <!-- The default code generator. You can override this one, to generate your own code style.
+                             Supported generators:
+                             - org.jooq.codegen.JavaGenerator
+                             - org.jooq.codegen.KotlinGenerator
+                             - org.jooq.codegen.ScalaGenerator
+                             Defaults to org.jooq.codegen.JavaGenerator -->
+                        <name>org.jooq.codegen.JavaGenerator</name>
+
+                        <database>
+                            <!-- The database type. The format here is:
+                                 org.jooq.meta.[database].[database]Database -->
+                            <name>org.jooq.meta.mariadb.MariaDBDatabase</name>
+
+                            <!-- The database schema (or in the absence of schema support, in your RDBMS this
+                                 can be the owner, user, database name) to be generated -->
+                            <!--inputSchema>library</inputSchema-->
+
+                            <!-- All elements that are generated from your schema
+                                 (A Java regular expression. Use the pipe to separate several expressions)
+                                 Watch out for case-sensitivity. Depending on your database, this might be important! -->
+                            <includes>.*</includes>
+
+                            <!-- Name of the Database schema on your machine -->
+                            <inputSchema>Harmony</inputSchema>
+                        </database>
+
+                        <generate>
+                            <pojos>true</pojos>
+                            <pojosEqualsAndHashCode>
+                                true
+                            </pojosEqualsAndHashCode>
+                            <javaTimeTypes>true</javaTimeTypes>
+                            <fluentSetters>true</fluentSetters>
+                        </generate>
+
+                        <target>
+                            <!-- The destination package of your generated classes (within the destination directory) -->
+                            <packageName>src.main.java.HarmonyDatabase</packageName>
+
+                            <!-- The destination directory of your generated classes. Using Maven directory layout here -->
+                            <directory>./</directory>
+                        </target>
+                    </generator>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>16</source>
+                    <target>16</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

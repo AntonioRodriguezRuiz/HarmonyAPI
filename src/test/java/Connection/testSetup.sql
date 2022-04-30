@@ -1,3 +1,4 @@
+CREATE SCHEMA IF NOT EXISTS Harmony;
 
 DELETE FROM reports;
 DELETE FROM reviewlikes;

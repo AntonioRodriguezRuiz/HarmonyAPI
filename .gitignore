@@ -6,6 +6,7 @@ src/main/java/HarmonyDatabase/
 !**/src/test/**/target/
 
 ### STS ###
+.war
 .apt_generated
 .classpath
 .factorypath

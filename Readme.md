@@ -149,7 +149,7 @@ Open the ConnectionTest.java class in `src/test/Connection` and execute it, the 
     
     Process finished with exit code 0
 
-##  RestAPI inicialisation
+##  RestAPI initialization
 
 Last but not least, execute Application.java in the `com.example.harmonyapi` package, if the execution is successful, meaning the are no errors,
 there should be now an opened server in port 8080 of your machine. To check that go to `http://localhost:8080/` in your browser,

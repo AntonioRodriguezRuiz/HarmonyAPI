@@ -1,4 +1,4 @@
-package api;
+package api.Controllers;
 
 import api.Services.MediaService;
 import org.springframework.beans.factory.annotation.Autowired;

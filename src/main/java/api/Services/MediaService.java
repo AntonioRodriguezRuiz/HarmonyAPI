@@ -1,16 +1,20 @@
 package api.Services;
 
+import api.BodyRequestHelpers.MovieHelper;
 import api.GlobalValues;
-import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
-import org.jooq.SortField;
-import org.jooq.TableLike;
+import org.jooq.*;
+import org.jooq.Record;
 import org.jooq.impl.DSL;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import src.main.java.HarmonyDatabase.tables.pojos.Media;
+import src.main.java.HarmonyDatabase.Routines;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 
 import static src.main.java.HarmonyDatabase.Tables.*;
@@ -109,4 +113,45 @@ public class MediaService {
         return result;
     }
 
+    public MovieHelper postMovie(MovieHelper movie) throws SQLException {
+        try(Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)){
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            List<Media> newMedia = create.select()
+                    .from(MEDIA)
+                    .where(MEDIA.TITLE.eq(movie.getTitle())
+                                    .and(MEDIA.RELEASEDATE.eq(LocalDate.parse(movie.getReleasedate()))))
+                    .fetchInto(Media.class);
+
+            if(!newMedia.isEmpty()){
+                throw new ResponseStatusException(HttpStatus.CONFLICT);
+            }
+
+            Routines.newmovie(create.configuration(),
+                    movie.getTitle(),
+                    LocalDate.parse(movie.getReleasedate()),
+                    movie.getCoverimage(),
+                    movie.getBackgroundimage(),
+                    movie.getSynopsis());
+
+            Record newMovie = create.select()
+                    .from(MEDIA)
+                    .naturalJoin(MOVIES)
+                    .orderBy(MEDIA.MEDIAID.desc())
+                    .limit(1)
+                    .fetch().get(0);
+
+            movie.setCoverimage(newMovie.getValue(MEDIA.COVERIMAGE));
+            movie.setBackgroundimage(newMovie.getValue(MEDIA.BACKGROUNDIMAGE));
+            movie.setMediaid(newMovie.getValue(MEDIA.MEDIAID));
+            movie.setMovieid(newMovie.getValue(MOVIES.MOVIEID));
+
+        } catch (ResponseStatusException | SQLException e){
+            if(e instanceof ResponseStatusException){
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return movie;
+    }
 }

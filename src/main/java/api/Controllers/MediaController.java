@@ -1,7 +1,9 @@
 package api.Controllers;
 
+import api.BodyRequestHelpers.MovieHelper;
 import api.GlobalValues;
 import api.Services.MediaService;
+import api.UserMiddlewares;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.SortField;
@@ -9,10 +11,7 @@ import org.jooq.TableLike;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import src.main.java.HarmonyDatabase.Tables;
 import src.main.java.HarmonyDatabase.tables.pojos.Genres;
@@ -73,6 +72,12 @@ public class MediaController {
         return mediaService.getAllMedia(search, typeTable, orderField, genreString, offset);
     }
 
+    @PostMapping("/movies")
+    public MovieHelper postMovie(@RequestBody MovieHelper movie) throws SQLException {
+        UserMiddlewares.isAdmin(movie.getUserid());
+        return mediaService.postMovie(movie);
+    }
+
     private void isValidGenre(String genreString) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
@@ -81,8 +86,7 @@ public class MediaController {
                                         .where(GENRES.NAME.eq(genreString))
                                         .fetchInto(Genres.class);
 
-            Boolean res = result.stream().anyMatch(g -> g.getName().equals(genreString));
-            if(!res){
+            if(result.isEmpty()){
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             }
 

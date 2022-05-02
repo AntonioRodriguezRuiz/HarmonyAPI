@@ -18,15 +18,17 @@ import static src.main.java.HarmonyDatabase.Tables.*;
 @Service
 public class MediaService {
 
-    public List<Media> getAllMedia(String search, TableLike type, SortField order, String genre) {
+    public List<Media> getAllMedia(String search, TableLike type, SortField order, String genre, Integer offset) {
         List<Media> result = null;
 
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
             if (type==null && order==null && genre==null){
                 result = create.select(MEDIA.fields())
                         .from(MEDIA)
                         .where(MEDIA.TITLE.contains(search))
+                        .offset(offset)
+                        .limit(GlobalValues.PAGE_SIZE)
                         .fetchInto(Media.class);
 
             } else if (order==null && genre==null){
@@ -34,6 +36,8 @@ public class MediaService {
                         .from(MEDIA)
                         .naturalJoin(type)
                         .where(MEDIA.TITLE.contains(search))
+                        .offset(offset)
+                        .limit(GlobalValues.PAGE_SIZE)
                         .fetchInto(Media.class);
 
             } else if (type==null && order==null){
@@ -42,6 +46,8 @@ public class MediaService {
                         .naturalJoin(MEDIAGENRES)
                         .naturalJoin(GENRES)
                         .where(MEDIA.TITLE.contains(search).and(GENRES.NAME.eq(genre)))
+                        .offset(offset)
+                        .limit(GlobalValues.PAGE_SIZE)
                         .fetchInto(Media.class);
 
             } else if (type==null && genre==null){
@@ -49,6 +55,8 @@ public class MediaService {
                         .from(MEDIA)
                         .where(MEDIA.TITLE.contains(search))
                         .orderBy(order)
+                        .offset(offset)
+                        .limit(GlobalValues.PAGE_SIZE)
                         .fetchInto(Media.class);
 
             } else if (genre==null){
@@ -57,6 +65,8 @@ public class MediaService {
                         .naturalJoin(type)
                         .where(MEDIA.TITLE.contains(search))
                         .orderBy(order)
+                        .offset(offset)
+                        .limit(GlobalValues.PAGE_SIZE)
                         .fetchInto(Media.class);
 
             } else if (type==null){
@@ -66,6 +76,8 @@ public class MediaService {
                         .naturalJoin(GENRES)
                         .where(MEDIA.TITLE.contains(search).and(GENRES.NAME.eq(genre)))
                         .orderBy(order)
+                        .offset(offset)
+                        .limit(GlobalValues.PAGE_SIZE)
                         .fetchInto(Media.class);
 
             } else if (order==null){
@@ -75,6 +87,8 @@ public class MediaService {
                         .naturalJoin(GENRES)
                         .naturalJoin(type)
                         .where(MEDIA.TITLE.contains(search).and(GENRES.NAME.eq(genre)))
+                        .offset(offset)
+                        .limit(GlobalValues.PAGE_SIZE)
                         .fetchInto(Media.class);
             } else{
                 result = create.select(MEDIA.fields())
@@ -84,6 +98,8 @@ public class MediaService {
                         .naturalJoin(type)
                         .where(MEDIA.TITLE.contains(search).and(GENRES.NAME.eq(genre)))
                         .orderBy(order)
+                        .offset(offset)
+                        .limit(GlobalValues.PAGE_SIZE)
                         .fetchInto(Media.class);
             }
 

@@ -67,12 +67,15 @@ public class MediaController {
             }
         }
 
-        return mediaService.getAllMedia(search, typeTable, orderField, genreString);
+        Integer page = allRequestParams.containsKey("page") ? Integer.valueOf(allRequestParams.get("page")) : 0;
+        Integer offset = page * GlobalValues.PAGE_SIZE;
+
+        return mediaService.getAllMedia(search, typeTable, orderField, genreString, offset);
     }
 
     private void isValidGenre(String genreString) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
             List<Genres> result = create.select()
                                         .from(GENRES)
                                         .where(GENRES.NAME.eq(genreString))

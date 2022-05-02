@@ -19,7 +19,6 @@ public class MediaHelper {
         return mediaid;
     }
 
-
     public String getTitle() {
         return title;
     }
@@ -47,7 +46,6 @@ public class MediaHelper {
     public void setMediaid(Integer mediaid) {
         this.mediaid = mediaid;
     }
-
 
     public void setTitle(String title) {
         this.title = title;

@@ -1,5 +1,6 @@
-package api;
+package api.Middlewares;
 
+import api.GlobalValues;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;

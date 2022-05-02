@@ -1,6 +1,7 @@
 package api.Controllers;
 
 import api.BodyRequestHelpers.MovieHelper;
+import api.BodyRequestHelpers.SeriesHelper;
 import api.GlobalValues;
 import api.Services.MediaService;
 import api.Middlewares.UserMiddlewares;
@@ -90,6 +91,25 @@ public class MediaController {
         }
         mediaService.putMovie(movie);
         return new ResponseEntity<MovieHelper>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/series")
+    public ResponseEntity<SeriesHelper> postSeries(@RequestBody SeriesHelper series) throws SQLException {
+        UserMiddlewares.isAdmin(series.getUserid());
+        if(series.getTitle()== null || series.getReleasedate()==null || series.getSynopsis()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<SeriesHelper>(mediaService.postSeries(series), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/series")
+    public ResponseEntity<SeriesHelper> putSeries(@RequestBody SeriesHelper series) throws SQLException {
+        UserMiddlewares.isAdmin(series.getUserid());
+        if(series.getMediaid()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        mediaService.putSeries(series);
+        return new ResponseEntity<SeriesHelper>(HttpStatus.NO_CONTENT);
     }
 
     private void isValidGenre(String genreString) throws SQLException {

@@ -23,8 +23,8 @@
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.mariadb.jdbc</groupId>
-            <artifactId>mariadb-java-client</artifactId>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -81,10 +81,10 @@
                 <configuration>
                     <!-- Configure the database connection here -->
                     <jdbc>
-                        <driver>org.mariadb.jdbc.Driver</driver>
-                        <url>jdbc:mariadb://localhost:3306/harmony</url>
-                        <user>user</user>
-                        <password>user</password>
+                        <driver>com.mysql.cj.jdbc.Driver</driver>
+                        <url>jdbc:mysql://34.65.47.107:3306/harmony</url>
+                        <user>root</user>
+                        <password>vqEC1FiEv7MB1le6</password>
                     </jdbc>
 
                     <generator>
@@ -99,7 +99,7 @@
                         <database>
                             <!-- The database type. The format here is:
                                  org.jooq.meta.[database].[database]Database -->
-                            <name>org.jooq.meta.mariadb.MariaDBDatabase</name>
+                            <name>org.jooq.meta.mysql.MySQLDatabase</name>
 
                             <!-- The database schema (or in the absence of schema support, in your RDBMS this
                                  can be the owner, user, database name) to be generated -->

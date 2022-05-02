@@ -341,7 +341,7 @@ DELIMITER //
 #              PART 1 -> NEW ENTRIES PROCEDURES (INSERTIONS)                 #
 ##############################################################################
 
-CREATE OR REPLACE PROCEDURE newUser(username VARCHAR(15), email VARCHAR(100), password VARCHAR(36), isAdmin BOOLEAN)
+CREATE PROCEDURE newUser(username VARCHAR(15), email VARCHAR(100), password VARCHAR(36), isAdmin BOOLEAN)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -371,7 +371,8 @@ BEGIN
     END;
 END//
 
-CREATE OR REPLACE PROCEDURE newSeries(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500))
+DELIMITER //
+CREATE PROCEDURE newSeries(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -407,7 +408,7 @@ BEGIN
     END;
 END //
 
-CREATE OR REPLACE PROCEDURE newSeason(title VARCHAR(120), releaseDate DATE, seasonNo INT, noEpisodes INT)
+CREATE PROCEDURE newSeason(title VARCHAR(120), releaseDate DATE, seasonNo INT, noEpisodes INT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -429,7 +430,7 @@ BEGIN
     END;
 END //
 
-CREATE OR REPLACE PROCEDURE newEpisode(title VARCHAR(120), releaseDate DATE, seasonNo INT, episodeName VARCHAR(60), episodeNo INT)
+CREATE PROCEDURE newEpisode(title VARCHAR(120), releaseDate DATE, seasonNo INT, episodeName VARCHAR(60), episodeNo INT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -454,7 +455,7 @@ BEGIN
     END;
 END //
 
-CREATE OR REPLACE PROCEDURE newVideogame(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500), company VARCHAR(60))
+CREATE PROCEDURE newVideogame(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500), company VARCHAR(60))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -490,7 +491,7 @@ BEGIN
     END;
 END //
 
-CREATE OR REPLACE PROCEDURE newPlatform(platformName VARCHAR(60))
+CREATE PROCEDURE newPlatform(platformName VARCHAR(60))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -507,7 +508,7 @@ BEGIN
     END;
 END //
 
-CREATE OR REPLACE PROCEDURE newVideogamePlatform(platformName VARCHAR(60), title VARCHAR(120), releaseDate DATE)
+CREATE PROCEDURE newVideogamePlatform(platformName VARCHAR(60), title VARCHAR(120), releaseDate DATE)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -532,7 +533,7 @@ BEGIN
     END;
 END //
 
-CREATE OR REPLACE PROCEDURE newBook(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500), collection VARCHAR(120))
+CREATE PROCEDURE newBook(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500), collection VARCHAR(120))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -568,7 +569,7 @@ BEGIN
     END;
 END //
 
-CREATE OR REPLACE PROCEDURE newMovie(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500))
+CREATE PROCEDURE newMovie(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -604,7 +605,7 @@ BEGIN
     END;
 END //
 
-CREATE OR REPLACE PROCEDURE newGenre(name VARCHAR(50))
+CREATE PROCEDURE newGenre(name VARCHAR(50))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -622,7 +623,7 @@ BEGIN
     END;
 END //
 
-CREATE OR REPLACE PROCEDURE newMediaGenre(title VARCHAR(120), releaseDate DATE, genre VARCHAR(50))
+CREATE PROCEDURE newMediaGenre(title VARCHAR(120), releaseDate DATE, genre VARCHAR(50))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -649,7 +650,7 @@ BEGIN
     END;
 END //
 
-CREATE OR REPLACE PROCEDURE newTracker(media INT, user INT, state INT)
+CREATE PROCEDURE newTracker(media INT, user INT, state INT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -668,7 +669,7 @@ BEGIN
     END;
 END //
 
-CREATE OR REPLACE PROCEDURE newList(user INT, listName VARCHAR(60), icon NVARCHAR(1))
+CREATE PROCEDURE newList(user INT, listName VARCHAR(60), icon NVARCHAR(1))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -687,7 +688,7 @@ BEGIN
     END;
 END //
 
-CREATE OR REPLACE PROCEDURE newListMedia(list INT, media INT)
+CREATE PROCEDURE newListMedia(list INT, media INT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -706,7 +707,7 @@ BEGIN
     END;
 END //
 
-CREATE OR REPLACE PROCEDURE newReview(user INT, media INT, rating FLOAT, review NVARCHAR(2800))
+CREATE PROCEDURE newReview(user INT, media INT, rating FLOAT, review NVARCHAR(2800))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -726,7 +727,7 @@ BEGIN
     END;
 END //
 
-CREATE OR REPLACE PROCEDURE newReport(userReporter INT, userReported INT, review INT, reason VARCHAR(120))
+CREATE PROCEDURE newReport(userReporter INT, userReported INT, review INT, reason VARCHAR(120))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -745,7 +746,7 @@ BEGIN
     END;
 END //
 
-CREATE OR REPLACE PROCEDURE newPerson(name VARCHAR(60), birthdate DATE, picture VARCHAR(240))
+CREATE PROCEDURE newPerson(name VARCHAR(60), birthdate DATE, picture VARCHAR(240))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -770,7 +771,7 @@ BEGIN
     END;
 END //
 
-CREATE OR REPLACE PROCEDURE newPersonMovie(personname VARCHAR(60), date DATE, title VARCHAR(120), releaseDate DATE, role VARCHAR(120), roletype TINYINT)
+CREATE PROCEDURE newPersonMovie(personname VARCHAR(60), date DATE, title VARCHAR(120), releaseDate DATE, role VARCHAR(120), roletype TINYINT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -801,7 +802,7 @@ BEGIN
     END;
 END //
 
-CREATE OR REPLACE PROCEDURE newPersonBook(personname VARCHAR(60), date DATE, title VARCHAR(120), releaseDate DATE, role VARCHAR(120))
+CREATE PROCEDURE newPersonBook(personname VARCHAR(60), date DATE, title VARCHAR(120), releaseDate DATE, role VARCHAR(120))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -832,7 +833,7 @@ BEGIN
     END;
 END //
 
-CREATE OR REPLACE PROCEDURE newPersonVideogame(personname VARCHAR(60), date DATE, title VARCHAR(120), releaseDate DATE, role VARCHAR(120), roletype TINYINT)
+CREATE PROCEDURE newPersonVideogame(personname VARCHAR(60), date DATE, title VARCHAR(120), releaseDate DATE, role VARCHAR(120), roletype TINYINT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -863,7 +864,7 @@ BEGIN
     END;
 END //
 
-CREATE OR REPLACE PROCEDURE newPersonEpisode(personname VARCHAR(60), date DATE, title VARCHAR(120), releaseDate DATE, seasonNo INT, episodeNo INT, role VARCHAR(120), roletype TINYINT)
+CREATE PROCEDURE newPersonEpisode(personname VARCHAR(60), date DATE, title VARCHAR(120), releaseDate DATE, seasonNo INT, episodeNo INT, role VARCHAR(120), roletype TINYINT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -903,7 +904,7 @@ END //
 #                   PART 2 -> Reviews RELATED PROCEDURES                     #
 ##############################################################################
 
-CREATE OR REPLACE PROCEDURE updateReview(id INT, newreview NVARCHAR(2800), newrating FLOAT(3))
+CREATE PROCEDURE updateReview(id INT, newreview NVARCHAR(2800), newrating FLOAT(3))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -923,7 +924,7 @@ BEGIN
     END;
 END //
 
-CREATE OR REPLACE PROCEDURE likeReview(user INT, review INT)
+CREATE PROCEDURE likeReview(user INT, review INT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -943,7 +944,7 @@ BEGIN
     END;
 END //
 
-CREATE OR REPLACE PROCEDURE unlikeReview(user INT, review INT)
+CREATE PROCEDURE unlikeReview(user INT, review INT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -965,7 +966,7 @@ END //
 
 /* Triggers*/
 
-CREATE OR REPLACE TRIGGER updateAvgRating_onInsert
+CREATE TRIGGER updateAvgRating_onInsert
     AFTER INSERT ON reviews FOR EACH ROW
 BEGIN
     DECLARE newAvgRating FLOAT(3);
@@ -977,7 +978,7 @@ UPDATE media SET avgRating=newAvgRating
 WHERE media.mediaid=new.mediaid;
 END //
 
-CREATE OR REPLACE TRIGGER updateAvgRating_onUpdate
+CREATE TRIGGER updateAvgRating_onUpdate
     AFTER UPDATE ON reviews FOR EACH ROW
 BEGIN
     DECLARE newAvgRating FLOAT(3);
@@ -989,7 +990,7 @@ UPDATE media SET avgRating=newAvgRating
 WHERE media.mediaid=new.mediaid;
 END //
 
-CREATE OR REPLACE TRIGGER updateReviewLikes_onInsert
+CREATE TRIGGER updateReviewLikes_onInsert
     AFTER INSERT ON reviewlikes FOR EACH ROW
 BEGIN
     DECLARE newLikes INT;
@@ -1001,7 +1002,7 @@ UPDATE reviews SET likes=newLikes
 WHERE reviews.reviewid=new.reviewid;
 END //
 
-CREATE OR REPLACE TRIGGER updateReviewLikes_onDelete
+CREATE TRIGGER updateReviewLikes_onDelete
     AFTER DELETE ON reviewlikes FOR EACH ROW
 BEGIN
     DECLARE newLikes INT;
@@ -1013,7 +1014,7 @@ UPDATE reviews SET likes=newLikes
 WHERE reviews.reviewid=old.reviewid;
 END //
 
-CREATE OR REPLACE TRIGGER updateList_oninsert
+CREATE TRIGGER updateList_oninsert
     AFTER INSERT ON listmedia FOR EACH ROW
 BEGIN
 
@@ -1021,7 +1022,7 @@ UPDATE lists SET modificationDate=CURDATE()
 WHERE lists.listid=new.listid;
 END //
 
-CREATE OR REPLACE TRIGGER updateList_ondelete
+CREATE TRIGGER updateList_ondelete
     AFTER DELETE ON listmedia FOR EACH ROW
 BEGIN
 

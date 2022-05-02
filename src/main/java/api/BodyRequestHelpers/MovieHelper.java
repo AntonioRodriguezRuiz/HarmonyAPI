@@ -1,11 +1,12 @@
 package api.BodyRequestHelpers;
 
+import java.time.LocalDate;
+
 public class MovieHelper{
     private Integer userid;
     private Integer mediaid;
-    private Integer movieid;
     private String title;
-    private String releasedate;
+    private LocalDate releasedate;
     private String coverimage;
     private String backgroundimage;
     private String synopsis;
@@ -18,15 +19,12 @@ public class MovieHelper{
         return mediaid;
     }
 
-    public Integer getMovieid() {
-        return movieid;
-    }
 
     public String getTitle() {
         return title;
     }
 
-    public String getReleasedate() {
+    public LocalDate getReleasedate() {
         return releasedate;
     }
 
@@ -50,15 +48,12 @@ public class MovieHelper{
         this.mediaid = mediaid;
     }
 
-    public void setMovieid(Integer movieid) {
-        this.movieid = movieid;
-    }
 
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public void setReleasedate(String releasedate) {
+    public void setReleasedate(LocalDate releasedate) {
         this.releasedate = releasedate;
     }
 
@@ -78,11 +73,20 @@ public class MovieHelper{
                        String synopsis){
         this.userid = userid;
         this.mediaid = mediaid;
-        this.movieid = movieid;
         this.title = title;
-        this.releasedate = releasedate;
+        this.releasedate = LocalDate.parse(releasedate);
         this.coverimage = coverimage;
         this.backgroundimage = backgroundimage;
         this.synopsis = synopsis;
+    }
+
+    public MovieHelper() {
+        this.userid = null;
+        this.mediaid = null;
+        this.title = null;
+        this.releasedate = null;
+        this.coverimage = null;
+        this.backgroundimage = null;
+        this.synopsis = null;
     }
 }

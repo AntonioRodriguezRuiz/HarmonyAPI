@@ -183,7 +183,8 @@ public class MediaService {
                     .set(MEDIA.COVERIMAGE, newMovie.getCoverimage())
                     .set(MEDIA.BACKGROUNDIMAGE, newMovie.getBackgroundimage())
                     .set(MEDIA.SYNOPSIS, newMovie.getSynopsis())
-                    .executeAsync();
+                    .where(MEDIA.MEDIAID.eq(newMovie.getMediaid()))
+                    .execute();
 
         } catch (ResponseStatusException | SQLException e) {
             if (e instanceof ResponseStatusException) {

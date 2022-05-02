@@ -3,7 +3,7 @@ package api.Controllers;
 import api.BodyRequestHelpers.MovieHelper;
 import api.GlobalValues;
 import api.Services.MediaService;
-import api.UserMiddlewares;
+import api.Middlewares.UserMiddlewares;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.SortField;
@@ -11,6 +11,7 @@ import org.jooq.TableLike;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import src.main.java.HarmonyDatabase.Tables;
@@ -73,9 +74,22 @@ public class MediaController {
     }
 
     @PostMapping("/movies")
-    public MovieHelper postMovie(@RequestBody MovieHelper movie) throws SQLException {
+    public ResponseEntity<MovieHelper> postMovie(@RequestBody MovieHelper movie) throws SQLException {
         UserMiddlewares.isAdmin(movie.getUserid());
-        return mediaService.postMovie(movie);
+        if(movie.getTitle()== null || movie.getReleasedate()==null || movie.getSynopsis()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<MovieHelper>(mediaService.postMovie(movie), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/movies")
+    public ResponseEntity<MovieHelper> putMovie(@RequestBody MovieHelper movie) throws SQLException {
+        UserMiddlewares.isAdmin(movie.getUserid());
+        if(movie.getMediaid()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        mediaService.putMovie(movie);
+        return new ResponseEntity<MovieHelper>(HttpStatus.NO_CONTENT);
     }
 
     private void isValidGenre(String genreString) throws SQLException {

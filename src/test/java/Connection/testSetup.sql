@@ -1041,3 +1041,5 @@ CALL newVideogame('videogameTest', '2012-06-23', null, null, 'this is a test for
 CALL newMovie('movieTest', '1999-05-01', null, null, 'test for oder')
 CALL newGenre('action')
 CALL newMediaGenre('Spider-Man', '2002-05-01', 'action')
+CALL newUser('antonioAdmin', 'e@e.com', 'antoniopassword', 1)
+CALL newUser('antonioUser', 'e@e2.com', 'antoniopassword', 0)

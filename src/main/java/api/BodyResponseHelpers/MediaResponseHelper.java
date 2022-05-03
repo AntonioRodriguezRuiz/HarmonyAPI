@@ -1,10 +1,9 @@
 package api.BodyResponseHelpers;
 
+import src.main.java.HarmonyDatabase.tables.pojos.Genres;
+
 import java.time.LocalDate;
 import java.util.List;
-
-import org.jooq.impl.QOM;
-import src.main.java.HarmonyDatabase.tables.pojos.Genres;
 
 public class MediaResponseHelper {
     private Integer mediaid;

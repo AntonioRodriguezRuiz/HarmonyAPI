@@ -2,11 +2,16 @@ package api.Services;
 
 import api.BodyResponseHelpers.*;
 import api.GlobalValues;
-import org.jooq.*;
+import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.SQLDialect;
+import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+import src.main.java.HarmonyDatabase.tables.pojos.Genres;
+import src.main.java.HarmonyDatabase.tables.pojos.Platforms;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,10 +19,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static src.main.java.HarmonyDatabase.Tables.*;
-
-import org.springframework.web.server.ResponseStatusException;
-import src.main.java.HarmonyDatabase.tables.pojos.Genres;
-import src.main.java.HarmonyDatabase.tables.pojos.Platforms;
 
 @Service
 public class MediaSpecificService {

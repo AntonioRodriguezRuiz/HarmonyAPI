@@ -5,7 +5,6 @@ import org.jooq.Record;
 import java.time.LocalDate;
 import java.util.List;
 
-import static src.main.java.HarmonyDatabase.Tables.VIDEOGAMES;
 import static src.main.java.HarmonyDatabase.tables.Media.MEDIA;
 
 public class MovieResponseHelper extends MediaResponseHelper{

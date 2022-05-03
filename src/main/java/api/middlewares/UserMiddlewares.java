@@ -1,4 +1,4 @@
-package api.Middlewares;
+package api.middlewares;
 
 import api.GlobalValues;
 import org.jooq.DSLContext;
@@ -6,14 +6,14 @@ import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
-import src.main.java.HarmonyDatabase.tables.pojos.Admins;
+import src.main.java.model.tables.pojos.Admins;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
-import static src.main.java.HarmonyDatabase.Tables.ADMINS;
+import static src.main.java.model.Tables.ADMINS;
 
 public class UserMiddlewares {
 

@@ -1,14 +1,14 @@
-package api.BodyResponseHelpers;
+package api.helpers.response;
 
 import org.jooq.Record;
-import src.main.java.HarmonyDatabase.tables.pojos.Genres;
-import src.main.java.HarmonyDatabase.tables.pojos.Platforms;
+import src.main.java.model.tables.pojos.Genres;
+import src.main.java.model.tables.pojos.Platforms;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import static src.main.java.HarmonyDatabase.Tables.VIDEOGAMES;
-import static src.main.java.HarmonyDatabase.tables.Media.MEDIA;
+import static src.main.java.model.Tables.VIDEOGAMES;
+import static src.main.java.model.tables.Media.MEDIA;
 public class VideogameResponseHelper extends MediaResponseHelper{
 
     private String company;

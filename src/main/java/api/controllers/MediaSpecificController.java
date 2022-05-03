@@ -1,7 +1,7 @@
-package api.Controllers;
+package api.controllers;
 
-import api.BodyResponseHelpers.MediaResponseHelper;
-import api.Services.MediaSpecificService;
+import api.helpers.response.MediaResponseHelper;
+import api.services.MediaSpecificService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

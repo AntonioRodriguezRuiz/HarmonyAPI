@@ -1,4 +1,4 @@
-package api.BodyRequestHelpers;
+package api.helpers.request;
 
 public class BookRequestHelper extends MediaRequestHelper{
 

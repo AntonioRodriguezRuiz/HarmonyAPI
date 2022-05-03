@@ -1,12 +1,12 @@
-package api.Controllers;
+package api.controllers;
 
-import api.BodyRequestHelpers.BookRequestHelper;
-import api.BodyRequestHelpers.MovieRequestHelper;
-import api.BodyRequestHelpers.SeriesRequestHelper;
-import api.BodyRequestHelpers.VideogameRequestHelper;
+import api.helpers.request.BookRequestHelper;
+import api.helpers.request.MovieRequestHelper;
+import api.helpers.request.SeriesRequestHelper;
+import api.helpers.request.VideogameRequestHelper;
 import api.GlobalValues;
-import api.Middlewares.UserMiddlewares;
-import api.Services.MediaService;
+import api.middlewares.UserMiddlewares;
+import api.services.MediaService;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.SortField;
@@ -17,9 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import src.main.java.HarmonyDatabase.Tables;
-import src.main.java.HarmonyDatabase.tables.pojos.Genres;
-import src.main.java.HarmonyDatabase.tables.pojos.Media;
+import src.main.java.model.Tables;
+import src.main.java.model.tables.pojos.Genres;
+import src.main.java.model.tables.pojos.Media;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -27,8 +27,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import static src.main.java.HarmonyDatabase.Tables.GENRES;
-import static src.main.java.HarmonyDatabase.Tables.MEDIA;
+import static src.main.java.model.Tables.GENRES;
+import static src.main.java.model.Tables.MEDIA;
 
 
 @RestController

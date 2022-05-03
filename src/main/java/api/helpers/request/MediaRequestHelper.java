@@ -1,4 +1,4 @@
-package api.BodyRequestHelpers;
+package api.helpers.request;
 
 import java.time.LocalDate;
 

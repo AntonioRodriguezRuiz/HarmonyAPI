@@ -1,6 +1,6 @@
-package api.BodyResponseHelpers;
+package api.helpers.response;
 
-import src.main.java.HarmonyDatabase.tables.pojos.Genres;
+import src.main.java.model.tables.pojos.Genres;
 
 import java.time.LocalDate;
 import java.util.List;

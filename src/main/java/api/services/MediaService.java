@@ -10,19 +10,17 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.List;
 
+import static api.GlobalValues.*;
 import static src.main.java.harmony.Tables.MEDIA;
 
 @Service
 public class MediaService {
 
     public List<Media> getAllMedia(){
-        String userName = "user";
-        String password = "user";
-        String url = "jdbc:mariadb://localhost:3306/harmony";
         DSLContext create;
         List<Media> result = null;
 
-        try (Connection conn = DriverManager.getConnection(url, userName, password)) {
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
             create = DSL.using(conn, SQLDialect.MARIADB);
             result = create.select()
                     .from(MEDIA)

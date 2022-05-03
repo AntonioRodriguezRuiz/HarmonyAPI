@@ -6,26 +6,26 @@ import org.jooq.Result;
 import org.jooq.SQLDialect;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
-import src.main.java.HarmonyDatabase.Routines;
+import src.main.java.harmony.Routines;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.time.LocalDate;
 
-import static src.main.java.HarmonyDatabase.Tables.*;
+import static src.main.java.harmony.Tables.*;
 
 public class ConnectionTest {
     public static void main(String[] args) {
         Settings settings = new Settings();
         settings.setExecuteLogging(true);
 
-        String userName = "user";
-        String password = "user";
-        String url = "jdbc:mariadb://localhost:3306/harmony";
+        String USER = "harmony";
+        String PASSWORD = "tN1moow41jd6rGfa";
+        String URL = "jdbc:mysql://34.65.47.107:3306/harmony";
 
         // Connection is the only JDBC resource that we need
         // PreparedStatement and ResultSet are handled by jOOQ, internally
-        try (Connection conn = DriverManager.getConnection(url, userName, password)) {
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB, settings);
             createExampleEntries(create, conn);
 

@@ -31,6 +31,7 @@ import src.main.java.model.routines.Newtracker;
 import src.main.java.model.routines.Newuser;
 import src.main.java.model.routines.Newvideogame;
 import src.main.java.model.routines.Newvideogameplatform;
+import src.main.java.model.routines.Newvideogameplatformbyid;
 import src.main.java.model.routines.Unlikereview;
 import src.main.java.model.routines.Updatereview;
 
@@ -474,6 +475,21 @@ public class Routines {
         p.setPlatformname(platformname);
         p.setTitle(title);
         p.setReleasedate(releasedate);
+
+        p.execute(configuration);
+    }
+
+    /**
+     * Call <code>harmony.newVideogamePlatformById</code>
+     */
+    public static void newvideogameplatformbyid(
+          Configuration configuration
+        , Integer mediaid
+        , Integer platformid
+    ) {
+        Newvideogameplatformbyid p = new Newvideogameplatformbyid();
+        p.setMediaid(mediaid);
+        p.setPlatformid(platformid);
 
         p.execute(configuration);
     }

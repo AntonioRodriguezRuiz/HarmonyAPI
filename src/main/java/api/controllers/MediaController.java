@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import src.main.java.HarmonyDatabase.tables.pojos.Media;
+import src.main.java.harmony.tables.pojos.Media;
 
 import java.util.List;
 

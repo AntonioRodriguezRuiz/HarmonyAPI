@@ -1,4 +1,4 @@
-package com.example.harmonyapi;
+package com.harmonyapi;
 
 public class MediaControllerTest {
     //TODO

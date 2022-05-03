@@ -21,9 +21,9 @@ public class Newseasonbyid extends AbstractRoutine<java.lang.Void> {
     private static final long serialVersionUID = 1L;
 
     /**
-     * The parameter <code>harmony.newSeasonById.seriesid</code>.
+     * The parameter <code>harmony.newSeasonById.mediaid</code>.
      */
-    public static final Parameter<Integer> SERIESID = Internal.createParameter("seriesid", SQLDataType.INTEGER, false, false);
+    public static final Parameter<Integer> MEDIAID = Internal.createParameter("mediaid", SQLDataType.INTEGER, false, false);
 
     /**
      * The parameter <code>harmony.newSeasonById.seasonNo</code>.
@@ -41,16 +41,16 @@ public class Newseasonbyid extends AbstractRoutine<java.lang.Void> {
     public Newseasonbyid() {
         super("newSeasonById", Harmony.HARMONY);
 
-        addInParameter(SERIESID);
+        addInParameter(MEDIAID);
         addInParameter(SEASONNO);
         addInParameter(NOEPISODES);
     }
 
     /**
-     * Set the <code>seriesid</code> parameter IN value to the routine
+     * Set the <code>mediaid</code> parameter IN value to the routine
      */
-    public void setSeriesid(Integer value) {
-        setValue(SERIESID, value);
+    public void setMediaid(Integer value) {
+        setValue(MEDIAID, value);
     }
 
     /**

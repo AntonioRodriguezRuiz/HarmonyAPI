@@ -25,6 +25,7 @@ import src.main.java.model.routines.Newplatform;
 import src.main.java.model.routines.Newreport;
 import src.main.java.model.routines.Newreview;
 import src.main.java.model.routines.Newseason;
+import src.main.java.model.routines.Newseasonbyid;
 import src.main.java.model.routines.Newseries;
 import src.main.java.model.routines.Newtracker;
 import src.main.java.model.routines.Newuser;
@@ -357,6 +358,23 @@ public class Routines {
         Newseason p = new Newseason();
         p.setTitle(title);
         p.setReleasedate(releasedate);
+        p.setSeasonno(seasonno);
+        p.setNoepisodes(noepisodes);
+
+        p.execute(configuration);
+    }
+
+    /**
+     * Call <code>harmony.newSeasonById</code>
+     */
+    public static void newseasonbyid(
+          Configuration configuration
+        , Integer mediaid
+        , Integer seasonno
+        , Integer noepisodes
+    ) {
+        Newseasonbyid p = new Newseasonbyid();
+        p.setMediaid(mediaid);
         p.setSeasonno(seasonno);
         p.setNoepisodes(noepisodes);
 

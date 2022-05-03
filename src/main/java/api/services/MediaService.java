@@ -2,8 +2,8 @@ package api.services;
 
 import api.GlobalValues;
 import api.helpers.request.*;
+import api.helpers.response.MediaResponseHelper;
 import org.jooq.*;
-import org.jooq.Record;
 import org.jooq.impl.DSL;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -112,8 +112,9 @@ public class MediaService {
         return result;
     }
 
-    public MediaRequestHelper postMedia(MediaRequestHelper media, Table table) throws SQLException {
-        try(Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)){
+    public MediaResponseHelper postMedia(MediaRequestHelper media, Table table) throws SQLException {
+        MediaResponseHelper newMedia = null;
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
 
             MovieRequestHelper movie = null;
@@ -122,8 +123,9 @@ public class MediaService {
             VideogameRequestHelper videogame = null;
 
             String aux = table.getName();
-            switch(table.getName()){
-                case "movies": movie = (MovieRequestHelper) media;
+            switch (table.getName()) {
+                case "movies":
+                    movie = (MovieRequestHelper) media;
                     Routines.newmovie(create.configuration(),
                             movie.getTitle(),
                             movie.getReleasedate(),
@@ -131,7 +133,8 @@ public class MediaService {
                             movie.getBackgroundimage(),
                             movie.getSynopsis());
                     break;
-                case "series":  series = (SeriesRequestHelper) media;
+                case "series":
+                    series = (SeriesRequestHelper) media;
                     Routines.newseries(create.configuration(),
                             series.getTitle(),
                             series.getReleasedate(),
@@ -139,7 +142,8 @@ public class MediaService {
                             series.getBackgroundimage(),
                             series.getSynopsis());
                     break;
-                case "books":   book = (BookRequestHelper) media;
+                case "books":
+                    book = (BookRequestHelper) media;
                     Routines.newbook(create.configuration(),
                             book.getTitle(),
                             book.getReleasedate(),
@@ -148,7 +152,8 @@ public class MediaService {
                             book.getSynopsis(),
                             book.getCollection());
                     break;
-                case "videogames": videogame = (VideogameRequestHelper) media;
+                case "videogames":
+                    videogame = (VideogameRequestHelper) media;
                     Routines.newvideogame(create.configuration(),
                             videogame.getTitle(),
                             videogame.getReleasedate(),
@@ -159,24 +164,23 @@ public class MediaService {
                     break;
             }
 
-            Record newMedia = create.select()
-                    .from(MEDIA)
-                    .naturalJoin(table)
-                    .orderBy(MEDIA.MEDIAID.desc())
-                    .limit(1)
-                    .fetch().get(0);
+            Integer newMediaid = create.select()
+                                .from(MEDIA)
+                                .naturalJoin(table)
+                                .orderBy(MEDIA.MEDIAID.desc())
+                                .limit(1)
+                                .fetch().get(0).get(MEDIA.MEDIAID);
 
-            media.setCoverimage(newMedia.getValue(MEDIA.COVERIMAGE));
-            media.setBackgroundimage(newMedia.getValue(MEDIA.BACKGROUNDIMAGE));
-            media.setMediaid(newMedia.getValue(MEDIA.MEDIAID));
+            MediaSpecificService mediaSpecificService = new MediaSpecificService();
+            newMedia = mediaSpecificService.getMedia(newMediaid);
 
-        } catch (ResponseStatusException | SQLException e){
-            if(e instanceof ResponseStatusException){
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
                 throw e;
             }
             e.printStackTrace();
         }
-        return media;
+        return newMedia;
     }
 
     public void putMedia(MediaRequestHelper media, Table table, Media oldMedia) throws SQLException {
@@ -225,36 +229,36 @@ public class MediaService {
         }
     }
 
-    public MovieRequestHelper postMovie(MovieRequestHelper movie) throws SQLException {
+    public MediaResponseHelper postMovie(MovieRequestHelper movie) throws SQLException {
         canBePost(movie);
-        return (MovieRequestHelper) postMedia(movie, MOVIES);
+        return postMedia(movie, MOVIES);
     }
 
     public void putMovie(MovieRequestHelper movie) throws SQLException {
         putMedia(movie, MOVIES, canBePut(movie, MOVIES));
     }
 
-    public SeriesRequestHelper postSeries(SeriesRequestHelper series) throws SQLException {
+    public MediaResponseHelper postSeries(SeriesRequestHelper series) throws SQLException {
         canBePost(series);
-        return (SeriesRequestHelper) postMedia(series, SERIES);
+        return postMedia(series, SERIES);
     }
 
     public void putSeries(SeriesRequestHelper series) throws SQLException {
         putMedia(series, SERIES, canBePut(series, SERIES));
     }
 
-    public BookRequestHelper postBook(BookRequestHelper book) throws SQLException {
+    public MediaResponseHelper postBook(BookRequestHelper book) throws SQLException {
         canBePost(book);
-        return (BookRequestHelper) postMedia(book, BOOKS);
+        return postMedia(book, BOOKS);
     }
 
     public void putBook(BookRequestHelper book) throws SQLException{
         putMedia(book, BOOKS, canBePut(book, BOOKS));
     }
 
-    public VideogameRequestHelper postVideogame(VideogameRequestHelper videogame) throws SQLException {
+    public MediaResponseHelper postVideogame(VideogameRequestHelper videogame) throws SQLException {
         canBePost(videogame);
-        return (VideogameRequestHelper) postMedia(videogame, VIDEOGAMES);
+        return postMedia(videogame, VIDEOGAMES);
     }
 
     public void putVideogame(VideogameRequestHelper videogame) throws SQLException{

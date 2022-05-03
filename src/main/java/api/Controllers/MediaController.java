@@ -1,7 +1,9 @@
 package api.Controllers;
 
-import api.BodyRequestHelpers.MovieHelper;
-import api.BodyRequestHelpers.SeriesHelper;
+import api.BodyRequestHelpers.BookRequestHelper;
+import api.BodyRequestHelpers.MovieRequestHelper;
+import api.BodyRequestHelpers.SeriesRequestHelper;
+import api.BodyRequestHelpers.VideogameRequestHelper;
 import api.GlobalValues;
 import api.Services.MediaService;
 import api.Middlewares.UserMiddlewares;
@@ -75,41 +77,79 @@ public class MediaController {
     }
 
     @PostMapping("/movies")
-    public ResponseEntity<MovieHelper> postMovie(@RequestBody MovieHelper movie) throws SQLException {
+    public ResponseEntity<MovieRequestHelper> postMovie(@RequestBody MovieRequestHelper movie) throws SQLException {
         UserMiddlewares.isAdmin(movie.getUserid());
         if(movie.getTitle()== null || movie.getReleasedate()==null || movie.getSynopsis()==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<MovieHelper>(mediaService.postMovie(movie), HttpStatus.CREATED);
+        return new ResponseEntity<MovieRequestHelper>(mediaService.postMovie(movie), HttpStatus.CREATED);
     }
 
     @PutMapping("/movies")
-    public ResponseEntity<MovieHelper> putMovie(@RequestBody MovieHelper movie) throws SQLException {
+    public ResponseEntity<MovieRequestHelper> putMovie(@RequestBody MovieRequestHelper movie) throws SQLException {
         UserMiddlewares.isAdmin(movie.getUserid());
         if(movie.getMediaid()==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         mediaService.putMovie(movie);
-        return new ResponseEntity<MovieHelper>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<MovieRequestHelper>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/series")
-    public ResponseEntity<SeriesHelper> postSeries(@RequestBody SeriesHelper series) throws SQLException {
+    public ResponseEntity<SeriesRequestHelper> postSeries(@RequestBody SeriesRequestHelper series) throws SQLException {
         UserMiddlewares.isAdmin(series.getUserid());
         if(series.getTitle()== null || series.getReleasedate()==null || series.getSynopsis()==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<SeriesHelper>(mediaService.postSeries(series), HttpStatus.CREATED);
+        return new ResponseEntity<SeriesRequestHelper>(mediaService.postSeries(series), HttpStatus.CREATED);
     }
 
     @PutMapping("/series")
-    public ResponseEntity<SeriesHelper> putSeries(@RequestBody SeriesHelper series) throws SQLException {
+    public ResponseEntity<SeriesRequestHelper> putSeries(@RequestBody SeriesRequestHelper series) throws SQLException {
         UserMiddlewares.isAdmin(series.getUserid());
         if(series.getMediaid()==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         mediaService.putSeries(series);
-        return new ResponseEntity<SeriesHelper>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<SeriesRequestHelper>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/books")
+    public ResponseEntity<BookRequestHelper> postBook(@RequestBody BookRequestHelper book) throws SQLException {
+        UserMiddlewares.isAdmin(book.getUserid());
+        if(book.getTitle()== null || book.getReleasedate()==null || book.getSynopsis()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<BookRequestHelper>(mediaService.postBook(book), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/books")
+    public ResponseEntity<BookRequestHelper> putBook(@RequestBody BookRequestHelper book) throws SQLException {
+        UserMiddlewares.isAdmin(book.getUserid());
+        if(book.getMediaid()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        mediaService.putBook(book);
+        return new ResponseEntity<BookRequestHelper>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/videogames")
+    public ResponseEntity<VideogameRequestHelper> postVideogame(@RequestBody VideogameRequestHelper videogame) throws SQLException {
+        UserMiddlewares.isAdmin(videogame.getUserid());
+        if(videogame.getTitle()== null || videogame.getReleasedate()==null || videogame.getSynopsis()==null || videogame.getCompany()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<VideogameRequestHelper>(mediaService.postVideogame(videogame), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/videogames")
+    public ResponseEntity<VideogameRequestHelper> putVideogame(@RequestBody VideogameRequestHelper videogame) throws SQLException {
+        UserMiddlewares.isAdmin(videogame.getUserid());
+        if(videogame.getMediaid()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        mediaService.putVideogame(videogame);
+        return new ResponseEntity<VideogameRequestHelper>(HttpStatus.NO_CONTENT);
     }
 
     private void isValidGenre(String genreString) throws SQLException {

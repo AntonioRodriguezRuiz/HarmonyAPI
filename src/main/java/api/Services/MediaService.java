@@ -1,7 +1,6 @@
 package api.Services;
 
-import api.BodyRequestHelpers.MovieHelper;
-import api.BodyRequestHelpers.SeriesHelper;
+import api.BodyRequestHelpers.*;
 import api.GlobalValues;
 import org.jooq.*;
 import org.jooq.Record;
@@ -15,7 +14,6 @@ import src.main.java.HarmonyDatabase.Routines;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.List;
 
 import static src.main.java.HarmonyDatabase.Tables.*;
@@ -114,37 +112,63 @@ public class MediaService {
         return result;
     }
 
-    public MovieHelper postMovie(MovieHelper movie) throws SQLException {
+    public MediaRequestHelper postMedia(MediaRequestHelper media, Table table) throws SQLException {
         try(Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)){
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
 
-            List<Media> oldMovie = create.select()
-                    .from(MEDIA)
-                    .where(MEDIA.TITLE.eq(movie.getTitle())
-                            .and(MEDIA.RELEASEDATE.eq(movie.getReleasedate())))
-                    .fetchInto(Media.class);
+            MovieRequestHelper movie = null;
+            SeriesRequestHelper series = null;
+            BookRequestHelper book = null;
+            VideogameRequestHelper videogame = null;
 
-            if(!oldMovie.isEmpty()){
-                throw new ResponseStatusException(HttpStatus.CONFLICT);
+            String aux = table.getName();
+            switch(table.getName()){
+                case "movies": movie = (MovieRequestHelper) media;
+                                Routines.newmovie(create.configuration(),
+                                        movie.getTitle(),
+                                        movie.getReleasedate(),
+                                        movie.getCoverimage(),
+                                        movie.getBackgroundimage(),
+                                        movie.getSynopsis());
+                                        break;
+                case "series":  series = (SeriesRequestHelper) media;
+                                Routines.newseries(create.configuration(),
+                                        series.getTitle(),
+                                        series.getReleasedate(),
+                                        series.getCoverimage(),
+                                        series.getBackgroundimage(),
+                                        series.getSynopsis());
+                                        break;
+                case "books":   book = (BookRequestHelper) media;
+                                Routines.newbook(create.configuration(),
+                                        book.getTitle(),
+                                        book.getReleasedate(),
+                                        book.getCoverimage(),
+                                        book.getBackgroundimage(),
+                                        book.getSynopsis(),
+                                        book.getCollection());
+                                        break;
+                case "videogames": videogame = (VideogameRequestHelper) media;
+                                    Routines.newvideogame(create.configuration(),
+                                            videogame.getTitle(),
+                                            videogame.getReleasedate(),
+                                            videogame.getCoverimage(),
+                                            videogame.getBackgroundimage(),
+                                            videogame.getSynopsis(),
+                                            videogame.getCompany());
+                                            break;
             }
 
-            Routines.newmovie(create.configuration(),
-                        movie.getTitle(),
-                        movie.getReleasedate(),
-                        movie.getCoverimage(),
-                        movie.getBackgroundimage(),
-                        movie.getSynopsis());
-
-            Record newMovie = create.select()
+            Record newMedia = create.select()
                     .from(MEDIA)
-                    .naturalJoin(MOVIES)
+                    .naturalJoin(table)
                     .orderBy(MEDIA.MEDIAID.desc())
                     .limit(1)
                     .fetch().get(0);
 
-            movie.setCoverimage(newMovie.getValue(MEDIA.COVERIMAGE));
-            movie.setBackgroundimage(newMovie.getValue(MEDIA.BACKGROUNDIMAGE));
-            movie.setMediaid(newMovie.getValue(MEDIA.MEDIAID));
+            media.setCoverimage(newMedia.getValue(MEDIA.COVERIMAGE));
+            media.setBackgroundimage(newMedia.getValue(MEDIA.BACKGROUNDIMAGE));
+            media.setMediaid(newMedia.getValue(MEDIA.MEDIAID));
 
         } catch (ResponseStatusException | SQLException e){
             if(e instanceof ResponseStatusException){
@@ -152,41 +176,46 @@ public class MediaService {
             }
             e.printStackTrace();
         }
-        return movie;
+        return media;
     }
 
-    public void putMovie(MovieHelper movie) throws SQLException {
+    public void putMedia(MediaRequestHelper media, Table table, Media oldMedia) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
 
-            List<Media> oldMovieList = create.select()
-                    .from(MEDIA)
-                    .naturalJoin(MOVIES)
-                    .where(MEDIA.MEDIAID.eq(movie.getMediaid()))
-                    .fetchInto(Media.class);
+            MediaRequestHelper newMedia = new MediaRequestHelper(null, null, null, null, null, null, null);
+            newMedia.setMediaid(media.getMediaid());
 
-            if (oldMovieList.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
-
-            Media oldMovie = oldMovieList.get(0);
-            MovieHelper newMovie = new MovieHelper();
-            newMovie.setMediaid(movie.getMediaid());
-
-            newMovie.setTitle(movie.getTitle() != null ? movie.getTitle() : oldMovie.getTitle());
-            newMovie.setReleasedate(movie.getReleasedate() != null ? movie.getReleasedate() : oldMovie.getReleasedate());
-            newMovie.setCoverimage(movie.getCoverimage() != null ? movie.getCoverimage() : oldMovie.getCoverimage());
-            newMovie.setBackgroundimage(movie.getBackgroundimage() != null ? movie.getBackgroundimage() : oldMovie.getBackgroundimage());
-            newMovie.setSynopsis(movie.getSynopsis() != null ? movie.getSynopsis() : oldMovie.getSynopsis());
+            newMedia.setTitle(media.getTitle() != null ? media.getTitle() : oldMedia.getTitle());
+            newMedia.setReleasedate(media.getReleasedate() != null ? media.getReleasedate() : oldMedia.getReleasedate());
+            newMedia.setCoverimage(media.getCoverimage() != null ? media.getCoverimage() : oldMedia.getCoverimage());
+            newMedia.setBackgroundimage(media.getBackgroundimage() != null ? media.getBackgroundimage() : oldMedia.getBackgroundimage());
+            newMedia.setSynopsis(media.getSynopsis() != null ? media.getSynopsis() : oldMedia.getSynopsis());
 
             create.update(MEDIA)
-                    .set(MEDIA.TITLE, newMovie.getTitle())
-                    .set(MEDIA.RELEASEDATE, newMovie.getReleasedate())
-                    .set(MEDIA.COVERIMAGE, newMovie.getCoverimage())
-                    .set(MEDIA.BACKGROUNDIMAGE, newMovie.getBackgroundimage())
-                    .set(MEDIA.SYNOPSIS, newMovie.getSynopsis())
-                    .where(MEDIA.MEDIAID.eq(newMovie.getMediaid()))
+                    .set(MEDIA.TITLE, newMedia.getTitle())
+                    .set(MEDIA.RELEASEDATE, newMedia.getReleasedate())
+                    .set(MEDIA.COVERIMAGE, newMedia.getCoverimage())
+                    .set(MEDIA.BACKGROUNDIMAGE, newMedia.getBackgroundimage())
+                    .set(MEDIA.SYNOPSIS, newMedia.getSynopsis())
+                    .where(MEDIA.MEDIAID.eq(newMedia.getMediaid()))
                     .execute();
+
+            if(table.getName().equals("books")){
+                BookRequestHelper book = (BookRequestHelper) media;
+                if(book.getCollection()!=null)
+                    create.update(BOOKS)
+                            .set(BOOKS.COLLECTION, book.getCollection())
+                            .where(BOOKS.MEDIAID.eq(media.getMediaid()))
+                            .execute();
+            } else if(table.getName().equals("videogames")){
+                VideogameRequestHelper videogame = (VideogameRequestHelper) media;
+                if(videogame.getCompany()!=null)
+                    create.update(VIDEOGAMES)
+                            .set(VIDEOGAMES.COMPANY, videogame.getCompany())
+                            .where(VIDEOGAMES.MEDIAID.eq(media.getMediaid()))
+                            .execute();
+            }
 
         } catch (ResponseStatusException | SQLException e) {
             if (e instanceof ResponseStatusException) {
@@ -196,37 +225,79 @@ public class MediaService {
         }
     }
 
-    public SeriesHelper postSeries(SeriesHelper series) throws SQLException {
+    public MovieRequestHelper postMovie(MovieRequestHelper movie) throws SQLException {
+        canBePost(movie);
+        return (MovieRequestHelper) postMedia(movie, MOVIES);
+    }
+
+    public void putMovie(MovieRequestHelper movie) throws SQLException {
+       putMedia(movie, MOVIES, canBePut(movie, MOVIES));
+    }
+
+    public SeriesRequestHelper postSeries(SeriesRequestHelper series) throws SQLException {
+        canBePost(series);
+        return (SeriesRequestHelper) postMedia(series, SERIES);
+    }
+
+    public void putSeries(SeriesRequestHelper series) throws SQLException {
+        putMedia(series, SERIES, canBePut(series, SERIES));
+    }
+
+    public BookRequestHelper postBook(BookRequestHelper book) throws SQLException {
+        canBePost(book);
+        return (BookRequestHelper) postMedia(book, BOOKS);
+    }
+
+    public void putBook(BookRequestHelper book) throws SQLException{
+        putMedia(book, BOOKS, canBePut(book, BOOKS));
+    }
+
+    public VideogameRequestHelper postVideogame(VideogameRequestHelper videogame) throws SQLException {
+        canBePost(videogame);
+        return (VideogameRequestHelper) postMedia(videogame, VIDEOGAMES);
+    }
+
+    public void putVideogame(VideogameRequestHelper videogame) throws SQLException{
+        putMedia(videogame, VIDEOGAMES, canBePut(videogame, VIDEOGAMES));
+    }
+
+    public void canBePost(MediaRequestHelper media) throws SQLException {
         try(Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)){
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
 
-            List<Media> oldSeries = create.select()
+            List<Media> oldMedia = create.select()
                     .from(MEDIA)
-                    .where(MEDIA.TITLE.eq(series.getTitle())
-                            .and(MEDIA.RELEASEDATE.eq(series.getReleasedate())))
+                    .where(MEDIA.TITLE.eq(media.getTitle())
+                            .and(MEDIA.RELEASEDATE.eq(media.getReleasedate())))
                     .fetchInto(Media.class);
 
-            if(!oldSeries.isEmpty()){
+            if(!oldMedia.isEmpty()){
                 throw new ResponseStatusException(HttpStatus.CONFLICT);
             }
+        } catch (ResponseStatusException | SQLException e){
+            if(e instanceof ResponseStatusException){
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
 
-            Routines.newseries(create.configuration(),
-                    series.getTitle(),
-                    series.getReleasedate(),
-                    series.getCoverimage(),
-                    series.getBackgroundimage(),
-                    series.getSynopsis());
+    public Media canBePut(MediaRequestHelper media, Table table) throws SQLException {
+        Media oldMedia = null;
+        try(Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)){
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
 
-            Record newSeries = create.select()
+            List<Media> oldMediaList = create.select()
                     .from(MEDIA)
-                    .naturalJoin(SERIES)
-                    .orderBy(MEDIA.MEDIAID.desc())
-                    .limit(1)
-                    .fetch().get(0);
+                    .naturalJoin(table)
+                    .where(MEDIA.MEDIAID.eq(media.getMediaid()))
+                    .fetchInto(Media.class);
 
-            series.setCoverimage(newSeries.getValue(MEDIA.COVERIMAGE));
-            series.setBackgroundimage(newSeries.getValue(MEDIA.BACKGROUNDIMAGE));
-            series.setMediaid(newSeries.getValue(MEDIA.MEDIAID));
+            if (oldMediaList.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+
+            oldMedia = oldMediaList.get(0);
 
         } catch (ResponseStatusException | SQLException e){
             if(e instanceof ResponseStatusException){
@@ -234,47 +305,7 @@ public class MediaService {
             }
             e.printStackTrace();
         }
-        return series;
+        return oldMedia;
     }
 
-    public void putSeries(SeriesHelper series) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
-
-            List<Media> oldSeriesList = create.select()
-                    .from(MEDIA)
-                    .naturalJoin(SERIES)
-                    .where(MEDIA.MEDIAID.eq(series.getMediaid()))
-                    .fetchInto(Media.class);
-
-            if (oldSeriesList.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
-
-            Media oldSeries = oldSeriesList.get(0);
-            SeriesHelper newSeries = new SeriesHelper();
-            newSeries.setMediaid(series.getMediaid());
-
-            newSeries.setTitle(series.getTitle() != null ? series.getTitle() : oldSeries.getTitle());
-            newSeries.setReleasedate(series.getReleasedate() != null ? series.getReleasedate() : oldSeries.getReleasedate());
-            newSeries.setCoverimage(series.getCoverimage() != null ? series.getCoverimage() : oldSeries.getCoverimage());
-            newSeries.setBackgroundimage(series.getBackgroundimage() != null ? series.getBackgroundimage() : oldSeries.getBackgroundimage());
-            newSeries.setSynopsis(series.getSynopsis() != null ? series.getSynopsis() : oldSeries.getSynopsis());
-
-            create.update(MEDIA)
-                    .set(MEDIA.TITLE, newSeries.getTitle())
-                    .set(MEDIA.RELEASEDATE, newSeries.getReleasedate())
-                    .set(MEDIA.COVERIMAGE, newSeries.getCoverimage())
-                    .set(MEDIA.BACKGROUNDIMAGE, newSeries.getBackgroundimage())
-                    .set(MEDIA.SYNOPSIS, newSeries.getSynopsis())
-                    .where(MEDIA.MEDIAID.eq(newSeries.getMediaid()))
-                    .execute();
-
-        } catch (ResponseStatusException | SQLException e) {
-            if (e instanceof ResponseStatusException) {
-                throw e;
-            }
-            e.printStackTrace();
-        }
-    }
 }

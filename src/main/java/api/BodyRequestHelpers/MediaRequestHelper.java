@@ -2,7 +2,7 @@ package api.BodyRequestHelpers;
 
 import java.time.LocalDate;
 
-public class MediaHelper {
+public class MediaRequestHelper {
     private Integer userid;
     private Integer mediaid;
     private String title;
@@ -67,24 +67,14 @@ public class MediaHelper {
         this.synopsis = synopsis;
     }
 
-    public MediaHelper(Integer userid, Integer mediaid, String title, String releasedate, String coverimage, String backgroundimage, String synopsis) {
+    public MediaRequestHelper(Integer userid, Integer mediaid, String title, String releasedate, String coverimage, String backgroundimage, String synopsis) {
         this.userid=userid;
         this.mediaid=mediaid;
         this.title=title;
-        this.releasedate=LocalDate.parse(releasedate);
+        this.releasedate=(releasedate==null ? null: LocalDate.parse(releasedate));
         this.coverimage=coverimage;
         this.backgroundimage=backgroundimage;
         this.synopsis=synopsis;
 
-    }
-
-    public MediaHelper(){
-        this.userid=null;
-        this.mediaid=null;
-        this.title=null;
-        this.releasedate=null;
-        this.coverimage=null;
-        this.backgroundimage=null;
-        this.synopsis=null;
     }
 }

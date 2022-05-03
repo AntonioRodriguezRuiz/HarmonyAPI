@@ -6,13 +6,13 @@ import org.jooq.Result;
 import org.jooq.SQLDialect;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
-import src.main.java.harmony.Routines;
+import src.main.java.model.Routines;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.time.LocalDate;
 
-import static src.main.java.harmony.Tables.*;
+import static src.main.java.model.Tables.*;
 
 public class ConnectionTest {
     public static void main(String[] args) {

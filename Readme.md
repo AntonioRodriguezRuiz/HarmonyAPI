@@ -8,7 +8,7 @@ If you don't have it yet, create a database called "Harmony" and give user all p
 to that database.
 
 Now open IntelliJ and import the project, create a connection to the database to check its working
-and execute testSetup.sql in `src/test/Connection`. If it executed without problems, move to the next step.
+and execute testSetup.sql in `src/test/connection`. If it executed without problems, move to the next step.
 
 Now click on the "Maven" panel in the right and run `harmony-api->Lifecycle->install`. 
 A new package and new classes should appear in `src/main/java/HarmonyDatabase` including tables and routines.
@@ -17,7 +17,7 @@ A new package and new classes should appear in `src/main/java/HarmonyDatabase` i
 
 ## Connection Test
 
-Open the ConnectionTest.java class in `src/test/Connection` and execute it, the expected output is:
+Open the ConnectionTest.java class in `src/test/connection` and execute it, the expected output is:
 
     # userid and reviewid at the end may vary depending on how many times you execute it
 

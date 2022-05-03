@@ -1,11 +1,10 @@
-package Connection;
+package connection;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.SQLDialect;
 import org.jooq.conf.Settings;
-import org.jooq.conf.StatementType;
 import org.jooq.impl.DSL;
 import src.main.java.HarmonyDatabase.Routines;
 

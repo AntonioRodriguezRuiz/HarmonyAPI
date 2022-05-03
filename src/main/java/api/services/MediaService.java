@@ -1,4 +1,4 @@
-package api.Services;
+package api.services;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;

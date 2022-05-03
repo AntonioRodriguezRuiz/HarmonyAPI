@@ -1,11 +1,10 @@
 package api.services;
 
 import api.GlobalValues;
+import api.helpers.request.SeasonRequestHelper;
 import api.helpers.response.*;
-import org.jooq.DSLContext;
+import org.jooq.*;
 import org.jooq.Record;
-import org.jooq.SQLDialect;
-import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,10 +18,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static src.main.java.model.Tables.*;
-
+import src.main.java.model.Routines;
+import src.main.java.model.tables.pojos.Seasons;
 @Service
 public class MediaSpecificService {
-    public MediaResponseHelper getMedia(Integer id) {
+    public MediaResponseHelper getMedia(Integer id) throws SQLException {
         MovieResponseHelper movieResult = null;
         SeriesResponseHelper seriesResult = null;
         BookResponseHelper bookResult = null;
@@ -66,8 +66,11 @@ public class MediaSpecificService {
                                     break;
             }
 
-        } catch (Exception exception){
-            exception.printStackTrace();
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
         }
 
         if(movieResult!=null){
@@ -80,6 +83,19 @@ public class MediaSpecificService {
             return videogameResult;
         }
 
+    }
+
+
+    public void deleteMedia(Integer id) {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            create.deleteFrom(MEDIA)
+                    .where(MEDIA.MEDIAID.eq(id)).execute();
+
+        } catch (Exception exception){
+            exception.printStackTrace();
+        }
     }
 
     public Table getType(Integer id) throws SQLException {
@@ -130,5 +146,82 @@ public class MediaSpecificService {
             e.printStackTrace();
         }
         return type;
+    }
+
+    public SeasonResponseHelper postSeason(SeasonRequestHelper season) throws SQLException {
+        SeasonResponseHelper result = null;
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            Table type = getType(season.getMediaid());
+
+            if(type!=SERIES){
+                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
+            }
+
+            Result<Record> seasonList = create.select()
+                            .from(SEASONS)
+                    .naturalJoin(MEDIA)
+                                    .where(MEDIA.MEDIAID.eq(season.getMediaid())
+                                            .and(SEASONS.SEASONNO.eq(season.getSeasonNo())))
+                    .fetch();
+
+            if(!seasonList.isEmpty()){
+                throw new ResponseStatusException(HttpStatus.CONFLICT);
+            }
+
+            Routines.newseasonbyid(create.configuration(),
+                                    season.getMediaid(),
+                                    season.getSeasonNo(),
+                                    season.getNoEpisodes());
+
+            Record record = create.select()
+                    .from(SEASONS)
+                    .orderBy(SEASONS.SEASONID.desc())
+                    .limit(1)
+                    .fetch().get(0);
+
+            result = new SeasonResponseHelper(record);
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public void putSeason(SeasonRequestHelper season) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            Table type = getType(season.getMediaid());
+
+            if(type!=SERIES){
+                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
+            }
+
+            List<Seasons> seasonList = create.select()
+                    .from(SEASONS)
+                    .where(SEASONS.SEASONID.eq(season.getSeasonid()))
+                    .fetchInto(Seasons.class);
+
+            if(seasonList.isEmpty()){
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+
+            Seasons oldSeason = seasonList.get(0);
+
+            SeasonRequestHelper newSeason = new SeasonRequestHelper(null, null, null, null, null);
+            newSeason.setSeasonNo(season.getSeasonNo()==null ? season.getSeasonNo() : oldSeason.getSeasonno());
+            newSeason.setNoEpisodes(season.getNoEpisodes()==null ? season.getNoEpisodes() : oldSeason.getNoepisodes());
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
     }
 }

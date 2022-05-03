@@ -1,12 +1,17 @@
 package api.controllers;
 
+import api.helpers.request.SeasonRequestHelper;
 import api.helpers.response.MediaResponseHelper;
+import api.helpers.response.SeasonResponseHelper;
+import api.middlewares.UserMiddlewares;
 import api.services.MediaSpecificService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.sql.SQLException;
 
 @RestController
 @RequestMapping("/api/v1/media/{id}")
@@ -16,8 +21,34 @@ public class MediaSpecificController {
     MediaSpecificService mediaService;
 
     @GetMapping
-    public MediaResponseHelper getMedia(@PathVariable Integer id){
+    public MediaResponseHelper getMedia(@PathVariable Integer id) throws SQLException {
         return mediaService.getMedia(id);
+    }
+
+    @DeleteMapping
+    public ResponseEntity deleteMedia(@PathVariable Integer id, @RequestBody String userid) throws SQLException {
+        UserMiddlewares.isAdmin(Integer.valueOf(userid.split(":")[1].split("\n}")[0].strip()));
+        mediaService.deleteMedia(id);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/seasons")
+    public ResponseEntity<SeasonResponseHelper> postSeason(@RequestBody SeasonRequestHelper season) throws SQLException {
+        UserMiddlewares.isAdmin(season.getUserid());
+        if(season.getSeasonNo()==null || season.getNoEpisodes()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(mediaService.postSeason(season), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/seasons")
+    public ResponseEntity putSeason(@RequestBody SeasonRequestHelper season) throws SQLException {
+        UserMiddlewares.isAdmin(season.getUserid());
+        if(season.getMediaid()==null || season.getSeasonid()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        mediaService.putSeason(season);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }

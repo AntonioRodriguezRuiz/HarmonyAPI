@@ -2,7 +2,6 @@ package api.helpers.request;
 
 public class SeasonRequestHelper {
     private Integer userid;
-    private Integer mediaid;
     private Integer seasonid;
 
     private Integer seasonNo;
@@ -14,14 +13,6 @@ public class SeasonRequestHelper {
 
     public void setUserid(Integer userid) {
         this.userid = userid;
-    }
-
-    public Integer getMediaid() {
-        return mediaid;
-    }
-
-    public void setMediaid(Integer mediaid) {
-        this.mediaid = mediaid;
     }
 
     public Integer getSeasonid() {
@@ -50,7 +41,6 @@ public class SeasonRequestHelper {
 
     public SeasonRequestHelper(Integer userid, Integer mediaid, Integer seasonid, Integer seasonNo, Integer noEpisodes) {
         this.userid = userid;
-        this.mediaid = mediaid;
         this.seasonid = seasonid;
         this.seasonNo = seasonNo;
         this.noEpisodes = noEpisodes;

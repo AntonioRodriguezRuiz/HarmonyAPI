@@ -1,7 +1,9 @@
 package api.controllers;
 
+import api.helpers.request.PlatformRequestHelper;
 import api.helpers.request.SeasonRequestHelper;
 import api.helpers.response.MediaResponseHelper;
+import api.helpers.response.PlatformResponseHelper;
 import api.helpers.response.SeasonResponseHelper;
 import api.middlewares.UserMiddlewares;
 import api.services.MediaSpecificService;
@@ -33,21 +35,40 @@ public class MediaSpecificController {
     }
 
     @PostMapping("/seasons")
-    public ResponseEntity<SeasonResponseHelper> postSeason(@RequestBody SeasonRequestHelper season) throws SQLException {
+    public ResponseEntity<SeasonResponseHelper> postSeason(@PathVariable Integer id, @RequestBody SeasonRequestHelper season) throws SQLException {
         UserMiddlewares.isAdmin(season.getUserid());
         if(season.getSeasonNo()==null || season.getNoEpisodes()==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(mediaService.postSeason(season), HttpStatus.CREATED);
+        return new ResponseEntity<>(mediaService.postSeason(id, season), HttpStatus.CREATED);
     }
 
     @PutMapping("/seasons")
-    public ResponseEntity putSeason(@RequestBody SeasonRequestHelper season) throws SQLException {
+    public ResponseEntity putSeason(@PathVariable Integer id, @RequestBody SeasonRequestHelper season) throws SQLException {
         UserMiddlewares.isAdmin(season.getUserid());
-        if(season.getMediaid()==null || season.getSeasonid()==null){
+        if(season.getSeasonid()==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        mediaService.putSeason(season);
+        mediaService.putSeason(id, season);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/platforms")
+    public ResponseEntity<PlatformResponseHelper> postPlatform(@PathVariable Integer id, @RequestBody PlatformRequestHelper platform) throws SQLException {
+        UserMiddlewares.isAdmin(platform.getUserid());
+        if(platform.getPlatformid()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(mediaService.postPlatform(id, platform), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/platforms")
+    public ResponseEntity deletePlatform(@PathVariable Integer id, @RequestBody PlatformRequestHelper platform) throws SQLException {
+        UserMiddlewares.isAdmin(platform.getUserid());
+        if(platform.getPlatformid()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        mediaService.deletePlatform(id, platform);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

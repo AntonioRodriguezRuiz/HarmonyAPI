@@ -1,6 +1,7 @@
 package api.services;
 
 import api.GlobalValues;
+import api.helpers.request.PlatformRequestHelper;
 import api.helpers.request.SeasonRequestHelper;
 import api.helpers.response.*;
 import org.jooq.*;
@@ -148,21 +149,21 @@ public class MediaSpecificService {
         return type;
     }
 
-    public SeasonResponseHelper postSeason(SeasonRequestHelper season) throws SQLException {
+    public SeasonResponseHelper postSeason(Integer id, SeasonRequestHelper season) throws SQLException {
         SeasonResponseHelper result = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
 
-            Table type = getType(season.getMediaid());
+            Table type = getType(id);
 
             if(type!=SERIES){
                 throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
             }
 
             Result<Record> seasonList = create.select()
-                            .from(SEASONS)
-                    .naturalJoin(MEDIA)
-                                    .where(MEDIA.MEDIAID.eq(season.getMediaid())
+                                            .from(SEASONS)
+                                            .naturalJoin(MEDIA)
+                                            .where(MEDIA.MEDIAID.eq(id)
                                             .and(SEASONS.SEASONNO.eq(season.getSeasonNo())))
                     .fetch();
 
@@ -171,7 +172,7 @@ public class MediaSpecificService {
             }
 
             Routines.newseasonbyid(create.configuration(),
-                                    season.getMediaid(),
+                                    id,
                                     season.getSeasonNo(),
                                     season.getNoEpisodes());
 
@@ -192,11 +193,11 @@ public class MediaSpecificService {
         return result;
     }
 
-    public void putSeason(SeasonRequestHelper season) throws SQLException {
+    public void putSeason(Integer id, SeasonRequestHelper season) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
 
-            Table type = getType(season.getMediaid());
+            Table type = getType(id);
 
             if(type!=SERIES){
                 throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
@@ -216,6 +217,87 @@ public class MediaSpecificService {
             SeasonRequestHelper newSeason = new SeasonRequestHelper(null, null, null, null, null);
             newSeason.setSeasonNo(season.getSeasonNo()==null ? season.getSeasonNo() : oldSeason.getSeasonno());
             newSeason.setNoEpisodes(season.getNoEpisodes()==null ? season.getNoEpisodes() : oldSeason.getNoepisodes());
+
+            create.update(SEASONS)
+                    .set(SEASONS.SEASONNO, newSeason.getSeasonNo())
+                    .set(SEASONS.NOEPISODES, newSeason.getNoEpisodes())
+                    .execute();
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
+
+    public PlatformResponseHelper postPlatform(Integer id, PlatformRequestHelper platform) throws SQLException {
+        PlatformResponseHelper newVideogamePlatform = null;
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            Table type = getType(id);
+
+            if(type!=VIDEOGAMES){
+                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
+            }
+
+            Result<Record> videogamePlatfomsList = create.select()
+                    .from(VIDEOGAMEPLATFORMS)
+                    .naturalJoin(VIDEOGAMES)
+                    .naturalJoin(MEDIA)
+                    .where(MEDIA.MEDIAID.eq(id)
+                            .and(VIDEOGAMEPLATFORMS.PLATFORMID.eq(platform.getPlatformid())))
+                    .fetch();
+
+            if(!videogamePlatfomsList.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT);
+            }
+
+            Routines.newvideogameplatformbyid(create.configuration(),
+                                            id,
+                                            platform.getPlatformid());
+            String name = create.select(PLATFORMS.PLATFORMNAME)
+                    .from(PLATFORMS)
+                    .where(PLATFORMS.PLATFORMID.eq(platform.getPlatformid()))
+                    .fetchInto(String.class).get(0);
+            newVideogamePlatform = new PlatformResponseHelper(platform.getPlatformid(), name);
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return newVideogamePlatform;
+    }
+
+    public void deletePlatform(Integer id, PlatformRequestHelper platform) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            Table type = getType(id);
+
+            if(type!=VIDEOGAMES){
+                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
+            }
+
+            List<Integer> videogameidList = create.select(VIDEOGAMES.VIDEOGAMEID)
+                                    .from(MEDIA)
+                                    .naturalJoin(VIDEOGAMES)
+                                    .where(MEDIA.MEDIAID.eq(id))
+                                    .fetchInto(Integer.class);
+
+            if(videogameidList.isEmpty()){
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+
+            Integer videogameid = videogameidList.get(0);
+
+            create.deleteFrom(VIDEOGAMEPLATFORMS)
+                    .where(VIDEOGAMEPLATFORMS.PLATFORMID.eq(platform.getPlatformid())
+                            .and(VIDEOGAMEPLATFORMS.VIDEOGAMEID.eq(videogameid)))
+                    .execute();
 
         } catch (ResponseStatusException | SQLException e) {
             if (e instanceof ResponseStatusException) {

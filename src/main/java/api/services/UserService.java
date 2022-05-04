@@ -31,6 +31,7 @@ public class UserService {
             return !create.select()
                 .from(USERS)
                 .where(USERS.USERNAME.eq(user.username()))
+                .or(USERS.EMAIL.eq(user.email()))
                 .fetch()
                 .isEmpty();
         } catch (ResponseStatusException | SQLException e) {

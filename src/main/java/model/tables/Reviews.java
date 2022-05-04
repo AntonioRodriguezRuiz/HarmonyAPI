@@ -69,9 +69,9 @@ public class Reviews extends TableImpl<ReviewsRecord> {
     public final TableField<ReviewsRecord, Integer> MEDIAID = createField(DSL.name("mediaid"), SQLDataType.INTEGER.nullable(false), this, "");
 
     /**
-     * The column <code>harmony.reviews.datetime</code>.
+     * The column <code>harmony.reviews.creationDate</code>.
      */
-    public final TableField<ReviewsRecord, LocalDateTime> DATETIME = createField(DSL.name("datetime"), SQLDataType.LOCALDATETIME(0).nullable(false), this, "");
+    public final TableField<ReviewsRecord, LocalDateTime> CREATIONDATE = createField(DSL.name("creationDate"), SQLDataType.LOCALDATETIME(0).nullable(false), this, "");
 
     /**
      * The column <code>harmony.reviews.rating</code>.

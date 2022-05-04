@@ -46,7 +46,7 @@ public class MediaController {
 
     @Operation(summary = "Get all media and filter by media type, genre, title and sort by parameters")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Search succesful")})
+            @ApiResponse(responseCode = "200", description = "Search successful")})
     @GetMapping
     public List<Media> getAllMedia(@RequestParam(name="search", required = false) String searchParam,
                                    @RequestParam(name="type", required = false) String typeParam,
@@ -105,7 +105,7 @@ public class MediaController {
 
     @Operation(summary = "Modifies a movie in the database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item moddified"),
+            @ApiResponse(responseCode = "204", description = "Item modified"),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
@@ -135,7 +135,7 @@ public class MediaController {
 
     @Operation(summary = "Modifies a series in the database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item moddified"),
+            @ApiResponse(responseCode = "204", description = "Item modified"),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
@@ -166,7 +166,7 @@ public class MediaController {
 
     @Operation(summary = "Modifies a book in the database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item moddified"),
+            @ApiResponse(responseCode = "204", description = "Item modified"),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
@@ -197,7 +197,7 @@ public class MediaController {
 
     @Operation(summary = "Modifies a videogame in the database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item moddified"),
+            @ApiResponse(responseCode = "204", description = "Item modified"),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})

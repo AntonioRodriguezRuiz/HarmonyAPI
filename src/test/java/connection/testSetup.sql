@@ -431,7 +431,7 @@ BEGIN
     END;
 END //
 
-DROP PROCEDURE IF EXISTS newSeasonById
+DROP PROCEDURE IF EXISTS newSeasonById;
 CREATE PROCEDURE newSeasonById(mediaid INT, seasonNo INT, noEpisodes INT)
 BEGIN
 START TRANSACTION;
@@ -1135,15 +1135,15 @@ DELIMITER ;
 CALL newMovie('Spider-Man', '2002-05-01', 'https://www.themoviedb.org/t/p/original/gh4cZbhZxyTbgxQPxD0dOudNPTn.jpg', 'https://www.themoviedb.org/t/p/original/sWvxBXNtCOaGdtpKNLiOqmwb10N.jpg', 'After being bitten by a genetically altered spider at Oscorp, nerdy but endearing high school student Peter Parker is endowed with amazing powers to become the superhero known as Spider-Man.');
 CALL newMovie('Spider-Man 3', '2007-05-01', 'https://www.themoviedb.org/t/p/original/63O5iixxXSmyOaBas7ek1tkeVra.jpg', 'https://www.themoviedb.org/t/p/original/6MQmtWk4cFwSDyNvIgoJRBIHUT3.jpg', 'The seemingly invincible Spider-Man goes up against an all-new crop of villains—including the shape-shifting Sandman. While Spider-Man’s superpowers are altered by an alien organism, his alter ego, Peter Parker, deals with nemesis Eddie Brock and also gets caught up in a love triangle.');
 CALL newMovie('The Amazing Spider-Man', '2012-06-23', 'https://www.themoviedb.org/t/p/original/gsIkMf1VErbF0xtrgXEZXqLgsBG.jpg', 'https://www.themoviedb.org/t/p/original/sLWUtbrpiLp23a0XDSiUiltdFPJ.jpg', 'Peter Parker is an outcast high schooler abandoned by his parents as a boy, leaving him to be raised by his Uncle Ben and Aunt May. Like most teenagers, Peter is trying to figure out who he is and how he got to be the person he is today. As Peter discovers a mysterious briefcase that belonged to his father, he begins a quest to understand his parents\' disappearance – leading him directly to Oscorp and the lab of Dr. Curt Connors, his father\'s former partner. As Spider-Man is set on a collision course with Connors\' alter ego, The Lizard, Peter will make life-altering choices to use his powers and shape his destiny to become a hero.');
-CALL newBook('booktest', '2012-06-23', null, null, 'this is a test for queries', 'testCollection')
-CALL newVideogame('videogameTest', '2012-06-23', null, null, 'this is a test for queries', 'testCompany')
-CALL newMovie('movieTest', '1999-05-01', null, null, 'test for oder')
-CALL newGenre('action')
-CALL newMediaGenre('Spider-Man', '2002-05-01', 'action')
-CALL newUser('antonioAdmin', 'e@e.com', 'antoniopassword', 1)
+CALL newBook('booktest', '2012-06-23', null, null, 'this is a test for queries', 'testCollection');
+CALL newVideogame('videogameTest', '2012-06-23', null, null, 'this is a test for queries', 'testCompany');
+CALL newMovie('movieTest', '1999-05-01', null, null, 'test for oder');
+CALL newGenre('action');
+CALL newMediaGenre('Spider-Man', '2002-05-01', 'action');
+CALL newUser('antonioAdmin', 'e@e.com', 'antoniopassword', 1);
 CALL newUser('antonioUser', 'e@e2.com', 'antoniopassword', 0);
-CALL newPlatform('gameboy')
-CALL newPerson('andres', '2002-05-01', null)
-CALL newPersonBook('andres', '2002-05-01', 'booktest', '2012-06-23', 'author')
+CALL newPlatform('gameboy');
+CALL newPerson('andres', '2002-05-01', null);
+CALL newPersonBook('andres', '2002-05-01', 'booktest', '2012-06-23', 'author');
 CALL newPersonMovie('andres', '2002-05-01', 'Spider-Man', '2002-05-01', 'actor', 1);
-CALL newReview(1, 1, 5.0, 'decent')
+CALL newReview(1, 1, 5.0, 'decent');

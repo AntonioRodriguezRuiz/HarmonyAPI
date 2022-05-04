@@ -8,6 +8,11 @@ import api.helpers.request.VideogameRequestHelper;
 import api.helpers.response.MediaResponseHelper;
 import api.middlewares.UserMiddlewares;
 import api.services.MediaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.SortField;
@@ -39,6 +44,9 @@ public class MediaController {
     @Autowired
     MediaService mediaService;
 
+    @Operation(summary = "Get all media and filter by media type, genre, title and sort by parameters")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Search succesful")})
     @GetMapping
     public List<Media> getAllMedia(@RequestParam(name="search", required = false) String searchParam,
                                    @RequestParam(name="type", required = false) String typeParam,
@@ -80,6 +88,12 @@ public class MediaController {
         return mediaService.getAllMedia(search, typeTable, orderField, genreParam, offset);
     }
 
+    @Operation(summary = "Post a new movie to the database")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Item created"),
+            @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
+            @ApiResponse(responseCode = "409", description = "Item already exists", content = @Content)})
     @PostMapping("/movies")
     public ResponseEntity<MediaResponseHelper> postMovie(@RequestBody MovieRequestHelper movie) throws SQLException {
         UserMiddlewares.isAdmin(movie.getUserid());
@@ -89,6 +103,12 @@ public class MediaController {
         return new ResponseEntity<>(mediaService.postMovie(movie), HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Modifies a movie in the database")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Item moddified"),
+            @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
     @PutMapping("/movies")
     public ResponseEntity<MovieRequestHelper> putMovie(@RequestBody MovieRequestHelper movie) throws SQLException {
         UserMiddlewares.isAdmin(movie.getUserid());
@@ -98,7 +118,12 @@ public class MediaController {
         mediaService.putMovie(movie);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
+    @Operation(summary = "Post a new series to the database")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Item created"),
+            @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
+            @ApiResponse(responseCode = "409", description = "Item already exists", content = @Content)})
     @PostMapping("/series")
     public ResponseEntity<MediaResponseHelper> postSeries(@RequestBody SeriesRequestHelper series) throws SQLException {
         UserMiddlewares.isAdmin(series.getUserid());
@@ -108,6 +133,12 @@ public class MediaController {
         return new ResponseEntity<>(mediaService.postSeries(series), HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Modifies a series in the database")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Item moddified"),
+            @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
     @PutMapping("/series")
     public ResponseEntity<SeriesRequestHelper> putSeries(@RequestBody SeriesRequestHelper series) throws SQLException {
         UserMiddlewares.isAdmin(series.getUserid());
@@ -118,6 +149,12 @@ public class MediaController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @Operation(summary = "Post a new book to the database")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Item created"),
+            @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
+            @ApiResponse(responseCode = "409", description = "Item already exists", content = @Content)})
     @PostMapping("/books")
     public ResponseEntity<MediaResponseHelper> postBook(@RequestBody BookRequestHelper book) throws SQLException {
         UserMiddlewares.isAdmin(book.getUserid());
@@ -127,6 +164,12 @@ public class MediaController {
         return new ResponseEntity<>(mediaService.postBook(book), HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Modifies a book in the database")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Item moddified"),
+            @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
     @PutMapping("/books")
     public ResponseEntity<BookRequestHelper> putBook(@RequestBody BookRequestHelper book) throws SQLException {
         UserMiddlewares.isAdmin(book.getUserid());
@@ -137,6 +180,12 @@ public class MediaController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @Operation(summary = "Post a new videogame to the database")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Item created"),
+            @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
+            @ApiResponse(responseCode = "409", description = "Item already exists", content = @Content)})
     @PostMapping("/videogames")
     public ResponseEntity<MediaResponseHelper> postVideogame(@RequestBody VideogameRequestHelper videogame) throws SQLException {
         UserMiddlewares.isAdmin(videogame.getUserid());
@@ -146,6 +195,12 @@ public class MediaController {
         return new ResponseEntity<>(mediaService.postVideogame(videogame), HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Modifies a videogame in the database")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Item moddified"),
+            @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
     @PutMapping("/videogames")
     public ResponseEntity<VideogameRequestHelper> putVideogame(@RequestBody VideogameRequestHelper videogame) throws SQLException {
         UserMiddlewares.isAdmin(videogame.getUserid());

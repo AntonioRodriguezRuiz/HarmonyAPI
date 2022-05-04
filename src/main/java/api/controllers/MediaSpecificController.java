@@ -1,7 +1,10 @@
 package api.controllers;
 
+import api.helpers.request.EpisodeRequestHelper;
 import api.helpers.request.PlatformRequestHelper;
 import api.helpers.request.SeasonRequestHelper;
+import api.helpers.request.UseridBodyHelper;
+import api.helpers.response.EpisodeResponseHelper;
 import api.helpers.response.MediaResponseHelper;
 import api.helpers.response.PlatformResponseHelper;
 import api.helpers.response.SeasonResponseHelper;
@@ -28,8 +31,8 @@ public class MediaSpecificController {
     }
 
     @DeleteMapping
-    public ResponseEntity deleteMedia(@PathVariable Integer id, @RequestBody String userid) throws SQLException {
-        UserMiddlewares.isAdmin(Integer.valueOf(userid.split(":")[1].split("\n}")[0].strip()));
+    public ResponseEntity deleteMedia(@PathVariable Integer id, @RequestBody UseridBodyHelper useridBody) throws SQLException {
+        UserMiddlewares.isAdmin(useridBody.userid());
         mediaService.deleteMedia(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
@@ -62,13 +65,53 @@ public class MediaSpecificController {
         return new ResponseEntity<>(mediaService.postPlatform(id, platform), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/platforms")
-    public ResponseEntity deletePlatform(@PathVariable Integer id, @RequestBody PlatformRequestHelper platform) throws SQLException {
-        UserMiddlewares.isAdmin(platform.getUserid());
-        if(platform.getPlatformid()==null){
+    @DeleteMapping("/platforms/{platformid}")
+    public ResponseEntity deletePlatform(@PathVariable Integer id, @PathVariable Integer platformid, @RequestBody UseridBodyHelper user) throws SQLException {
+        UserMiddlewares.isAdmin(user.userid());
+        mediaService.deletePlatform(id, platformid);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/{seasonid}")
+    public SeasonResponseHelper getSeason(@PathVariable Integer id, @PathVariable Integer seasonid) throws SQLException {
+        return mediaService.getSeason(id,seasonid);
+    }
+
+    @PostMapping("/{seasonid}")
+    public ResponseEntity<EpisodeResponseHelper> postEpisode(@PathVariable Integer id, @PathVariable Integer seasonid, @RequestBody EpisodeRequestHelper episode) throws SQLException {
+        UserMiddlewares.isAdmin(episode.getUserid());
+        if(episode.getEpisodeNo()==null || episode.getEpisodeName()==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        mediaService.deletePlatform(id, platform);
+        return new ResponseEntity<>(mediaService.postEpisode(id, seasonid, episode), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{seasonid}")
+    public ResponseEntity putEpisode(@PathVariable Integer id, @PathVariable Integer seasonid, @RequestBody EpisodeRequestHelper episode) throws SQLException {
+        UserMiddlewares.isAdmin(episode.getUserid());
+        if(episode.getEpisodeid()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        mediaService.putEpisode(id, seasonid, episode);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping("/{seasonid}")
+    public ResponseEntity deleteSeason(@PathVariable Integer id, @PathVariable Integer seasonid, @RequestBody UseridBodyHelper user) throws SQLException {
+        UserMiddlewares.isAdmin(user.userid());
+        mediaService.deleteSeason(id, seasonid);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/{seasonid}/{episodeid}")
+    public EpisodeResponseHelper getEpisode(@PathVariable Integer id, @PathVariable Integer seasonid, @PathVariable Integer episodeid) throws SQLException {
+        return mediaService.getEpisode(id,seasonid, episodeid);
+    }
+
+    @DeleteMapping("/{seasonid}/{episodeid}")
+    public ResponseEntity deleteEpisode(@PathVariable Integer id, @PathVariable Integer seasonid, @PathVariable Integer episodeid, @RequestBody UseridBodyHelper user) throws SQLException {
+        UserMiddlewares.isAdmin(user.userid());
+        mediaService.deleteEpisode(id, seasonid, episodeid);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

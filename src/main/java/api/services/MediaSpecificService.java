@@ -1,6 +1,7 @@
 package api.services;
 
 import api.GlobalValues;
+import api.helpers.request.EpisodeRequestHelper;
 import api.helpers.request.PlatformRequestHelper;
 import api.helpers.request.SeasonRequestHelper;
 import api.helpers.response.*;
@@ -23,82 +24,6 @@ import src.main.java.model.Routines;
 import src.main.java.model.tables.pojos.Seasons;
 @Service
 public class MediaSpecificService {
-    public MediaResponseHelper getMedia(Integer id) throws SQLException {
-        MovieResponseHelper movieResult = null;
-        SeriesResponseHelper seriesResult = null;
-        BookResponseHelper bookResult = null;
-        VideogameResponseHelper videogameResult = null;
-
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
-
-            Table type = getType(id);
-
-            Record media = create.select()
-                    .from(MEDIA)
-                    .naturalJoin(type)
-                    .where(MEDIA.MEDIAID.eq(id))
-                    .fetch().get(0);
-
-            List<Genres> genresList = create.select(GENRES.fields())
-                    .from(GENRES)
-                    .naturalJoin(MEDIAGENRES)
-                    .where(MEDIAGENRES.MEDIAID.eq(id))
-                    .fetchInto(Genres.class);
-
-
-            switch (type.getName()){
-                case "movies": movieResult = new MovieResponseHelper(media, genresList); break;
-                case "series": Integer noSeasons = create.select()
-                                                                .from(SEASONS)
-                                                                .naturalJoin(SERIES)
-                                                                .where(SERIES.MEDIAID.eq(id))
-                                                                .fetch().size();
-                                seriesResult = new SeriesResponseHelper(media, genresList, noSeasons);
-                                break;
-                case "books": bookResult = new BookResponseHelper(media, genresList); break;
-                case "videogames": List<Platforms> platforms = create.select(PLATFORMS.fields())
-                                                                    .from(PLATFORMS)
-                                                                    .naturalJoin(VIDEOGAMEPLATFORMS)
-                                                                    .naturalJoin(VIDEOGAMES)
-                                                                    .where(VIDEOGAMES.MEDIAID.eq(id))
-                                                                    .fetchInto(Platforms.class);
-                                    videogameResult = new VideogameResponseHelper(media, genresList, platforms);
-                                    break;
-            }
-
-        } catch (ResponseStatusException | SQLException e) {
-            if (e instanceof ResponseStatusException) {
-                throw e;
-            }
-            e.printStackTrace();
-        }
-
-        if(movieResult!=null){
-            return movieResult;
-        } else if (seriesResult!=null) {
-            return seriesResult;
-        } else if (bookResult!=null) {
-            return bookResult;
-        } else{
-            return videogameResult;
-        }
-
-    }
-
-
-    public void deleteMedia(Integer id) {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
-
-            create.deleteFrom(MEDIA)
-                    .where(MEDIA.MEDIAID.eq(id)).execute();
-
-        } catch (Exception exception){
-            exception.printStackTrace();
-        }
-    }
-
     public Table getType(Integer id) throws SQLException {
         Table type = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
@@ -128,15 +53,15 @@ public class MediaSpecificService {
                     .where(MEDIA.MEDIAID.eq(id))
                     .fetch();
 
-            if(!isMovie.isEmpty()){
+            if (!isMovie.isEmpty()) {
                 type = MOVIES;
-            } else if(!isSeries.isEmpty()){
+            } else if (!isSeries.isEmpty()) {
                 type = SERIES;
-            } else if(!isBook.isEmpty()){
+            } else if (!isBook.isEmpty()) {
                 type = BOOKS;
-            } else if(!isVideogame.isEmpty()){
+            } else if (!isVideogame.isEmpty()) {
                 type = VIDEOGAMES;
-            } else{
+            } else {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
 
@@ -149,32 +74,182 @@ public class MediaSpecificService {
         return type;
     }
 
-    public SeasonResponseHelper postSeason(Integer id, SeasonRequestHelper season) throws SQLException {
-        SeasonResponseHelper result = null;
+    public Result<Record> seasonExists(Integer id, Integer seasonid, Integer seasonNo) throws SQLException {
+        Result<Record> seasonList = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
 
             Table type = getType(id);
 
-            if(type!=SERIES){
+            if (type != SERIES) {
                 throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
             }
 
-            Result<Record> seasonList = create.select()
-                                            .from(SEASONS)
-                                            .naturalJoin(MEDIA)
-                                            .where(MEDIA.MEDIAID.eq(id)
-                                            .and(SEASONS.SEASONNO.eq(season.getSeasonNo())))
-                    .fetch();
+            if (seasonid == null) {
+                seasonList = create.select()
+                        .from(SEASONS)
+                        .naturalJoin(SERIES)
+                        .naturalJoin(MEDIA)
+                        .where(MEDIA.MEDIAID.eq(id)
+                                .and(SEASONS.SEASONNO.eq(seasonNo)))
+                        .fetch();
+            } else {
+                seasonList = create.select()
+                        .from(MEDIA)
+                        .naturalJoin(SERIES)
+                        .naturalJoin(SEASONS)
+                        .where(MEDIA.MEDIAID.eq(id)
+                                .and(SEASONS.SEASONID.eq(seasonid)))
+                        .fetch();
+            }
 
-            if(!seasonList.isEmpty()){
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return seasonList;
+    }
+
+    public Result<Record> episodeExists(Integer id, Integer seasonid, Integer episodeid, Integer episodeNo) throws SQLException {
+        Result<Record> episodeList = null;
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            Table type = getType(id);
+
+            if (type != SERIES) {
+                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
+            }
+
+            if (episodeid == null) {
+                episodeList = create.select()
+                        .from(MEDIA)
+                        .naturalJoin(SERIES)
+                        .naturalJoin(SEASONS)
+                        .naturalJoin(EPISODES)
+                        .where(MEDIA.MEDIAID.eq(id)
+                                .and(EPISODES.SEASONID.eq(seasonid))
+                                .and(EPISODES.EPISODENO.eq(episodeNo)))
+                        .fetch();
+            } else {
+                episodeList = create.select()
+                        .from(MEDIA)
+                        .naturalJoin(SERIES)
+                        .naturalJoin(SEASONS)
+                        .naturalJoin(EPISODES)
+                        .where(MEDIA.MEDIAID.eq(id)
+                                .and(EPISODES.SEASONID.eq(seasonid))
+                                .and(EPISODES.EPISODEID.eq(episodeid)))
+                        .fetch();
+            }
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return episodeList;
+    }
+
+    public MediaResponseHelper getMedia(Integer id) throws SQLException {
+        MovieResponseHelper movieResult = null;
+        SeriesResponseHelper seriesResult = null;
+        BookResponseHelper bookResult = null;
+        VideogameResponseHelper videogameResult = null;
+
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            Table type = getType(id);
+
+            Record media = create.select()
+                    .from(MEDIA)
+                    .naturalJoin(type)
+                    .where(MEDIA.MEDIAID.eq(id))
+                    .fetch().get(0);
+
+            List<Genres> genresList = create.select(GENRES.fields())
+                    .from(GENRES)
+                    .naturalJoin(MEDIAGENRES)
+                    .where(MEDIAGENRES.MEDIAID.eq(id))
+                    .fetchInto(Genres.class);
+
+
+            switch (type.getName()) {
+                case "movies":
+                    movieResult = new MovieResponseHelper(media, genresList);
+                    break;
+                case "series":
+                    Integer noSeasons = create.select()
+                            .from(SEASONS)
+                            .naturalJoin(SERIES)
+                            .where(SERIES.MEDIAID.eq(id))
+                            .fetch().size();
+                    seriesResult = new SeriesResponseHelper(media, genresList, noSeasons);
+                    break;
+                case "books":
+                    bookResult = new BookResponseHelper(media, genresList);
+                    break;
+                case "videogames":
+                    List<Platforms> platforms = create.select(PLATFORMS.fields())
+                            .from(PLATFORMS)
+                            .naturalJoin(VIDEOGAMEPLATFORMS)
+                            .naturalJoin(VIDEOGAMES)
+                            .where(VIDEOGAMES.MEDIAID.eq(id))
+                            .fetchInto(Platforms.class);
+                    videogameResult = new VideogameResponseHelper(media, genresList, platforms);
+                    break;
+            }
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+
+        if (movieResult != null) {
+            return movieResult;
+        } else if (seriesResult != null) {
+            return seriesResult;
+        } else if (bookResult != null) {
+            return bookResult;
+        } else {
+            return videogameResult;
+        }
+
+    }
+
+    public void deleteMedia(Integer id) {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            create.deleteFrom(MEDIA)
+                    .where(MEDIA.MEDIAID.eq(id)).execute();
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    public SeasonResponseHelper postSeason(Integer id, SeasonRequestHelper season) throws SQLException {
+        SeasonResponseHelper result = null;
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            Result<Record> seasonList = seasonExists(id, null, season.getSeasonNo());
+
+            if (!seasonList.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT);
             }
 
             Routines.newseasonbyid(create.configuration(),
-                                    id,
-                                    season.getSeasonNo(),
-                                    season.getNoEpisodes());
+                    id,
+                    season.getSeasonNo(),
+                    season.getNoEpisodes());
 
             Record record = create.select()
                     .from(SEASONS)
@@ -199,7 +274,7 @@ public class MediaSpecificService {
 
             Table type = getType(id);
 
-            if(type!=SERIES){
+            if (type != SERIES) {
                 throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
             }
 
@@ -208,15 +283,15 @@ public class MediaSpecificService {
                     .where(SEASONS.SEASONID.eq(season.getSeasonid()))
                     .fetchInto(Seasons.class);
 
-            if(seasonList.isEmpty()){
+            if (seasonList.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
 
             Seasons oldSeason = seasonList.get(0);
 
             SeasonRequestHelper newSeason = new SeasonRequestHelper(null, null, null, null, null);
-            newSeason.setSeasonNo(season.getSeasonNo()==null ? season.getSeasonNo() : oldSeason.getSeasonno());
-            newSeason.setNoEpisodes(season.getNoEpisodes()==null ? season.getNoEpisodes() : oldSeason.getNoepisodes());
+            newSeason.setSeasonNo(season.getSeasonNo() == null ? season.getSeasonNo() : oldSeason.getSeasonno());
+            newSeason.setNoEpisodes(season.getNoEpisodes() == null ? season.getNoEpisodes() : oldSeason.getNoepisodes());
 
             create.update(SEASONS)
                     .set(SEASONS.SEASONNO, newSeason.getSeasonNo())
@@ -238,7 +313,7 @@ public class MediaSpecificService {
 
             Table type = getType(id);
 
-            if(type!=VIDEOGAMES){
+            if (type != VIDEOGAMES) {
                 throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
             }
 
@@ -250,13 +325,13 @@ public class MediaSpecificService {
                             .and(VIDEOGAMEPLATFORMS.PLATFORMID.eq(platform.getPlatformid())))
                     .fetch();
 
-            if(!videogamePlatfomsList.isEmpty()) {
+            if (!videogamePlatfomsList.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT);
             }
 
             Routines.newvideogameplatformbyid(create.configuration(),
-                                            id,
-                                            platform.getPlatformid());
+                    id,
+                    platform.getPlatformid());
             String name = create.select(PLATFORMS.PLATFORMNAME)
                     .from(PLATFORMS)
                     .where(PLATFORMS.PLATFORMID.eq(platform.getPlatformid()))
@@ -272,30 +347,32 @@ public class MediaSpecificService {
         return newVideogamePlatform;
     }
 
-    public void deletePlatform(Integer id, PlatformRequestHelper platform) throws SQLException {
+    public void deletePlatform(Integer id, Integer platformid) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
 
             Table type = getType(id);
 
-            if(type!=VIDEOGAMES){
+            if (type != VIDEOGAMES) {
                 throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
             }
 
             List<Integer> videogameidList = create.select(VIDEOGAMES.VIDEOGAMEID)
-                                    .from(MEDIA)
-                                    .naturalJoin(VIDEOGAMES)
-                                    .where(MEDIA.MEDIAID.eq(id))
-                                    .fetchInto(Integer.class);
+                    .from(MEDIA)
+                    .naturalJoin(VIDEOGAMES)
+                    .naturalJoin(VIDEOGAMEPLATFORMS)
+                    .where(MEDIA.MEDIAID.eq(id)
+                            .and(VIDEOGAMEPLATFORMS.PLATFORMID.eq(platformid)))
+                    .fetchInto(Integer.class);
 
-            if(videogameidList.isEmpty()){
+            if (videogameidList.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
 
             Integer videogameid = videogameidList.get(0);
 
             create.deleteFrom(VIDEOGAMEPLATFORMS)
-                    .where(VIDEOGAMEPLATFORMS.PLATFORMID.eq(platform.getPlatformid())
+                    .where(VIDEOGAMEPLATFORMS.PLATFORMID.eq(platformid)
                             .and(VIDEOGAMEPLATFORMS.VIDEOGAMEID.eq(videogameid)))
                     .execute();
 
@@ -306,4 +383,148 @@ public class MediaSpecificService {
             e.printStackTrace();
         }
     }
+
+    public SeasonResponseHelper getSeason(Integer id, Integer seasonid) throws SQLException {
+        Result<Record> seasonList = seasonExists(id, seasonid, null);
+
+        if (seasonList.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        SeasonResponseHelper seasonResult = new SeasonResponseHelper(seasonList.get(0));
+        return seasonResult;
+    }
+
+    public EpisodeResponseHelper postEpisode(Integer id, Integer seasonid, EpisodeRequestHelper episode) throws SQLException {
+        EpisodeResponseHelper newEpisode = null;
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            Result<Record> seasonList = seasonExists(id, seasonid, null);
+
+            if (seasonList.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+
+            // checks the episode does not already exists
+            Result<Record> episodesList = episodeExists(id, seasonid, null, episode.getEpisodeNo());
+
+            if (!episodesList.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT);
+            }
+
+            // creates episode
+            Routines.newepisodebyid(create.configuration(),
+                    seasonid,
+                    episode.getEpisodeName(),
+                    episode.getEpisodeNo());
+
+            Record episodeRecord = create.select()
+                    .from(MEDIA)
+                    .naturalJoin(SERIES)
+                    .naturalJoin(SEASONS)
+                    .naturalJoin(EPISODES)
+                    .orderBy(EPISODES.EPISODEID.desc())
+                    .fetch().get(0);
+
+            newEpisode = new EpisodeResponseHelper(episodeRecord);
+
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return newEpisode;
+    }
+
+    public void putEpisode(Integer id, Integer seasonid, EpisodeRequestHelper episode) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            // checks the episode does not already exists
+            Result<Record> episodesList = episodeExists(id, seasonid, episode.getEpisodeid(), null);
+
+            if (episodesList.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+
+            EpisodeResponseHelper oldEpisode = new EpisodeResponseHelper(episodesList.get(0));
+            EpisodeRequestHelper newEpisode = new EpisodeRequestHelper(null, null, null, null);
+
+            newEpisode.setEpisodeNo(episode.getEpisodeNo()==null ? oldEpisode.getEpisodeNo() : episode.getEpisodeNo());
+            newEpisode.setEpisodeName(episode.getEpisodeName()==null ? oldEpisode.getEpisodeName() : episode.getEpisodeName());
+
+            create.update(EPISODES)
+                    .set(EPISODES.EPISODENO, newEpisode.getEpisodeNo())
+                    .set(EPISODES.EPISODENAME, newEpisode.getEpisodeName())
+                    .where(EPISODES.EPISODEID.eq(episode.getEpisodeid()))
+                    .execute();
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteSeason(Integer id, Integer seasonid) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            // checks the episode does not already exists
+            Result<Record> seasonList = seasonExists(id, seasonid, null);
+
+            if (seasonList.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+
+            create.deleteFrom(SEASONS)
+                    .where(SEASONS.SEASONID.eq(seasonid))
+                    .execute();
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
+
+    public EpisodeResponseHelper getEpisode(Integer id, Integer seasonid, Integer episodeid) throws SQLException {
+        Result<Record> episodesList = episodeExists(id, seasonid, episodeid, null);
+
+        if (episodesList.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        EpisodeResponseHelper episodeResult = new EpisodeResponseHelper(episodesList.get(0));
+        return episodeResult;
+    }
+
+    public void deleteEpisode(Integer id, Integer seasonid, Integer episodeid) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            // checks the episode does not already exists
+            Result<Record> episodesList = episodeExists(id, seasonid, episodeid, null);
+
+            if (episodesList.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+
+            create.deleteFrom(EPISODES)
+                    .where(EPISODES.EPISODEID.eq(episodeid))
+                    .execute();
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
+
 }

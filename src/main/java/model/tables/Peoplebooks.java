@@ -7,19 +7,21 @@ package src.main.java.model.tables;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jooq.Check;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Identity;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row4;
+import org.jooq.Row5;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.TableOptions;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
+import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
@@ -69,6 +71,11 @@ public class Peoplebooks extends TableImpl<PeoplebooksRecord> {
      * The column <code>harmony.peopleBooks.role</code>.
      */
     public final TableField<PeoplebooksRecord, String> ROLE = createField(DSL.name("role"), SQLDataType.VARCHAR(120).nullable(false), this, "");
+
+    /**
+     * The column <code>harmony.peopleBooks.roletype</code>.
+     */
+    public final TableField<PeoplebooksRecord, Byte> ROLETYPE = createField(DSL.name("roletype"), SQLDataType.TINYINT, this, "");
 
     private Peoplebooks(Name alias, Table<PeoplebooksRecord> aliased) {
         this(alias, aliased, null);
@@ -151,6 +158,13 @@ public class Peoplebooks extends TableImpl<PeoplebooksRecord> {
     }
 
     @Override
+    public List<Check<PeoplebooksRecord>> getChecks() {
+        return Arrays.<Check<PeoplebooksRecord>>asList(
+              Internal.createCheck(this, DSL.name("roletypeNotValid"), "(`roletype` = 1)", true)
+        );
+    }
+
+    @Override
     public Peoplebooks as(String alias) {
         return new Peoplebooks(DSL.name(alias), this);
     }
@@ -177,11 +191,11 @@ public class Peoplebooks extends TableImpl<PeoplebooksRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row4 type methods
+    // Row5 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row4<Integer, Integer, Integer, String> fieldsRow() {
-        return (Row4) super.fieldsRow();
+    public Row5<Integer, Integer, Integer, String, Byte> fieldsRow() {
+        return (Row5) super.fieldsRow();
     }
 }

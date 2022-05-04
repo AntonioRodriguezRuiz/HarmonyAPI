@@ -1,4 +1,7 @@
-# Harmony API
+<p align="center" width="100%">
+    <img width="33%" src="./assets/logo-light-1x.png"> 
+</p>
+
 Java client for the Harmony API
 
 # Class generation

@@ -53,13 +53,8 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.6.4</version>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
             <scope>runtime</scope>
         </dependency>
     </dependencies>
@@ -86,10 +81,10 @@
                 <configuration>
                     <!-- Configure the database connection here -->
                     <jdbc>
-                        <driver>com.mysql.cj.jdbc.Driver</driver>
-                        <url>jdbc:mysql://34.65.47.107:3306/harmony</url>
+                        <driver>org.mariadb.jdbc.Driver</driver>
+                        <url>jdbc:mariadb://db.harmonyapi.rocks:3306/harmony</url>
                         <user>harmony</user>
-                        <password>tN1moow41jd6rGfa</password>
+                        <password>k8KAkzsMjJqjFu6w4Va5ni7aaUAqpMa7</password>
                     </jdbc>
 
                     <generator>
@@ -104,7 +99,7 @@
                         <database>
                             <!-- The database type. The format here is:
                                  org.jooq.meta.[database].[database]Database -->
-                            <name>org.jooq.meta.mysql.MySQLDatabase</name>
+                            <name>org.jooq.meta.mariadb.MariaDBDatabase</name>
 
                             <!-- The database schema (or in the absence of schema support, in your RDBMS this
                                  can be the owner, user, database name) to be generated -->

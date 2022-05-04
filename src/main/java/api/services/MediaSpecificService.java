@@ -22,6 +22,8 @@ import java.util.List;
 import static src.main.java.model.Tables.*;
 import src.main.java.model.Routines;
 import src.main.java.model.tables.pojos.Seasons;
+import src.main.java.model.tables.pojos.Episodes;
+
 @Service
 public class MediaSpecificService {
     public Table getType(Integer id) throws SQLException {
@@ -307,7 +309,12 @@ public class MediaSpecificService {
                             .naturalJoin(SERIES)
                             .where(SERIES.MEDIAID.eq(id))
                             .fetch().size();
-                    seriesResult = new SeriesResponseHelper(media, genresList, noSeasons);
+                    List<Seasons> seasons = create.select(SEASONS.fields())
+                                                    .from(SEASONS)
+                                                    .naturalJoin(SERIES)
+                                                    .where(SERIES.MEDIAID.eq(id))
+                                                    .fetchInto(Seasons.class);
+                    seriesResult = new SeriesResponseHelper(media, genresList, noSeasons, seasons);
                     break;
                 case "books":
                     bookResult = new BookResponseHelper(media, genresList);
@@ -376,7 +383,7 @@ public class MediaSpecificService {
                     .limit(1)
                     .fetch().get(0);
 
-            result = new SeasonResponseHelper(record);
+            result = new SeasonResponseHelper(record, new ArrayList<>());
 
         } catch (ResponseStatusException | SQLException e) {
             if (e instanceof ResponseStatusException) {
@@ -506,13 +513,27 @@ public class MediaSpecificService {
     }
 
     public SeasonResponseHelper getSeason(Integer id, Integer seasonid) throws SQLException {
-        Result<Record> seasonList = existsSeason(id, seasonid, null);
+        SeasonResponseHelper seasonResult = null;
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            Result<Record> seasonList = existsSeason(id, seasonid, null);
 
-        if (seasonList.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            if (seasonList.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+
+            List<Episodes> episodesList = create.select(EPISODES.fields())
+                    .from(EPISODES)
+                    .where(EPISODES.SEASONID.eq(seasonid))
+                    .fetchInto(Episodes.class);
+
+            seasonResult = new SeasonResponseHelper(seasonList.get(0), episodesList);
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
         }
-
-        SeasonResponseHelper seasonResult = new SeasonResponseHelper(seasonList.get(0));
         return seasonResult;
     }
 

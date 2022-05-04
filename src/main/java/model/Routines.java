@@ -11,6 +11,7 @@ import org.jooq.Configuration;
 import src.main.java.model.routines.Likereview;
 import src.main.java.model.routines.Newbook;
 import src.main.java.model.routines.Newepisode;
+import src.main.java.model.routines.Newepisodebyid;
 import src.main.java.model.routines.Newgenre;
 import src.main.java.model.routines.Newlist;
 import src.main.java.model.routines.Newlistmedia;
@@ -95,6 +96,23 @@ public class Routines {
         p.setTitle(title);
         p.setReleasedate(releasedate);
         p.setSeasonno(seasonno);
+        p.setEpisodename(episodename);
+        p.setEpisodeno(episodeno);
+
+        p.execute(configuration);
+    }
+
+    /**
+     * Call <code>harmony.newEpisodeById</code>
+     */
+    public static void newepisodebyid(
+          Configuration configuration
+        , Integer seasonid
+        , String episodename
+        , Integer episodeno
+    ) {
+        Newepisodebyid p = new Newepisodebyid();
+        p.setSeasonid(seasonid);
         p.setEpisodename(episodename);
         p.setEpisodeno(episodeno);
 

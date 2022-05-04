@@ -1,5 +1,5 @@
 <p align="center" width="100%">
-    <img width="33%" src="./assets/harmony.gif"> 
+    <img width="66%" src="./assets/harmony.gif"> 
 </p>
 
 <h1 align=center>Harmony</h1>

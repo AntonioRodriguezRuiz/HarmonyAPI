@@ -25,6 +25,23 @@ import static src.main.java.model.Tables.*;
  **/
 @Service
 public class UserService {
+    public boolean userExists(UserRequestHelper user) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            return !create.select()
+                .from(USERS)
+                .where(USERS.USERNAME.eq(user.username()))
+                .fetch()
+                .isEmpty();
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public UserResponseHelper postUser(UserRequestHelper user) throws SQLException {
         UserResponseHelper newUser = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
@@ -41,7 +58,6 @@ public class UserService {
             var newUserRecord = create.select()
                 .from(USERS)
                 .orderBy(USERS.USERID.desc())
-                .limit(1)
                 .fetch().get(0);
 
             newUser = new UserResponseHelper(

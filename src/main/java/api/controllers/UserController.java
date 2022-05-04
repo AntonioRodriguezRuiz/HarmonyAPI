@@ -31,6 +31,9 @@ public class UserController {
         if (user.username() == null || user.password() == null || user.email() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
+        if (userService.userExists(user)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
         return new ResponseEntity<>(userService.postUser(user), HttpStatus.CREATED);
     }
 }

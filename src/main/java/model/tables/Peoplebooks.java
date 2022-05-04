@@ -160,7 +160,7 @@ public class Peoplebooks extends TableImpl<PeoplebooksRecord> {
     @Override
     public List<Check<PeoplebooksRecord>> getChecks() {
         return Arrays.<Check<PeoplebooksRecord>>asList(
-              Internal.createCheck(this, DSL.name("roletypeNotValid"), "(`roletype` = 1)", true)
+              Internal.createCheck(this, DSL.name("roletypeNotValid"), "(`roletype` = 0)", true)
         );
     }
 

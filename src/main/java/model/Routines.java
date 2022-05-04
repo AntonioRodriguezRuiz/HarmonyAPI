@@ -21,6 +21,7 @@ import src.main.java.model.routines.Newmovie;
 import src.main.java.model.routines.Newperson;
 import src.main.java.model.routines.Newpersonbook;
 import src.main.java.model.routines.Newpersonepisode;
+import src.main.java.model.routines.Newpersonepisodebyid;
 import src.main.java.model.routines.Newpersonmovie;
 import src.main.java.model.routines.Newpersonvideogame;
 import src.main.java.model.routines.Newplatform;
@@ -277,6 +278,25 @@ public class Routines {
         p.setReleasedate(releasedate);
         p.setSeasonno(seasonno);
         p.setEpisodeno(episodeno);
+        p.setRole(role);
+        p.setRoletype(roletype);
+
+        p.execute(configuration);
+    }
+
+    /**
+     * Call <code>harmony.newPersonEpisodeById</code>
+     */
+    public static void newpersonepisodebyid(
+          Configuration configuration
+        , Integer personid
+        , Integer episodeid
+        , String role
+        , Byte roletype
+    ) {
+        Newpersonepisodebyid p = new Newpersonepisodebyid();
+        p.setPersonid(personid);
+        p.setEpisodeid(episodeid);
         p.setRole(role);
         p.setRoletype(roletype);
 

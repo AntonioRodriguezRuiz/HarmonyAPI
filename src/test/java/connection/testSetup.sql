@@ -203,11 +203,13 @@ CREATE TABLE peopleBooks(
                             bookid INT NOT NULL,
                             personid INT NOT NULL,
                             role VARCHAR(120) NOT NULL,
+                            roletype TINYINT,
 
                             PRIMARY KEY (peopleBooksid),
                             FOREIGN KEY (bookid) REFERENCES books(bookid)  ON DELETE CASCADE,
                             FOREIGN KEY (personid) REFERENCES people(personid) ON DELETE CASCADE,
 
+                            CONSTRAINT roletypeNotValid CHECK ( roletype=0 ),
                             CONSTRAINT duplicatedEntry_peopleMovies UNIQUE(bookid, personid,role)
 );
 
@@ -245,7 +247,7 @@ CREATE TABLE trackers(
                          mediaid INT NOT NULL,
                          userid INT NOT NULL,
                          state INT NOT NULL,
-                         datetime DATETIME NOT NULL,
+                         creationDate DATETIME NOT NULL,
 
                          PRIMARY KEY (trackerid),
 
@@ -288,7 +290,7 @@ CREATE TABLE reviews(
                         reviewid INT NOT NULL UNIQUE AUTO_INCREMENT,
                         userid INT,
                         mediaid INT NOT NULL,
-                        datetime DATETIME NOT NULL,
+                        creationDate DATETIME NOT NULL,
                         rating FLOAT(3) NOT NULL,
                         review NVARCHAR(2800),
                         likes INT NOT NULL,
@@ -371,20 +373,19 @@ BEGIN
     END;
 END//
 
-DELIMITER //
 CREATE PROCEDURE newSeries(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500))
 BEGIN
-    START TRANSACTION;
-    tblock: BEGIN
+START TRANSACTION;
+tblock: BEGIN
         DECLARE mediaidForeign INT;
 
         DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING
-            BEGIN
-                GET DIAGNOSTICS CONDITION 1 @text = MESSAGE_TEXT;
-                SET @text = CONCAT('[Procedure newSeries] Transaction aborted --> ', @text);
-                ROLLBACK;
-                SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @text;
-            END;
+BEGIN
+GET DIAGNOSTICS CONDITION 1 @text = MESSAGE_TEXT;
+SET @text = CONCAT('[Procedure newSeries] Transaction aborted --> ', @text);
+ROLLBACK;
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @text;
+END;
 
         IF coverImage IS NOT NULL AND backgroundImage IS NOT NULL THEN
             INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis)
@@ -395,17 +396,17 @@ BEGIN
         ELSEIF backgroundImage IS NOT NULL THEN
             INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis)
             VALUES(title, releaseDate,'img/bkg/default', backgroundImage, synopsis);
-        ELSE
+ELSE
             INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis)
             VALUES(title, releaseDate,'img/bkg/default', 'img/bkg/default', synopsis);
-        END IF;
+END IF;
 
-        SELECT mediaid INTO mediaidForeign FROM media
-        WHERE media.title=title AND media.releaseDate=releaseDate;
-        INSERT INTO series(mediaid)
-        VALUES(mediaidForeign);
-        COMMIT;
-    END;
+SELECT mediaid INTO mediaidForeign FROM media
+WHERE media.title=title AND media.releaseDate=releaseDate;
+INSERT INTO series(mediaid)
+VALUES(mediaidForeign);
+COMMIT;
+END;
 END //
 
 CREATE PROCEDURE newSeason(title VARCHAR(120), releaseDate DATE, seasonNo INT, noEpisodes INT)
@@ -430,6 +431,29 @@ BEGIN
     END;
 END //
 
+DROP PROCEDURE IF EXISTS newSeasonById
+CREATE PROCEDURE newSeasonById(mediaid INT, seasonNo INT, noEpisodes INT)
+BEGIN
+START TRANSACTION;
+tblock: BEGIN
+        DECLARE seriesidForeign INT;
+
+        DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING
+BEGIN
+GET DIAGNOSTICS CONDITION 1 @text = MESSAGE_TEXT;
+SET @text = CONCAT('[Procedure newSeason] Transaction aborted --> ', @text);
+ROLLBACK;
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @text;
+END;
+SELECT S.seriesid INTO seriesidForeign FROM media
+                                                JOIN series S ON media.mediaid = S.mediaid
+WHERE media.mediaid=mediaid;
+INSERT INTO seasons(seriesid, seasonNo, noEpisodes)
+VALUES(seriesidForeign, seasonNo, noEpisodes);
+COMMIT;
+END;
+END //
+
 CREATE PROCEDURE newEpisode(title VARCHAR(120), releaseDate DATE, seasonNo INT, episodeName VARCHAR(60), episodeNo INT)
 BEGIN
     START TRANSACTION;
@@ -451,6 +475,26 @@ BEGIN
 
         INSERT INTO episodes(seasonid, episodeName, episodeNo)
         VALUES(seasonidForeign, episodeName, episodeNo);
+        COMMIT;
+    END;
+END //
+
+DELIMITER //
+CREATE PROCEDURE newEpisodeById(seasonid INT, episodeName VARCHAR(60), episodeNo INT)
+BEGIN
+    START TRANSACTION;
+    tblock: BEGIN
+
+        DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING
+            BEGIN
+                GET DIAGNOSTICS CONDITION 1 @text = MESSAGE_TEXT;
+                SET @text = CONCAT('[Procedure newEpisode] Transaction aborted --> ', @text);
+                ROLLBACK;
+                SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @text;
+            END;
+
+        INSERT INTO episodes(seasonid, episodeName, episodeNo)
+        VALUES(seasonid, episodeName, episodeNo);
         COMMIT;
     END;
 END //
@@ -529,6 +573,29 @@ BEGIN
         WHERE media.title=title AND media.releaseDate=releaseDate;
         INSERT INTO videogameplatforms(videogameid, platformid)
         VALUES(videogameidForeign, platformidForeign);
+        COMMIT;
+    END;
+END //
+
+DELIMITER //
+CREATE PROCEDURE newVideogamePlatformById(mediaid INT, platformid INT)
+BEGIN
+    START TRANSACTION;
+    tblock: BEGIN
+        DECLARE videogameidForeign INT;
+
+        DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING
+            BEGIN
+                GET DIAGNOSTICS CONDITION 1 @text = MESSAGE_TEXT;
+                SET @text = CONCAT('[Procedure newVideogamePlatform] Transaction aborted --> ', @text);
+                ROLLBACK;
+                SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @text;
+            END;
+        SELECT V.videogameid INTO videogameidForeign FROM media
+                                                              JOIN videogames V ON media.mediaid = V.mediaid
+                                                                WHERE media.mediaid=mediaid;
+        INSERT INTO videogameplatforms(videogameid, platformid)
+        VALUES(videogameidForeign, platformid);
         COMMIT;
     END;
 END //
@@ -650,6 +717,26 @@ BEGIN
     END;
 END //
 
+DELIMITER //
+CREATE PROCEDURE newMediaGenreById(mediaid INT, genreid INT)
+BEGIN
+    START TRANSACTION;
+    tblock: BEGIN
+
+        DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING
+            BEGIN
+                GET DIAGNOSTICS CONDITION 1 @text = MESSAGE_TEXT;
+                SET @text = CONCAT('[Procedure newMediaGenre] Transaction aborted --> ', @text);
+                ROLLBACK;
+                SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @text;
+            END;
+
+        INSERT INTO mediaGenres(mediaid, genreid)
+        VALUES(mediaid, genreid);
+        COMMIT;
+    END;
+END //
+
 CREATE PROCEDURE newTracker(media INT, user INT, state INT)
 BEGIN
     START TRANSACTION;
@@ -663,7 +750,7 @@ BEGIN
                 SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @text;
             END;
 
-        INSERT INTO trackers(mediaid, userid, state, datetime)
+        INSERT INTO trackers(mediaid, userid, state, creationDate)
         VALUES(media, user, state, CURDATE());
         COMMIT;
     END;
@@ -720,7 +807,7 @@ BEGIN
                 SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @text;
             END;
 
-        INSERT INTO reviews(userid, mediaid, datetime, rating, review, likes)
+        INSERT INTO reviews(userid, mediaid, creationDate, rating, review, likes)
         VALUES(user, media, CURDATE(), rating, review, likes);
 
         COMMIT;
@@ -827,8 +914,8 @@ BEGIN
         SELECT bookid INTO bookidForeign FROM books
                                                   JOIN media M ON M.mediaid = books.mediaid
         WHERE M.title=title AND M.releaseDate=releaseDate;
-        INSERT INTO peopleBooks(bookid, personid, role)
-        VALUES(bookidForeign, personidForeign, role);
+        INSERT INTO peopleBooks(bookid, personid, role, roletype)
+        VALUES(bookidForeign, personidForeign, role, 0);
         COMMIT;
     END;
 END //
@@ -899,6 +986,17 @@ BEGIN
     END;
 END //
 
+DELIMITER //
+CREATE PROCEDURE newPersonEpisodeById(personid INT, episodeid INT, role VARCHAR(120), roletype TINYINT)
+BEGIN
+    START TRANSACTION;
+    BEGIN
+        INSERT INTO peopleEpisodes(episodeid, personid, role, roletype)
+        VALUES(episodeid, personid, role, roletype);
+        COMMIT;
+    END;
+END//
+
 
 ##############################################################################
 #                   PART 2 -> Reviews RELATED PROCEDURES                     #
@@ -917,7 +1015,7 @@ BEGIN
                 SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @text;
             END;
 
-        UPDATE reviews SET review=newreview, rating=newrating, datetime=CURDATE()
+        UPDATE reviews SET review=newreview, rating=newrating, creationDate=CURDATE()
         WHERE reviewid=id;
 
         COMMIT;
@@ -965,7 +1063,7 @@ BEGIN
 END //
 
 /* Triggers*/
-
+DELIMITER //
 CREATE TRIGGER updateAvgRating_onInsert
     AFTER INSERT ON reviews FOR EACH ROW
 BEGIN
@@ -1043,4 +1141,9 @@ CALL newMovie('movieTest', '1999-05-01', null, null, 'test for oder')
 CALL newGenre('action')
 CALL newMediaGenre('Spider-Man', '2002-05-01', 'action')
 CALL newUser('antonioAdmin', 'e@e.com', 'antoniopassword', 1)
-CALL newUser('antonioUser', 'e@e2.com', 'antoniopassword', 0)
+CALL newUser('antonioUser', 'e@e2.com', 'antoniopassword', 0);
+CALL newPlatform('gameboy')
+CALL newPerson('andres', '2002-05-01', null)
+CALL newPersonBook('andres', '2002-05-01', 'booktest', '2012-06-23', 'author')
+CALL newPersonMovie('andres', '2002-05-01', 'Spider-Man', '2002-05-01', 'actor', 1);
+CALL newReview(1, 1, 5.0, 'decent')

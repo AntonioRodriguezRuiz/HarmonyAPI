@@ -2,6 +2,7 @@ package api.services;
 
 import api.GlobalValues;
 import api.helpers.request.EpisodeRequestHelper;
+import api.helpers.request.GenreRequestHelper;
 import api.helpers.request.PlatformRequestHelper;
 import api.helpers.request.SeasonRequestHelper;
 import api.helpers.response.*;
@@ -152,6 +153,48 @@ public class MediaSpecificService {
             e.printStackTrace();
         }
         return episodeList;
+    }
+
+    public void existsPlatform(Integer platformid) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            Result<Record> platformList = create.select()
+                                                .from(PLATFORMS)
+                                                .where(PLATFORMS.PLATFORMID.eq(platformid))
+                                                .fetch();
+
+            if(platformList.isEmpty()){
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
+
+    public void existsGenre(Integer genreid) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            Result<Record> genreList = create.select()
+                    .from(GENRES)
+                    .where(GENRES.GENREID.eq(genreid))
+                    .fetch();
+
+            if(genreList.isEmpty()){
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
     }
 
     public MediaResponseHelper getMedia(Integer id) throws SQLException {
@@ -316,6 +359,8 @@ public class MediaSpecificService {
             if (type != VIDEOGAMES) {
                 throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
             }
+
+            existsPlatform(platform.getPlatformid());
 
             Result<Record> videogamePlatfomsList = create.select()
                     .from(VIDEOGAMEPLATFORMS)
@@ -527,4 +572,68 @@ public class MediaSpecificService {
         }
     }
 
+    public GenreResponseHelper postGenre(Integer id, GenreRequestHelper genre) throws SQLException {
+        GenreResponseHelper newMediaGenre = null;
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            existsGenre(genre.getGenreid());
+
+            Result<Record> mediaGenreList = create.select()
+                    .from(MEDIA)
+                    .naturalJoin(MEDIAGENRES)
+                    .where(MEDIA.MEDIAID.eq(id)
+                            .and(MEDIAGENRES.GENREID.eq(genre.getGenreid())))
+                    .fetch();
+
+            if (!mediaGenreList.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT);
+            }
+
+            Routines.newmediagenrebyid(create.configuration(),
+                                    id,
+                                    genre.getGenreid());
+
+            Record record = create.select()
+                    .from(GENRES)
+                    .where(GENRES.GENREID.eq(genre.getGenreid()))
+                    .fetch().get(0);
+
+            newMediaGenre = new GenreResponseHelper(record);
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return newMediaGenre;
+    }
+
+    public void deleteGenre(Integer id, Integer genreid) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            Result<Record> mediagenreList = create.select()
+                    .from(MEDIAGENRES)
+                    .where(MEDIAGENRES.MEDIAID.eq(id)
+                            .and(MEDIAGENRES.GENREID.eq(genreid)))
+                    .fetch();
+
+            if (mediagenreList.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+
+            create.deleteFrom(MEDIAGENRES)
+                    .where(MEDIAGENRES.MEDIAID.eq(id)
+                            .and(MEDIAGENRES.GENREID.eq(genreid)))
+                    .execute();
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
 }

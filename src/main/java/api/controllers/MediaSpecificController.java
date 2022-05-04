@@ -1,13 +1,7 @@
 package api.controllers;
 
-import api.helpers.request.EpisodeRequestHelper;
-import api.helpers.request.PlatformRequestHelper;
-import api.helpers.request.SeasonRequestHelper;
-import api.helpers.request.UseridBodyHelper;
-import api.helpers.response.EpisodeResponseHelper;
-import api.helpers.response.MediaResponseHelper;
-import api.helpers.response.PlatformResponseHelper;
-import api.helpers.response.SeasonResponseHelper;
+import api.helpers.request.*;
+import api.helpers.response.*;
 import api.middlewares.UserMiddlewares;
 import api.services.MediaSpecificService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,6 +106,22 @@ public class MediaSpecificController {
     public ResponseEntity deleteEpisode(@PathVariable Integer id, @PathVariable Integer seasonid, @PathVariable Integer episodeid, @RequestBody UseridBodyHelper user) throws SQLException {
         UserMiddlewares.isAdmin(user.userid());
         mediaService.deleteEpisode(id, seasonid, episodeid);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/genres")
+    public ResponseEntity<GenreResponseHelper> postGenre(@PathVariable Integer id, @RequestBody GenreRequestHelper genre) throws SQLException {
+        UserMiddlewares.isAdmin(genre.getUserid());
+        if(genre.getGenreid()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(mediaService.postGenre(id, genre), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/genres/{genreid}")
+    public ResponseEntity deleteGenre(@PathVariable Integer id, @PathVariable Integer genreid, @RequestBody UseridBodyHelper user) throws SQLException {
+        UserMiddlewares.isAdmin(user.userid());
+        mediaService.deleteGenre(id, genreid);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

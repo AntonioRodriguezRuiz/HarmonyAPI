@@ -40,18 +40,22 @@ public class MediaController {
     MediaService mediaService;
 
     @GetMapping
-    public List<Media> getAllMedia(@RequestParam Map<String, String> allRequestParams) throws SQLException {
-        String search = allRequestParams.containsKey("search") ? allRequestParams.get("search") : "";
+    public List<Media> getAllMedia(@RequestParam(name="search", required = false) String searchParam,
+                                   @RequestParam(name="type", required = false) String typeParam,
+                                   @RequestParam(name="order", required = false) String orderParam,
+                                   @RequestParam(name="genre", required = false) String genreParam,
+                                   @RequestParam(name="page", required = false) String pageParam)
+                                    throws SQLException {
 
-        String genreString = allRequestParams.containsKey("genre") ? allRequestParams.get("genre"): null;
-        if(genreString!=null){
-            isValidGenre(genreString);
+        String search = searchParam!=null ? searchParam : "";
+
+        if(genreParam!=null){
+            isValidGenre(genreParam);
         }
 
-        String typeString = allRequestParams.containsKey("type") ? allRequestParams.get("type") : null;
         TableLike typeTable = null;
-        if(typeString!=null){
-            switch (typeString){
+        if(typeParam!=null){
+            switch (typeParam){
                 case "movie": typeTable = src.main.java.model.Tables.MOVIES; break;
                 case "series": typeTable = src.main.java.model.Tables.SERIES; break;
                 case "videogame": typeTable = src.main.java.model.Tables.VIDEOGAMES; break;
@@ -60,10 +64,9 @@ public class MediaController {
             }
         }
 
-        String orderString =  allRequestParams.containsKey("order") ? allRequestParams.get("order") : null;
         SortField orderField = null;
-        if(orderString!=null){
-            switch (orderString){
+        if(orderParam!=null){
+            switch (orderParam){
                 case "title": orderField = MEDIA.TITLE.asc(); break;
                 case "releaseDate": orderField = MEDIA.RELEASEDATE.desc(); break;
                 case "rating": orderField = MEDIA.AVGRATING.desc(); break;
@@ -71,10 +74,10 @@ public class MediaController {
             }
         }
 
-        Integer page = allRequestParams.containsKey("page") ? Integer.valueOf(allRequestParams.get("page")) : 0;
-        Integer offset = page * GlobalValues.PAGE_SIZE;
+        Integer page = pageParam!=null ? Integer.valueOf(pageParam) : 1;
+        Integer offset = page * GlobalValues.PAGE_SIZE - GlobalValues.PAGE_SIZE;
 
-        return mediaService.getAllMedia(search, typeTable, orderField, genreString, offset);
+        return mediaService.getAllMedia(search, typeTable, orderField, genreParam, offset);
     }
 
     @PostMapping("/movies")

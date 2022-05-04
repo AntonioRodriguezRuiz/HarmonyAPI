@@ -92,7 +92,7 @@ public class MediaSpecificService {
         return peopleTable;
     }
 
-    public Result<Record> seasonExists(Integer id, Integer seasonid, Integer seasonNo) throws SQLException {
+    public Result<Record> existsSeason(Integer id, Integer seasonid, Integer seasonNo) throws SQLException {
         Result<Record> seasonList = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
@@ -130,7 +130,7 @@ public class MediaSpecificService {
         return seasonList;
     }
 
-    public Result<Record> episodeExists(Integer id, Integer seasonid, Integer episodeid, Integer episodeNo) throws SQLException {
+    public Result<Record> existsEpisode(Integer id, Integer seasonid, Integer episodeid, Integer episodeNo) throws SQLException {
         Result<Record> episodeList = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
@@ -359,7 +359,7 @@ public class MediaSpecificService {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
 
-            Result<Record> seasonList = seasonExists(id, null, season.getSeasonNo());
+            Result<Record> seasonList = existsSeason(id, null, season.getSeasonNo());
 
             if (!seasonList.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT);
@@ -506,7 +506,7 @@ public class MediaSpecificService {
     }
 
     public SeasonResponseHelper getSeason(Integer id, Integer seasonid) throws SQLException {
-        Result<Record> seasonList = seasonExists(id, seasonid, null);
+        Result<Record> seasonList = existsSeason(id, seasonid, null);
 
         if (seasonList.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -521,14 +521,14 @@ public class MediaSpecificService {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
 
-            Result<Record> seasonList = seasonExists(id, seasonid, null);
+            Result<Record> seasonList = existsSeason(id, seasonid, null);
 
             if (seasonList.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
 
             // checks the episode does not already exists
-            Result<Record> episodesList = episodeExists(id, seasonid, null, episode.getEpisodeNo());
+            Result<Record> episodesList = existsEpisode(id, seasonid, null, episode.getEpisodeNo());
 
             if (!episodesList.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT);
@@ -565,7 +565,7 @@ public class MediaSpecificService {
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
 
             // checks the episode does not already exists
-            Result<Record> episodesList = episodeExists(id, seasonid, episode.getEpisodeid(), null);
+            Result<Record> episodesList = existsEpisode(id, seasonid, episode.getEpisodeid(), null);
 
             if (episodesList.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -596,7 +596,7 @@ public class MediaSpecificService {
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
 
             // checks the episode does not already exists
-            Result<Record> seasonList = seasonExists(id, seasonid, null);
+            Result<Record> seasonList = existsSeason(id, seasonid, null);
 
             if (seasonList.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -615,7 +615,7 @@ public class MediaSpecificService {
     }
 
     public EpisodeResponseHelper getEpisode(Integer id, Integer seasonid, Integer episodeid) throws SQLException {
-        Result<Record> episodesList = episodeExists(id, seasonid, episodeid, null);
+        Result<Record> episodesList = existsEpisode(id, seasonid, episodeid, null);
 
         if (episodesList.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -630,7 +630,7 @@ public class MediaSpecificService {
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
 
             // checks the episode does not already exists
-            Result<Record> episodesList = episodeExists(id, seasonid, episodeid, null);
+            Result<Record> episodesList = existsEpisode(id, seasonid, episodeid, null);
 
             if (episodesList.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -844,7 +844,7 @@ public class MediaSpecificService {
             if (!table.getName().equals("series")) {
                 throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
             }
-            Result<Record> episodeExists = episodeExists(id, seasonid, episodeid, null);
+            Result<Record> episodeExists = existsEpisode(id, seasonid, episodeid, null);
             if (episodeExists.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }

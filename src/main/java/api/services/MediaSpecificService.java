@@ -7,6 +7,7 @@ import org.jooq.*;
 import org.jooq.Record;
 import org.jooq.impl.DSL;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import src.main.java.model.tables.pojos.Genres;
@@ -92,6 +93,26 @@ public class MediaSpecificService {
                 break;
         }
         return peopleTable;
+    }
+
+    private Result<Record> existsMedia(Integer id) throws SQLException {
+        Result<Record> mediaList = null;
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            mediaList = create.select()
+                    .from(MEDIA)
+                    .where(MEDIA.MEDIAID.eq(id))
+                    .fetch();
+
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return mediaList;
     }
 
     public Result<Record> existsSeason(Integer id, Integer seasonid, Integer seasonNo) throws SQLException {
@@ -273,6 +294,27 @@ public class MediaSpecificService {
             e.printStackTrace();
         }
         return peopleList;
+    }
+
+    private Result<Record> existsReview(Integer id, Integer userid) throws SQLException {
+        Result<Record> reviewList = null;
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            reviewList = create.select()
+                    .from(REVIEWS)
+                    .where(REVIEWS.MEDIAID.eq(id)
+                            .and(REVIEWS.USERID.eq(userid)))
+                    .fetch();
+
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return reviewList;
     }
 
     public MediaResponseHelper getMedia(Integer id) throws SQLException {
@@ -948,6 +990,92 @@ public class MediaSpecificService {
             create.deleteFrom(PEOPLEEPISODES)
                     .where(PEOPLEEPISODES.PERSONID.eq(personid)
                                 .and(PEOPLEEPISODES.EPISODEID.eq(episodeid)))
+                    .execute();
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
+
+    public List<ReviewResponseHelper> getReviews(Integer id) throws SQLException {
+        List<ReviewResponseHelper> reviews = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            Result<Record> mediaList = existsMedia(id);
+
+            if(mediaList.isEmpty()){
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+
+            Result<Record> result = create.select()
+                    .from(REVIEWS)
+                    .where(REVIEWS.MEDIAID.eq(id))
+                    .fetch();
+
+            for (Record record: result) {
+                reviews.add(ReviewResponseHelper.of(record));
+            }
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return reviews;
+    }
+
+
+    public ReviewResponseHelper addReview(Integer id, ReviewRequestHelper review) throws SQLException {
+        Record record = null;
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            Result<Record> reviewList = existsReview(id, review.userid());
+
+            if (!reviewList.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT);
+            }
+
+            Routines.newreview(create.configuration(),
+                    review.userid(),
+                    id,
+                    review.rating(),
+                    review.review());
+
+            record = create.select()
+                    .from(REVIEWS)
+                    .orderBy(REVIEWS.REVIEWID.desc())
+                    .fetch().get(0);
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return ReviewResponseHelper.of(record);
+    }
+
+    public void putReview(Integer id, ReviewRequestHelper review) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            Record record = create.select()
+                    .from(REVIEWS)
+                    .orderBy(REVIEWS.REVIEWID.desc())
+                    .fetch().get(0);
+
+            ReviewResponseHelper oldReview = ReviewResponseHelper.of(record);
+
+            create.update(REVIEWS)
+                    .set(REVIEWS.RATING, review.rating()==null ? oldReview.rating() : review.rating())
+                    .set(REVIEWS.REVIEW, review.review()==null ? oldReview.review() : review.review())
+                    .where(REVIEWS.REVIEWID.eq(review.reviewid()))
                     .execute();
 
         } catch (ResponseStatusException | SQLException e) {

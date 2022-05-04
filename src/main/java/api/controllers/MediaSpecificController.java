@@ -168,4 +168,35 @@ public class MediaSpecificController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @GetMapping("/reviews")
+    public List<ReviewResponseHelper> getReviews(@PathVariable Integer id) throws SQLException {
+        return mediaService.getReviews(id);
+    }
+
+    @PostMapping("/reviews")
+    public ReviewResponseHelper addReview(@PathVariable Integer id, @RequestBody ReviewRequestHelper review) throws SQLException {
+        if(review.userid()==null){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+        if(review.rating()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        return mediaService.addReview(id, review);
+    }
+
+    @PutMapping("/reviews")
+    public ResponseEntity putReview(@PathVariable Integer id, @RequestBody ReviewRequestHelper review) throws SQLException {
+        if(review.userid()==null){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        } else if(review.reviewid()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        UserMiddlewares.isOwnerOfReview(review.userid(), review.reviewid());
+        if(review.rating()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        mediaService.putReview(id, review);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 }

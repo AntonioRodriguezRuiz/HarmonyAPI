@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.SQLException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/media/{id}")
@@ -122,6 +123,27 @@ public class MediaSpecificController {
     public ResponseEntity removeGenre(@PathVariable Integer id, @PathVariable Integer genreid, @RequestBody UseridBodyHelper user) throws SQLException {
         UserMiddlewares.isAdmin(user.userid());
         mediaService.removeGenre(id, genreid);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/people")
+    public List<PeopleMediaResponseHelper> getPeopleFromMedia(@PathVariable Integer id) throws SQLException {
+        return mediaService.getPeopleFromMedia(id);
+    }
+
+    @PostMapping("/people")
+    public ResponseEntity<PeopleMediaResponseHelper> addPerson(@PathVariable Integer id, @RequestBody PeopleMediaRequestHelper person) throws SQLException {
+        UserMiddlewares.isAdmin(person.getUserid());
+        if(person.getPersonid()==null || person.getRole()==null || person.getRoleType()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(mediaService.addPerson(id, person), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/people/{personid}")
+    public ResponseEntity removePerson(@PathVariable Integer id, @PathVariable Integer personid, @RequestBody UseridBodyHelper user) throws SQLException {
+        UserMiddlewares.isAdmin(user.userid());
+        mediaService.removePerson(id, personid);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

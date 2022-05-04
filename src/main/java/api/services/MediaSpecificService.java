@@ -1,10 +1,7 @@
 package api.services;
 
 import api.GlobalValues;
-import api.helpers.request.EpisodeRequestHelper;
-import api.helpers.request.GenreRequestHelper;
-import api.helpers.request.PlatformRequestHelper;
-import api.helpers.request.SeasonRequestHelper;
+import api.helpers.request.*;
 import api.helpers.response.*;
 import org.jooq.*;
 import org.jooq.Record;
@@ -14,10 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import src.main.java.model.tables.pojos.Genres;
 import src.main.java.model.tables.pojos.Platforms;
+import src.main.java.model.tables.pojos.People;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static src.main.java.model.Tables.*;
@@ -73,6 +72,24 @@ public class MediaSpecificService {
             e.printStackTrace();
         }
         return type;
+    }
+
+    public Table getPeopleTable(Table table) {
+        Table peopleTable = null;
+        switch (table.getName()) {
+            case "movies":
+                peopleTable = PEOPLEMOVIES;
+                break;
+
+            case "books":
+                peopleTable = PEOPLEBOOKS;
+                break;
+
+            case "videogames":
+                peopleTable = PEOPLEVIDEOGAMES;
+                break;
+        }
+        return peopleTable;
     }
 
     public Result<Record> seasonExists(Integer id, Integer seasonid, Integer seasonNo) throws SQLException {
@@ -160,11 +177,11 @@ public class MediaSpecificService {
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
 
             Result<Record> platformList = create.select()
-                                                .from(PLATFORMS)
-                                                .where(PLATFORMS.PLATFORMID.eq(platformid))
-                                                .fetch();
+                    .from(PLATFORMS)
+                    .where(PLATFORMS.PLATFORMID.eq(platformid))
+                    .fetch();
 
-            if(platformList.isEmpty()){
+            if (platformList.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
 
@@ -185,7 +202,7 @@ public class MediaSpecificService {
                     .where(GENRES.GENREID.eq(genreid))
                     .fetch();
 
-            if(genreList.isEmpty()){
+            if (genreList.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
 
@@ -195,6 +212,54 @@ public class MediaSpecificService {
             }
             e.printStackTrace();
         }
+    }
+
+    private People existsPerson(Integer personid) throws SQLException {
+        People personResult = null;
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            List<People> peopleList = create.select()
+                    .from(PEOPLE)
+                    .where(PEOPLE.PERSONID.eq(personid))
+                    .fetchInto(People.class);
+
+            if (peopleList.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+
+            personResult = peopleList.get(0);
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return personResult;
+    }
+
+    private Result<Record> existsMediaPerson(Integer id, Integer personid, Table peopleTable, Table table) throws SQLException {
+        Result<Record> peopleList = null;
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            peopleList = create.select()
+                    .from(PEOPLE)
+                    .naturalJoin(peopleTable)
+                    .naturalJoin(table)
+                    .naturalJoin(MEDIA)
+                    .where(MEDIA.MEDIAID.eq(id)
+                            .and(PEOPLE.PERSONID.eq(personid)))
+                    .fetch();
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return peopleList;
     }
 
     public MediaResponseHelper getMedia(Integer id) throws SQLException {
@@ -498,8 +563,8 @@ public class MediaSpecificService {
             EpisodeResponseHelper oldEpisode = new EpisodeResponseHelper(episodesList.get(0));
             EpisodeRequestHelper newEpisode = new EpisodeRequestHelper(null, null, null, null);
 
-            newEpisode.setEpisodeNo(episode.getEpisodeNo()==null ? oldEpisode.getEpisodeNo() : episode.getEpisodeNo());
-            newEpisode.setEpisodeName(episode.getEpisodeName()==null ? oldEpisode.getEpisodeName() : episode.getEpisodeName());
+            newEpisode.setEpisodeNo(episode.getEpisodeNo() == null ? oldEpisode.getEpisodeNo() : episode.getEpisodeNo());
+            newEpisode.setEpisodeName(episode.getEpisodeName() == null ? oldEpisode.getEpisodeName() : episode.getEpisodeName());
 
             create.update(EPISODES)
                     .set(EPISODES.EPISODENO, newEpisode.getEpisodeNo())
@@ -591,8 +656,8 @@ public class MediaSpecificService {
             }
 
             Routines.newmediagenrebyid(create.configuration(),
-                                    id,
-                                    genre.getGenreid());
+                    id,
+                    genre.getGenreid());
 
             Record record = create.select()
                     .from(GENRES)
@@ -636,4 +701,127 @@ public class MediaSpecificService {
             e.printStackTrace();
         }
     }
+
+    public List<PeopleMediaResponseHelper> getPeopleFromMedia(Integer id) throws SQLException {
+        List<PeopleMediaResponseHelper> peopleList = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            Table table = getType(id);
+
+            if (table.getName().equals("series")) {
+                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
+            }
+
+            Table peopleTable = getPeopleTable(table);
+
+            Result<Record> result = create.select()
+                    .from(MEDIA)
+                    .naturalJoin(table)
+                    .naturalJoin(peopleTable)
+                    .naturalJoin(PEOPLE)
+                    .where(MEDIA.MEDIAID.eq(id))
+                    .fetch();
+
+            for (Record record : result) {
+                peopleList.add(new PeopleMediaResponseHelper(record, table));
+            }
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return peopleList;
+    }
+
+    public PeopleMediaResponseHelper addPerson(Integer id, PeopleMediaRequestHelper person) throws SQLException {
+        PeopleMediaResponseHelper personResult = null;
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            Table table = getType(id);
+
+            if (table.getName().equals("series")) {
+                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
+            } else if (table.getName().equals("series") && person.getRoleTypeByte() != 0) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            }
+
+            MediaResponseHelper mediaData = getMedia(id);
+            People personData = existsPerson(person.getPersonid());
+            Result<Record> peopleList = existsMediaPerson(id, person.getPersonid(), getPeopleTable(table), table);
+
+            if (!peopleList.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT);
+            }
+
+            switch (table.getName()) {
+                case "movies":
+                    Routines.newpersonmovie(create.configuration(),
+                            personData.getName(), personData.getBirthdate(),
+                            mediaData.getTitle(), mediaData.getReleasedate(),
+                            person.getRole(), person.getRoleTypeByte()
+                    );
+                    break;
+
+                case "books":
+                    Routines.newpersonbook(create.configuration(),
+                            personData.getName(), personData.getBirthdate(),
+                            mediaData.getTitle(), mediaData.getReleasedate(),
+                            person.getRole()
+                    );
+                    break;
+
+                case "videogames":
+                    Routines.newpersonvideogame(create.configuration(),
+                            personData.getName(), personData.getBirthdate(),
+                            mediaData.getTitle(), mediaData.getReleasedate(),
+                            person.getRole(), person.getRoleTypeByte()
+                    );
+                    break;
+            }
+
+            personResult = new PeopleMediaResponseHelper(id, person.getPersonid(), personData.getName(),
+                    personData.getBirthdate(), person.getRole(), person.getRoleType());
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return personResult;
+    }
+
+    public void removePerson(Integer id, Integer personid) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            Table table = getType(id);
+
+            if (table.getName().equals("series")) {
+                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
+            }
+            Table peopleTable = getPeopleTable(table);
+            Result<Record> peopleList = existsMediaPerson(id, personid, peopleTable, table);
+
+            if (peopleList.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+
+            create.deleteFrom(peopleTable)
+                    .where(peopleTable.field("personid"))
+                    .execute();
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
 }
+
+

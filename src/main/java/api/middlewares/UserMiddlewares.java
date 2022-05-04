@@ -2,6 +2,8 @@ package api.middlewares;
 
 import api.GlobalValues;
 import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.Result;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static src.main.java.model.Tables.ADMINS;
+import static src.main.java.model.Tables.REVIEWS;
 
 public class UserMiddlewares {
 
@@ -27,6 +30,37 @@ public class UserMiddlewares {
 
             if(result.isEmpty()){
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            }
+
+        } catch (ResponseStatusException | SQLException e){
+            if(e instanceof ResponseStatusException){
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
+
+    public static void isOwnerOfReview(Integer userid, Integer reviewid) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            Result<Record> review = create.select()
+                                        .from(REVIEWS)
+                                        .where(REVIEWS.REVIEWID.eq(reviewid))
+                                        .fetch();
+
+            if(review.isEmpty()){
+                throw  new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+
+            Result<Record> reviewUser = create.select()
+                    .from(REVIEWS)
+                    .where(REVIEWS.REVIEWID.eq(reviewid)
+                            .and(REVIEWS.USERID.eq(userid)))
+                    .fetch();
+
+            if(reviewUser.isEmpty()){
+                throw  new ResponseStatusException(HttpStatus.FORBIDDEN);
             }
 
         } catch (ResponseStatusException | SQLException e){

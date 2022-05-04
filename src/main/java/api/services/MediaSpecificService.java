@@ -244,14 +244,25 @@ public class MediaSpecificService {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
 
-            peopleList = create.select()
-                    .from(PEOPLE)
-                    .naturalJoin(peopleTable)
-                    .naturalJoin(table)
-                    .naturalJoin(MEDIA)
-                    .where(MEDIA.MEDIAID.eq(id)
-                            .and(PEOPLE.PERSONID.eq(personid)))
-                    .fetch();
+            if (peopleTable.getName().equals("peopleEpisodes")) {
+                peopleList = create.select()
+                        .from(PEOPLE)
+                        .naturalJoin(PEOPLEEPISODES)
+                        .naturalJoin(EPISODES)
+                        .naturalJoin(MEDIA)
+                        .where(EPISODES.EPISODEID.eq(id)
+                                .and(PEOPLE.PERSONID.eq(personid)))
+                        .fetch();
+            } else {
+                peopleList = create.select()
+                        .from(PEOPLE)
+                        .naturalJoin(peopleTable)
+                        .naturalJoin(table)
+                        .naturalJoin(MEDIA)
+                        .where(MEDIA.MEDIAID.eq(id)
+                                .and(PEOPLE.PERSONID.eq(personid)))
+                        .fetch();
+            }
 
         } catch (ResponseStatusException | SQLException e) {
             if (e instanceof ResponseStatusException) {
@@ -745,7 +756,7 @@ public class MediaSpecificService {
 
             if (table.getName().equals("series")) {
                 throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
-            } else if (table.getName().equals("series") && person.getRoleTypeByte() != 0) {
+            } else if (table.getName().equals("book") && person.getRoleTypeByte() != 0) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             }
 
@@ -813,6 +824,109 @@ public class MediaSpecificService {
 
             create.deleteFrom(peopleTable)
                     .where(peopleTable.field("personid"))
+                    .execute();
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
+
+    public List<PeopleMediaResponseHelper> getPeopleFromEpisode(Integer id, Integer seasonid, Integer episodeid) throws SQLException {
+        List<PeopleMediaResponseHelper> peopleList = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            Table table = getType(id);
+
+            if (!table.getName().equals("series")) {
+                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
+            }
+            Result<Record> episodeExists = episodeExists(id, seasonid, episodeid, null);
+            if (episodeExists.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+
+            Table peopleTable = PEOPLEEPISODES;
+
+            Result<Record> result = create.select()
+                    .from(MEDIA)
+                    .naturalJoin(SERIES)
+                    .naturalJoin(SEASONS)
+                    .naturalJoin(EPISODES)
+                    .naturalJoin(peopleTable)
+                    .naturalJoin(PEOPLE)
+                    .where(EPISODES.EPISODEID.eq(episodeid))
+                    .fetch();
+
+            for (Record record : result) {
+                peopleList.add(new PeopleEpisodeResponseHelper(record, table, seasonid, episodeid));
+            }
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return peopleList;
+    }
+
+    public PeopleMediaResponseHelper addPersonEpisode(Integer id, Integer seasonid, Integer episodeid, PeopleEpisodeRequestHelper person) throws SQLException {
+        PeopleMediaResponseHelper personResult = null;
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            Table table = getType(id);
+
+            if (!table.getName().equals("series")) {
+                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
+            }
+
+            People personData = existsPerson(person.getPersonid());
+            Result<Record> peopleList = existsMediaPerson(episodeid, person.getPersonid(), PEOPLEEPISODES, table);
+
+            if (!peopleList.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT);
+            }
+
+            Routines.newpersonepisodebyid(create.configuration(),
+                    person.getPersonid(), episodeid,
+                    person.getRole(), person.getRoleTypeByte());
+
+            personResult = new PeopleMediaResponseHelper(id, person.getPersonid(), personData.getName(),
+                    personData.getBirthdate(), person.getRole(), person.getRoleType());
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return personResult;
+    }
+
+    public void removePersonEpisode(Integer id, Integer seasonid, Integer episodeid, Integer personid) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+
+            Table table = getType(id);
+
+            if (!table.getName().equals("series")) {
+                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
+            }
+
+            Result<Record> peopleList = existsMediaPerson(episodeid, personid, PEOPLEEPISODES, table);
+
+            if (peopleList.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+
+            create.deleteFrom(PEOPLEEPISODES)
+                    .where(PEOPLEEPISODES.PERSONID.eq(personid)
+                                .and(PEOPLEEPISODES.EPISODEID.eq(episodeid)))
                     .execute();
 
         } catch (ResponseStatusException | SQLException e) {

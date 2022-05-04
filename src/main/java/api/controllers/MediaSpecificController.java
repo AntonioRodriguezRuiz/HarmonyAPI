@@ -147,4 +147,25 @@ public class MediaSpecificController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @GetMapping("/{seasonid}/{episodeid}/people")
+    public List<PeopleMediaResponseHelper> getPeopleFromEpisode(@PathVariable Integer id, @PathVariable Integer seasonid, @PathVariable Integer episodeid) throws SQLException {
+        return mediaService.getPeopleFromEpisode(id, seasonid, episodeid);
+    }
+
+    @PostMapping("/{seasonid}/{episodeid}/people")
+    public ResponseEntity<PeopleMediaResponseHelper> addPersonEpisode(@PathVariable Integer id, @PathVariable Integer seasonid, @PathVariable Integer episodeid, @RequestBody PeopleEpisodeRequestHelper person) throws SQLException {
+        UserMiddlewares.isAdmin(person.getUserid());
+        if(person.getPersonid()==null || person.getRole()==null || person.getRoleType()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(mediaService.addPersonEpisode(id, seasonid, episodeid, person), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{seasonid}/{episodeid}/people/{personid}")
+    public ResponseEntity removePersonEpisode(@PathVariable Integer id, @PathVariable Integer seasonid, @PathVariable Integer episodeid, @PathVariable Integer personid, @RequestBody UseridBodyHelper user) throws SQLException {
+        UserMiddlewares.isAdmin(user.userid());
+        mediaService.removePersonEpisode(id, seasonid, episodeid, personid);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 }

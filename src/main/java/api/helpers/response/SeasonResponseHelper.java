@@ -7,6 +7,8 @@ import static src.main.java.model.Tables.SEASONS;
 public class SeasonResponseHelper {
     private Integer mediaid;
     private Integer seasonid;
+    private Integer seasonNo;
+    private Integer noEpisodes;
 
     public Integer getMediaid() {
         return mediaid;
@@ -24,8 +26,6 @@ public class SeasonResponseHelper {
         this.seasonid = seasonid;
     }
 
-    private Integer seasonNo;
-    private Integer noEpisodes;
 
     public Integer getSeasonNo() {
         return seasonNo;

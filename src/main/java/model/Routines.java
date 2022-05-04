@@ -16,6 +16,7 @@ import src.main.java.model.routines.Newgenre;
 import src.main.java.model.routines.Newlist;
 import src.main.java.model.routines.Newlistmedia;
 import src.main.java.model.routines.Newmediagenre;
+import src.main.java.model.routines.Newmediagenrebyid;
 import src.main.java.model.routines.Newmovie;
 import src.main.java.model.routines.Newperson;
 import src.main.java.model.routines.Newpersonbook;
@@ -177,6 +178,21 @@ public class Routines {
         p.setTitle(title);
         p.setReleasedate(releasedate);
         p.setGenre(genre);
+
+        p.execute(configuration);
+    }
+
+    /**
+     * Call <code>harmony.newMediaGenreById</code>
+     */
+    public static void newmediagenrebyid(
+          Configuration configuration
+        , Integer mediaid
+        , Integer genreid
+    ) {
+        Newmediagenrebyid p = new Newmediagenrebyid();
+        p.setMediaid(mediaid);
+        p.setGenreid(genreid);
 
         p.execute(configuration);
     }

@@ -174,14 +174,14 @@ public class MediaSpecificController {
     }
 
     @PostMapping("/reviews")
-    public ReviewResponseHelper addReview(@PathVariable Integer id, @RequestBody ReviewRequestHelper review) throws SQLException {
+    public ResponseEntity<ReviewResponseHelper> addReview(@PathVariable Integer id, @RequestBody ReviewRequestHelper review) throws SQLException {
         if(review.userid()==null){
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         if(review.rating()==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        return mediaService.addReview(id, review);
+        return new ResponseEntity<>(mediaService.addReview(id, review), HttpStatus.CREATED);
     }
 
     @PutMapping("/reviews")

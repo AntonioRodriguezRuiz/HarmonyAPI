@@ -93,6 +93,10 @@ public class PeopleMediaResponseHelper {
             case "videogames": this.role = record.getValue(PEOPLEVIDEOGAMES.ROLE);
                 this.roleType = RoleType.of(record.getValue((PEOPLEBOOKS.ROLETYPE)));
                 break;
+
+            case "series": this.role = record.getValue(PEOPLEEPISODES.ROLE);
+                this.roleType = RoleType.of(record.getValue((PEOPLEEPISODES.ROLETYPE)));
+                break;
         }
 
     }

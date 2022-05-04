@@ -51,18 +51,18 @@ public class MediaSpecificController {
     }
 
     @PostMapping("/platforms")
-    public ResponseEntity<PlatformResponseHelper> postPlatform(@PathVariable Integer id, @RequestBody PlatformRequestHelper platform) throws SQLException {
+    public ResponseEntity<PlatformResponseHelper> addPlatform(@PathVariable Integer id, @RequestBody PlatformRequestHelper platform) throws SQLException {
         UserMiddlewares.isAdmin(platform.getUserid());
         if(platform.getPlatformid()==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(mediaService.postPlatform(id, platform), HttpStatus.CREATED);
+        return new ResponseEntity<>(mediaService.addPlatform(id, platform), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/platforms/{platformid}")
-    public ResponseEntity deletePlatform(@PathVariable Integer id, @PathVariable Integer platformid, @RequestBody UseridBodyHelper user) throws SQLException {
+    public ResponseEntity removePlatform(@PathVariable Integer id, @PathVariable Integer platformid, @RequestBody UseridBodyHelper user) throws SQLException {
         UserMiddlewares.isAdmin(user.userid());
-        mediaService.deletePlatform(id, platformid);
+        mediaService.removePlatform(id, platformid);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -110,18 +110,18 @@ public class MediaSpecificController {
     }
 
     @PostMapping("/genres")
-    public ResponseEntity<GenreResponseHelper> postGenre(@PathVariable Integer id, @RequestBody GenreRequestHelper genre) throws SQLException {
+    public ResponseEntity<GenreResponseHelper> addGenre(@PathVariable Integer id, @RequestBody GenreRequestHelper genre) throws SQLException {
         UserMiddlewares.isAdmin(genre.getUserid());
         if(genre.getGenreid()==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(mediaService.postGenre(id, genre), HttpStatus.CREATED);
+        return new ResponseEntity<>(mediaService.addGenre(id, genre), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/genres/{genreid}")
-    public ResponseEntity deleteGenre(@PathVariable Integer id, @PathVariable Integer genreid, @RequestBody UseridBodyHelper user) throws SQLException {
+    public ResponseEntity removeGenre(@PathVariable Integer id, @PathVariable Integer genreid, @RequestBody UseridBodyHelper user) throws SQLException {
         UserMiddlewares.isAdmin(user.userid());
-        mediaService.deleteGenre(id, genreid);
+        mediaService.removeGenre(id, genreid);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

@@ -349,7 +349,7 @@ public class MediaSpecificService {
         }
     }
 
-    public PlatformResponseHelper postPlatform(Integer id, PlatformRequestHelper platform) throws SQLException {
+    public PlatformResponseHelper addPlatform(Integer id, PlatformRequestHelper platform) throws SQLException {
         PlatformResponseHelper newVideogamePlatform = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
@@ -392,7 +392,7 @@ public class MediaSpecificService {
         return newVideogamePlatform;
     }
 
-    public void deletePlatform(Integer id, Integer platformid) throws SQLException {
+    public void removePlatform(Integer id, Integer platformid) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
 
@@ -572,7 +572,7 @@ public class MediaSpecificService {
         }
     }
 
-    public GenreResponseHelper postGenre(Integer id, GenreRequestHelper genre) throws SQLException {
+    public GenreResponseHelper addGenre(Integer id, GenreRequestHelper genre) throws SQLException {
         GenreResponseHelper newMediaGenre = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
@@ -610,7 +610,7 @@ public class MediaSpecificService {
         return newMediaGenre;
     }
 
-    public void deleteGenre(Integer id, Integer genreid) throws SQLException {
+    public void removeGenre(Integer id, Integer genreid) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
 

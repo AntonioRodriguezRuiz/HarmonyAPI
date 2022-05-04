@@ -9,6 +9,7 @@ import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import src.main.java.model.Routines;
+import src.main.java.model.tables.records.UsersRecord;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -56,17 +57,10 @@ public class UserService {
                 Byte.valueOf("0")
             );
 
-            var newUserRecord = create.select()
+            newUser = new UserResponseHelper(create.select()
                 .from(USERS)
                 .orderBy(USERS.USERID.desc())
-                .fetch().get(0);
-
-            newUser = new UserResponseHelper(
-                newUserRecord.get(USERS.USERNAME),
-                newUserRecord.get(USERS.EMAIL),
-                newUserRecord.get(USERS.PASSWORD),
-                newUserRecord.get(USERS.CREATIONDATE)
-            );
+                .fetch().get(0));
         } catch (ResponseStatusException | SQLException e) {
             if (e instanceof ResponseStatusException) {
                 throw e;

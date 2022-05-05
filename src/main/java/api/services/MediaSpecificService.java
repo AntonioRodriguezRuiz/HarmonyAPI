@@ -30,7 +30,7 @@ public class MediaSpecificService {
     public Table getType(Integer id) throws SQLException {
         Table type = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             List<Record> isMovie = create.select()
                     .from(MEDIA)
@@ -98,7 +98,7 @@ public class MediaSpecificService {
     private Result<Record> existsMedia(Integer id) throws SQLException {
         Result<Record> mediaList = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             mediaList = create.select()
                     .from(MEDIA)
@@ -118,7 +118,7 @@ public class MediaSpecificService {
     public Result<Record> existsSeason(Integer id, Integer seasonid, Integer seasonNo) throws SQLException {
         Result<Record> seasonList = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             Table type = getType(id);
 
@@ -156,7 +156,7 @@ public class MediaSpecificService {
     public Result<Record> existsEpisode(Integer id, Integer seasonid, Integer episodeid, Integer episodeNo) throws SQLException {
         Result<Record> episodeList = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             Table type = getType(id);
 
@@ -197,7 +197,7 @@ public class MediaSpecificService {
 
     public void existsPlatform(Integer platformid) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             Result<Record> platformList = create.select()
                     .from(PLATFORMS)
@@ -218,7 +218,7 @@ public class MediaSpecificService {
 
     public void existsGenre(Integer genreid) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             Result<Record> genreList = create.select()
                     .from(GENRES)
@@ -240,7 +240,7 @@ public class MediaSpecificService {
     private People existsPerson(Integer personid) throws SQLException {
         People personResult = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             List<People> peopleList = create.select()
                     .from(PEOPLE)
@@ -265,7 +265,7 @@ public class MediaSpecificService {
     private Result<Record> existsMediaPerson(Integer id, PeopleMediaRequestHelper person, Table peopleTable, Table table) throws SQLException {
         Result<Record> peopleList = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             if (peopleTable.getName().equals("peopleEpisodes")) {
                 peopleList = create.select()
@@ -303,7 +303,7 @@ public class MediaSpecificService {
     private Result<Record> existsReview(Integer id, Integer userid) throws SQLException {
         Result<Record> reviewList = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             reviewList = create.select()
                     .from(REVIEWS)
@@ -328,7 +328,7 @@ public class MediaSpecificService {
         VideogameResponseHelper videogameResult = null;
 
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             Table type = getType(id);
 
@@ -397,7 +397,7 @@ public class MediaSpecificService {
 
     public void deleteMedia(Integer id) {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             create.deleteFrom(MEDIA)
                     .where(MEDIA.MEDIAID.eq(id)).execute();
@@ -410,7 +410,7 @@ public class MediaSpecificService {
     public SeasonResponseHelper postSeason(Integer id, SeasonRequestHelper season) throws SQLException {
         SeasonResponseHelper result = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             Result<Record> seasonList = existsSeason(id, null, season.getSeasonNo());
 
@@ -442,7 +442,7 @@ public class MediaSpecificService {
 
     public void putSeason(Integer id, SeasonRequestHelper season) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             Table type = getType(id);
 
@@ -481,7 +481,7 @@ public class MediaSpecificService {
     public PlatformResponseHelper addPlatform(Integer id, PlatformRequestHelper platform) throws SQLException {
         PlatformResponseHelper newVideogamePlatform = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             Table type = getType(id);
 
@@ -523,7 +523,7 @@ public class MediaSpecificService {
 
     public void removePlatform(Integer id, Integer platformid) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             Table type = getType(id);
 
@@ -561,7 +561,7 @@ public class MediaSpecificService {
     public SeasonResponseHelper getSeason(Integer id, Integer seasonid) throws SQLException {
         SeasonResponseHelper seasonResult = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
             Result<Record> seasonList = existsSeason(id, seasonid, null);
 
             if (seasonList.isEmpty()) {
@@ -586,7 +586,7 @@ public class MediaSpecificService {
     public EpisodeResponseHelper postEpisode(Integer id, Integer seasonid, EpisodeRequestHelper episode) throws SQLException {
         EpisodeResponseHelper newEpisode = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             Result<Record> seasonList = existsSeason(id, seasonid, null);
 
@@ -629,7 +629,7 @@ public class MediaSpecificService {
 
     public void putEpisode(Integer id, Integer seasonid, EpisodeRequestHelper episode) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             // checks the episode does not already exists
             Result<Record> episodesList = existsEpisode(id, seasonid, episode.getEpisodeid(), null);
@@ -660,7 +660,7 @@ public class MediaSpecificService {
 
     public void deleteSeason(Integer id, Integer seasonid) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             // checks the episode does not already exists
             Result<Record> seasonList = existsSeason(id, seasonid, null);
@@ -694,7 +694,7 @@ public class MediaSpecificService {
 
     public void deleteEpisode(Integer id, Integer seasonid, Integer episodeid) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             // checks the episode does not already exists
             Result<Record> episodesList = existsEpisode(id, seasonid, episodeid, null);
@@ -718,7 +718,7 @@ public class MediaSpecificService {
     public GenreResponseHelper addGenre(Integer id, GenreRequestHelper genre) throws SQLException {
         GenreResponseHelper newMediaGenre = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             existsGenre(genre.getGenreid());
 
@@ -755,7 +755,7 @@ public class MediaSpecificService {
 
     public void removeGenre(Integer id, Integer genreid) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             Result<Record> mediagenreList = create.select()
                     .from(MEDIAGENRES)
@@ -783,7 +783,7 @@ public class MediaSpecificService {
     public List<PeopleMediaResponseHelper> getPeopleFromMedia(Integer id) throws SQLException {
         List<PeopleMediaResponseHelper> peopleList = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             Table table = getType(id);
 
@@ -835,7 +835,7 @@ public class MediaSpecificService {
     public PeopleMediaResponseHelper addPerson(Integer id, PeopleMediaRequestHelper person) throws SQLException {
         PeopleMediaResponseHelper personResult = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             Table table = getType(id);
 
@@ -893,7 +893,7 @@ public class MediaSpecificService {
 
     public void removePerson(Integer id, PeopleMediaRequestHelper person) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             Table table = getType(id);
 
@@ -922,7 +922,7 @@ public class MediaSpecificService {
     public List<PeopleMediaResponseHelper> getPeopleFromEpisode(Integer id, Integer seasonid, Integer episodeid) throws SQLException {
         List<PeopleMediaResponseHelper> peopleList = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             Table table = getType(id);
 
@@ -962,7 +962,7 @@ public class MediaSpecificService {
     public PeopleMediaResponseHelper addPersonEpisode(Integer id, Integer seasonid, Integer episodeid, PeopleEpisodeRequestHelper person) throws SQLException {
         PeopleMediaResponseHelper personResult = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             existsEpisode(id, seasonid, episodeid, null);
 
@@ -997,7 +997,7 @@ public class MediaSpecificService {
 
     public void removePersonEpisode(Integer id, Integer seasonid, Integer episodeid, PeopleMediaRequestHelper person) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             existsEpisode(id, seasonid, episodeid, null);
 
@@ -1032,7 +1032,7 @@ public class MediaSpecificService {
     public List<ReviewResponseHelper> getReviews(Integer id) throws SQLException {
         List<ReviewResponseHelper> reviews = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             Result<Record> mediaList = existsMedia(id);
 
@@ -1062,7 +1062,7 @@ public class MediaSpecificService {
     public ReviewResponseHelper addReview(Integer id, ReviewRequestHelper review) throws SQLException {
         Record record = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             Result<Record> reviewList = existsReview(id, review.userid());
 
@@ -1092,7 +1092,7 @@ public class MediaSpecificService {
 
     public void putReview(Integer id, ReviewRequestHelper review) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             Record record = create.select()
                     .from(REVIEWS)

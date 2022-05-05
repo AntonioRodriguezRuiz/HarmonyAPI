@@ -62,7 +62,7 @@ public class MediaSpecificController {
         return new ResponseEntity<>(mediaService.postSeason(id, season), HttpStatus.CREATED);
     }
 
-    @Operation(summary = "Deletes a series season")
+    @Operation(summary = "Modifies a series season")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Item destroyed"),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),

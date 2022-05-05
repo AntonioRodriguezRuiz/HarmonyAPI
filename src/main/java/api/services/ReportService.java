@@ -6,6 +6,7 @@ import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -41,6 +42,12 @@ public class ReportService {
     public void deleteReport(Integer id){
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+
+            Result<Record> reportList = existsReport(id);
+
+            if(reportList.isEmpty()){
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
 
             create.deleteFrom(REPORTS)
                     .where(REPORTS.REPORTID.eq(id)).execute();

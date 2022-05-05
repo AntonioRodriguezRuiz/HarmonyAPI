@@ -75,9 +75,12 @@ public class MediaController {
         SortField orderField = null;
         if(orderParam!=null){
             switch (orderParam){
-                case "title": orderField = MEDIA.TITLE.asc(); break;
-                case "releaseDate": orderField = MEDIA.RELEASEDATE.desc(); break;
-                case "rating": orderField = MEDIA.AVGRATING.desc(); break;
+                case "-title": orderField = MEDIA.TITLE.desc(); break;
+                case "-releaseDate": orderField = MEDIA.RELEASEDATE.desc(); break;
+                case "-rating": orderField = MEDIA.AVGRATING.desc(); break;
+                case "+title": orderField = MEDIA.TITLE.asc(); break;
+                case "+releaseDate": orderField = MEDIA.RELEASEDATE.asc(); break;
+                case "+rating": orderField = MEDIA.AVGRATING.asc(); break;
                 default: throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             }
         }

@@ -221,8 +221,7 @@ public class MediaSpecificController {
     @Operation(summary = "Get information about all the people participating in the creation of the media")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Search successful"),
-            @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content),
-            @ApiResponse(responseCode = "405", description = "The media item is not a season of a series", content = @Content)})
+            @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
     @GetMapping("/people")
     public List<PeopleMediaResponseHelper> getPeopleFromMedia(@PathVariable Integer id) throws SQLException {
         return mediaService.getPeopleFromMedia(id);
@@ -233,6 +232,7 @@ public class MediaSpecificController {
             @ApiResponse(responseCode = "201", description = "Item created"),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
+            @ApiResponse(responseCode = "405", description = "The media item is a series, series do not have people directly", content = @Content),
             @ApiResponse(responseCode = "409", description = "This person is already in this media with the same role", content = @Content)})
     @PostMapping("/people")
     public ResponseEntity<PeopleMediaResponseHelper> addPerson(@PathVariable Integer id, @RequestBody PeopleMediaRequestHelper person) throws SQLException {
@@ -248,15 +248,17 @@ public class MediaSpecificController {
             @ApiResponse(responseCode = "204", description = "Item destroyed"),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
+            @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content),
+            @ApiResponse(responseCode = "405", description = "The media item is a series, series do not have people directly", content = @Content)})
     @DeleteMapping("/people/{personid}")
-    public ResponseEntity removePerson(@PathVariable Integer id, @PathVariable Integer personid, @RequestBody UseridBodyHelper user) throws SQLException {
-        UserMiddlewares.isAdmin(user.userid());
-        mediaService.removePerson(id, personid);
+    public ResponseEntity removePerson(@PathVariable Integer id, @PathVariable Integer personid, @RequestBody PeopleMediaRequestHelper person) throws SQLException {
+        UserMiddlewares.isAdmin(person.getUserid());
+        person.setPersonid(personid);
+        mediaService.removePerson(id, person);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @Operation(summary = "Adds a new person to an episode")
+    @Operation(summary = "Gets all the people working on an episode")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Item created"),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
@@ -267,7 +269,7 @@ public class MediaSpecificController {
         return mediaService.getPeopleFromEpisode(id, seasonid, episodeid);
     }
 
-    @Operation(summary = "Removes a person with a role from an episode")
+    @Operation(summary = "Adds a person with a role to an episode")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Item destroyed"),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
@@ -282,18 +284,35 @@ public class MediaSpecificController {
         return new ResponseEntity<>(mediaService.addPersonEpisode(id, seasonid, episodeid, person), HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Removes a person with a role from an episode")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Item destroyed"),
+            @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
     @DeleteMapping("/{seasonid}/{episodeid}/people/{personid}")
-    public ResponseEntity removePersonEpisode(@PathVariable Integer id, @PathVariable Integer seasonid, @PathVariable Integer episodeid, @PathVariable Integer personid, @RequestBody UseridBodyHelper user) throws SQLException {
-        UserMiddlewares.isAdmin(user.userid());
-        mediaService.removePersonEpisode(id, seasonid, episodeid, personid);
+    public ResponseEntity removePersonEpisode(@PathVariable Integer id, @PathVariable Integer seasonid, @PathVariable Integer episodeid, @PathVariable Integer personid, @RequestBody PeopleMediaRequestHelper person) throws SQLException {
+        UserMiddlewares.isAdmin(person.getUserid());
+        person.setPersonid(personid);
+        mediaService.removePersonEpisode(id, seasonid, episodeid, person);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @Operation(summary = "Get information about all the reviews of the media")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Search successful"),
+            @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
     @GetMapping("/reviews")
     public List<ReviewResponseHelper> getReviews(@PathVariable Integer id) throws SQLException {
         return mediaService.getReviews(id);
     }
 
+    @Operation(summary = "Adds a new review to a media")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Item created"),
+            @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Not logged in", content = @Content),
+            @ApiResponse(responseCode = "409", description = "This person already has a review in this media. You can only perform put operations over it", content = @Content)})
     @PostMapping("/reviews")
     public ResponseEntity<ReviewResponseHelper> addReview(@PathVariable Integer id, @RequestBody ReviewRequestHelper review) throws SQLException {
         if(review.userid()==null){
@@ -305,6 +324,12 @@ public class MediaSpecificController {
         return new ResponseEntity<>(mediaService.addReview(id, review), HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Modifies a review from a media")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Item destroyed"),
+            @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Only the owner of the review can modify it", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
     @PutMapping("/reviews")
     public ResponseEntity putReview(@PathVariable Integer id, @RequestBody ReviewRequestHelper review) throws SQLException {
         if(review.userid()==null){

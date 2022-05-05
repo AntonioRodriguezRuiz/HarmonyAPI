@@ -1,13 +1,13 @@
 package api.services;
 
 import api.GlobalValues;
+import api.helpers.enums.RoleType;
 import api.helpers.request.*;
 import api.helpers.response.*;
 import org.jooq.*;
 import org.jooq.Record;
 import org.jooq.impl.DSL;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import src.main.java.model.tables.pojos.Genres;
@@ -262,7 +262,7 @@ public class MediaSpecificService {
         return personResult;
     }
 
-    private Result<Record> existsMediaPerson(Integer id, Integer personid, Table peopleTable, Table table) throws SQLException {
+    private Result<Record> existsMediaPerson(Integer id, PeopleMediaRequestHelper person, Table peopleTable, Table table) throws SQLException {
         Result<Record> peopleList = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
@@ -274,16 +274,21 @@ public class MediaSpecificService {
                         .naturalJoin(EPISODES)
                         .naturalJoin(MEDIA)
                         .where(EPISODES.EPISODEID.eq(id)
-                                .and(PEOPLE.PERSONID.eq(personid)))
+                                .and(PEOPLE.PERSONID.eq(person.getPersonid())
+                                .and(PEOPLEEPISODES.ROLE.eq(person.getRole()))
+                                .and(PEOPLEEPISODES.ROLETYPE.eq(person.getRoleTypeByte()))))
                         .fetch();
             } else {
+
                 peopleList = create.select()
                         .from(PEOPLE)
                         .naturalJoin(peopleTable)
                         .naturalJoin(table)
                         .naturalJoin(MEDIA)
                         .where(MEDIA.MEDIAID.eq(id)
-                                .and(PEOPLE.PERSONID.eq(personid)))
+                                .and(PEOPLE.PERSONID.eq(person.getPersonid()))
+                                .and(peopleTable.field("role", String.class).eq(person.getRole())
+                                .and(peopleTable.field("roletype", Byte.class).eq(person.getRoleTypeByte()))))
                         .fetch();
             }
 
@@ -784,22 +789,40 @@ public class MediaSpecificService {
             Table table = getType(id);
 
             if (table.getName().equals("series")) {
-                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
+                Result<Record> result = create.select()
+                        .from(MEDIA)
+                        .naturalJoin(table)
+                        .naturalJoin(SEASONS)
+                        .naturalJoin(EPISODES)
+                        .naturalJoin(PEOPLEEPISODES)
+                        .naturalJoin(PEOPLE)
+                        .where(MEDIA.MEDIAID.eq(id))
+                        .fetch();
+
+                for (Record record : result) {
+                    Integer seasonid = record.get(SEASONS.SEASONID);
+                    Integer episodeid = record.get(EPISODES.EPISODEID);
+                    peopleList.add(new PeopleEpisodeResponseHelper(record, table, seasonid,  episodeid));
+                }
+
+            } else{
+                Table peopleTable = getPeopleTable(table);
+                Result<Record> result = create.select()
+                        .from(MEDIA)
+                        .naturalJoin(table)
+                        .naturalJoin(peopleTable)
+                        .naturalJoin(PEOPLE)
+                        .where(MEDIA.MEDIAID.eq(id))
+                        .fetch();
+
+                for (Record record : result) {
+                    peopleList.add(new PeopleMediaResponseHelper(record, table));
+                }
             }
 
-            Table peopleTable = getPeopleTable(table);
 
-            Result<Record> result = create.select()
-                    .from(MEDIA)
-                    .naturalJoin(table)
-                    .naturalJoin(peopleTable)
-                    .naturalJoin(PEOPLE)
-                    .where(MEDIA.MEDIAID.eq(id))
-                    .fetch();
 
-            for (Record record : result) {
-                peopleList.add(new PeopleMediaResponseHelper(record, table));
-            }
+
 
         } catch (ResponseStatusException | SQLException e) {
             if (e instanceof ResponseStatusException) {
@@ -825,7 +848,7 @@ public class MediaSpecificService {
 
             MediaResponseHelper mediaData = getMedia(id);
             People personData = existsPerson(person.getPersonid());
-            Result<Record> peopleList = existsMediaPerson(id, person.getPersonid(), getPeopleTable(table), table);
+            Result<Record> peopleList = existsMediaPerson(id, person, getPeopleTable(table), table);
 
             if (!peopleList.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT);
@@ -869,7 +892,7 @@ public class MediaSpecificService {
         return personResult;
     }
 
-    public void removePerson(Integer id, Integer personid) throws SQLException {
+    public void removePerson(Integer id, PeopleMediaRequestHelper person) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
 
@@ -879,7 +902,7 @@ public class MediaSpecificService {
                 throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
             }
             Table peopleTable = getPeopleTable(table);
-            Result<Record> peopleList = existsMediaPerson(id, personid, peopleTable, table);
+            Result<Record> peopleList = existsMediaPerson(id, person, peopleTable, table);
 
             if (peopleList.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -949,7 +972,7 @@ public class MediaSpecificService {
             }
 
             People personData = existsPerson(person.getPersonid());
-            Result<Record> peopleList = existsMediaPerson(episodeid, person.getPersonid(), PEOPLEEPISODES, table);
+            Result<Record> peopleList = existsMediaPerson(episodeid, person, PEOPLEEPISODES, table);
 
             if (!peopleList.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT);
@@ -971,7 +994,7 @@ public class MediaSpecificService {
         return personResult;
     }
 
-    public void removePersonEpisode(Integer id, Integer seasonid, Integer episodeid, Integer personid) throws SQLException {
+    public void removePersonEpisode(Integer id, Integer seasonid, Integer episodeid, PeopleMediaRequestHelper person) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
 
@@ -981,15 +1004,17 @@ public class MediaSpecificService {
                 throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
             }
 
-            Result<Record> peopleList = existsMediaPerson(episodeid, personid, PEOPLEEPISODES, table);
+            Result<Record> peopleList = existsMediaPerson(episodeid, person, PEOPLEEPISODES, table);
 
             if (peopleList.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
 
             create.deleteFrom(PEOPLEEPISODES)
-                    .where(PEOPLEEPISODES.PERSONID.eq(personid)
-                                .and(PEOPLEEPISODES.EPISODEID.eq(episodeid)))
+                    .where(PEOPLEEPISODES.PERSONID.eq(person.getPersonid())
+                                .and(PEOPLEEPISODES.EPISODEID.eq(episodeid))
+                                .and(PEOPLEEPISODES.ROLE.eq(person.getRole()))
+                                .and(PEOPLEEPISODES.ROLETYPE.eq(person.getRoleTypeByte())))
                     .execute();
 
         } catch (ResponseStatusException | SQLException e) {

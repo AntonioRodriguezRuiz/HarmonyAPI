@@ -254,6 +254,10 @@ public class MediaSpecificController {
     public ResponseEntity removePerson(@PathVariable Integer id, @PathVariable Integer personid, @RequestBody PeopleMediaRequestHelper person) throws SQLException {
         UserMiddlewares.isAdmin(person.getUserid());
         person.setPersonid(personid);
+        person.setPersonid(personid);
+        if(person.getRole()==null || person.getRoleType()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
         mediaService.removePerson(id, person);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -294,6 +298,9 @@ public class MediaSpecificController {
     public ResponseEntity removePersonEpisode(@PathVariable Integer id, @PathVariable Integer seasonid, @PathVariable Integer episodeid, @PathVariable Integer personid, @RequestBody PeopleMediaRequestHelper person) throws SQLException {
         UserMiddlewares.isAdmin(person.getUserid());
         person.setPersonid(personid);
+        if(person.getRole()==null || person.getRoleType()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
         mediaService.removePersonEpisode(id, seasonid, episodeid, person);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

@@ -132,9 +132,9 @@ public class Users extends TableImpl<UsersRecord> {
     @Override
     public List<Check<UsersRecord>> getChecks() {
         return Arrays.<Check<UsersRecord>>asList(
-              Internal.createCheck(this, DSL.name("emailNotValid"), "(locate(_utf8mb4\\'@\\',`email`) is not null)", true)
-            , Internal.createCheck(this, DSL.name("usernameInvalidStartingUnderscore"), "(locate(_utf8mb4\\'_\\',`username`) <> 1)", true)
-            , Internal.createCheck(this, DSL.name("usernameTooShort"), "(length(`username`) >= 3)", true)
+              Internal.createCheck(this, DSL.name("emailNotValid"), "locate('@',`email`) is not null", true)
+            , Internal.createCheck(this, DSL.name("usernameInvalidStartingUnderscore"), "locate('_',`username`) <> 1", true)
+            , Internal.createCheck(this, DSL.name("usernameTooShort"), "octet_length(`username`) >= 3", true)
         );
     }
 

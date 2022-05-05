@@ -74,9 +74,9 @@ public class Trackers extends TableImpl<TrackersRecord> {
     public final TableField<TrackersRecord, Integer> STATE = createField(DSL.name("state"), SQLDataType.INTEGER.nullable(false), this, "");
 
     /**
-     * The column <code>harmony.trackers.datetime</code>.
+     * The column <code>harmony.trackers.creationDate</code>.
      */
-    public final TableField<TrackersRecord, LocalDateTime> DATETIME = createField(DSL.name("datetime"), SQLDataType.LOCALDATETIME(0).nullable(false), this, "");
+    public final TableField<TrackersRecord, LocalDateTime> CREATIONDATE = createField(DSL.name("creationDate"), SQLDataType.LOCALDATETIME(0).nullable(false), this, "");
 
     private Trackers(Name alias, Table<TrackersRecord> aliased) {
         this(alias, aliased, null);
@@ -161,7 +161,7 @@ public class Trackers extends TableImpl<TrackersRecord> {
     @Override
     public List<Check<TrackersRecord>> getChecks() {
         return Arrays.<Check<TrackersRecord>>asList(
-              Internal.createCheck(this, DSL.name("invalidState"), "((`state` >= 1) and (`state` <= 4))", true)
+              Internal.createCheck(this, DSL.name("invalidState"), "`state` >= 1 and `state` <= 4", true)
         );
     }
 

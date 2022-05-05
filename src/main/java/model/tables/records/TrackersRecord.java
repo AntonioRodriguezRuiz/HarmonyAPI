@@ -84,17 +84,17 @@ public class TrackersRecord extends UpdatableRecordImpl<TrackersRecord> implemen
     }
 
     /**
-     * Setter for <code>harmony.trackers.datetime</code>.
+     * Setter for <code>harmony.trackers.creationDate</code>.
      */
-    public TrackersRecord setDatetime(LocalDateTime value) {
+    public TrackersRecord setCreationdate(LocalDateTime value) {
         set(4, value);
         return this;
     }
 
     /**
-     * Getter for <code>harmony.trackers.datetime</code>.
+     * Getter for <code>harmony.trackers.creationDate</code>.
      */
-    public LocalDateTime getDatetime() {
+    public LocalDateTime getCreationdate() {
         return (LocalDateTime) get(4);
     }
 
@@ -143,7 +143,7 @@ public class TrackersRecord extends UpdatableRecordImpl<TrackersRecord> implemen
 
     @Override
     public Field<LocalDateTime> field5() {
-        return Trackers.TRACKERS.DATETIME;
+        return Trackers.TRACKERS.CREATIONDATE;
     }
 
     @Override
@@ -168,7 +168,7 @@ public class TrackersRecord extends UpdatableRecordImpl<TrackersRecord> implemen
 
     @Override
     public LocalDateTime component5() {
-        return getDatetime();
+        return getCreationdate();
     }
 
     @Override
@@ -193,7 +193,7 @@ public class TrackersRecord extends UpdatableRecordImpl<TrackersRecord> implemen
 
     @Override
     public LocalDateTime value5() {
-        return getDatetime();
+        return getCreationdate();
     }
 
     @Override
@@ -222,7 +222,7 @@ public class TrackersRecord extends UpdatableRecordImpl<TrackersRecord> implemen
 
     @Override
     public TrackersRecord value5(LocalDateTime value) {
-        setDatetime(value);
+        setCreationdate(value);
         return this;
     }
 
@@ -250,13 +250,13 @@ public class TrackersRecord extends UpdatableRecordImpl<TrackersRecord> implemen
     /**
      * Create a detached, initialised TrackersRecord
      */
-    public TrackersRecord(Integer trackerid, Integer mediaid, Integer userid, Integer state, LocalDateTime datetime) {
+    public TrackersRecord(Integer trackerid, Integer mediaid, Integer userid, Integer state, LocalDateTime creationdate) {
         super(Trackers.TRACKERS);
 
         setTrackerid(trackerid);
         setMediaid(mediaid);
         setUserid(userid);
         setState(state);
-        setDatetime(datetime);
+        setCreationdate(creationdate);
     }
 }

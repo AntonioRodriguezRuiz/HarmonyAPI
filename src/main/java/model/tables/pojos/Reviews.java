@@ -19,7 +19,7 @@ public class Reviews implements Serializable {
     private Integer       reviewid;
     private Integer       userid;
     private Integer       mediaid;
-    private LocalDateTime datetime;
+    private LocalDateTime creationdate;
     private Double        rating;
     private String        review;
     private Integer       likes;
@@ -30,7 +30,7 @@ public class Reviews implements Serializable {
         this.reviewid = value.reviewid;
         this.userid = value.userid;
         this.mediaid = value.mediaid;
-        this.datetime = value.datetime;
+        this.creationdate = value.creationdate;
         this.rating = value.rating;
         this.review = value.review;
         this.likes = value.likes;
@@ -40,7 +40,7 @@ public class Reviews implements Serializable {
         Integer       reviewid,
         Integer       userid,
         Integer       mediaid,
-        LocalDateTime datetime,
+        LocalDateTime creationdate,
         Double        rating,
         String        review,
         Integer       likes
@@ -48,7 +48,7 @@ public class Reviews implements Serializable {
         this.reviewid = reviewid;
         this.userid = userid;
         this.mediaid = mediaid;
-        this.datetime = datetime;
+        this.creationdate = creationdate;
         this.rating = rating;
         this.review = review;
         this.likes = likes;
@@ -100,17 +100,17 @@ public class Reviews implements Serializable {
     }
 
     /**
-     * Getter for <code>harmony.reviews.datetime</code>.
+     * Getter for <code>harmony.reviews.creationDate</code>.
      */
-    public LocalDateTime getDatetime() {
-        return this.datetime;
+    public LocalDateTime getCreationdate() {
+        return this.creationdate;
     }
 
     /**
-     * Setter for <code>harmony.reviews.datetime</code>.
+     * Setter for <code>harmony.reviews.creationDate</code>.
      */
-    public Reviews setDatetime(LocalDateTime datetime) {
-        this.datetime = datetime;
+    public Reviews setCreationdate(LocalDateTime creationdate) {
+        this.creationdate = creationdate;
         return this;
     }
 
@@ -186,11 +186,11 @@ public class Reviews implements Serializable {
         }
         else if (!mediaid.equals(other.mediaid))
             return false;
-        if (datetime == null) {
-            if (other.datetime != null)
+        if (creationdate == null) {
+            if (other.creationdate != null)
                 return false;
         }
-        else if (!datetime.equals(other.datetime))
+        else if (!creationdate.equals(other.creationdate))
             return false;
         if (rating == null) {
             if (other.rating != null)
@@ -220,7 +220,7 @@ public class Reviews implements Serializable {
         result = prime * result + ((this.reviewid == null) ? 0 : this.reviewid.hashCode());
         result = prime * result + ((this.userid == null) ? 0 : this.userid.hashCode());
         result = prime * result + ((this.mediaid == null) ? 0 : this.mediaid.hashCode());
-        result = prime * result + ((this.datetime == null) ? 0 : this.datetime.hashCode());
+        result = prime * result + ((this.creationdate == null) ? 0 : this.creationdate.hashCode());
         result = prime * result + ((this.rating == null) ? 0 : this.rating.hashCode());
         result = prime * result + ((this.review == null) ? 0 : this.review.hashCode());
         result = prime * result + ((this.likes == null) ? 0 : this.likes.hashCode());
@@ -234,7 +234,7 @@ public class Reviews implements Serializable {
         sb.append(reviewid);
         sb.append(", ").append(userid);
         sb.append(", ").append(mediaid);
-        sb.append(", ").append(datetime);
+        sb.append(", ").append(creationdate);
         sb.append(", ").append(rating);
         sb.append(", ").append(review);
         sb.append(", ").append(likes);

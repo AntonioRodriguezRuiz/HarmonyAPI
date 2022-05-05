@@ -11,25 +11,30 @@ import org.jooq.Configuration;
 import src.main.java.model.routines.Likereview;
 import src.main.java.model.routines.Newbook;
 import src.main.java.model.routines.Newepisode;
+import src.main.java.model.routines.Newepisodebyid;
 import src.main.java.model.routines.Newgenre;
 import src.main.java.model.routines.Newlist;
 import src.main.java.model.routines.Newlistmedia;
 import src.main.java.model.routines.Newmediagenre;
+import src.main.java.model.routines.Newmediagenrebyid;
 import src.main.java.model.routines.Newmovie;
 import src.main.java.model.routines.Newperson;
 import src.main.java.model.routines.Newpersonbook;
 import src.main.java.model.routines.Newpersonepisode;
+import src.main.java.model.routines.Newpersonepisodebyid;
 import src.main.java.model.routines.Newpersonmovie;
 import src.main.java.model.routines.Newpersonvideogame;
 import src.main.java.model.routines.Newplatform;
 import src.main.java.model.routines.Newreport;
 import src.main.java.model.routines.Newreview;
 import src.main.java.model.routines.Newseason;
+import src.main.java.model.routines.Newseasonbyid;
 import src.main.java.model.routines.Newseries;
 import src.main.java.model.routines.Newtracker;
 import src.main.java.model.routines.Newuser;
 import src.main.java.model.routines.Newvideogame;
 import src.main.java.model.routines.Newvideogameplatform;
+import src.main.java.model.routines.Newvideogameplatformbyid;
 import src.main.java.model.routines.Unlikereview;
 import src.main.java.model.routines.Updatereview;
 
@@ -100,6 +105,23 @@ public class Routines {
     }
 
     /**
+     * Call <code>harmony.newEpisodeById</code>
+     */
+    public static void newepisodebyid(
+          Configuration configuration
+        , Integer seasonid
+        , String episodename
+        , Integer episodeno
+    ) {
+        Newepisodebyid p = new Newepisodebyid();
+        p.setSeasonid(seasonid);
+        p.setEpisodename(episodename);
+        p.setEpisodeno(episodeno);
+
+        p.execute(configuration);
+    }
+
+    /**
      * Call <code>harmony.newGenre</code>
      */
     public static void newgenre(
@@ -157,6 +179,21 @@ public class Routines {
         p.setTitle(title);
         p.setReleasedate(releasedate);
         p.setGenre(genre);
+
+        p.execute(configuration);
+    }
+
+    /**
+     * Call <code>harmony.newMediaGenreById</code>
+     */
+    public static void newmediagenrebyid(
+          Configuration configuration
+        , Integer mediaid
+        , Integer genreid
+    ) {
+        Newmediagenrebyid p = new Newmediagenrebyid();
+        p.setMediaid(mediaid);
+        p.setGenreid(genreid);
 
         p.execute(configuration);
     }
@@ -241,6 +278,25 @@ public class Routines {
         p.setReleasedate(releasedate);
         p.setSeasonno(seasonno);
         p.setEpisodeno(episodeno);
+        p.setRole(role);
+        p.setRoletype(roletype);
+
+        p.execute(configuration);
+    }
+
+    /**
+     * Call <code>harmony.newPersonEpisodeById</code>
+     */
+    public static void newpersonepisodebyid(
+          Configuration configuration
+        , Integer personid
+        , Integer episodeid
+        , String role
+        , Byte roletype
+    ) {
+        Newpersonepisodebyid p = new Newpersonepisodebyid();
+        p.setPersonid(personid);
+        p.setEpisodeid(episodeid);
         p.setRole(role);
         p.setRoletype(roletype);
 
@@ -364,6 +420,23 @@ public class Routines {
     }
 
     /**
+     * Call <code>harmony.newSeasonById</code>
+     */
+    public static void newseasonbyid(
+          Configuration configuration
+        , Integer mediaid
+        , Integer seasonno
+        , Integer noepisodes
+    ) {
+        Newseasonbyid p = new Newseasonbyid();
+        p.setMediaid(mediaid);
+        p.setSeasonno(seasonno);
+        p.setNoepisodes(noepisodes);
+
+        p.execute(configuration);
+    }
+
+    /**
      * Call <code>harmony.newSeries</code>
      */
     public static void newseries(
@@ -456,6 +529,21 @@ public class Routines {
         p.setPlatformname(platformname);
         p.setTitle(title);
         p.setReleasedate(releasedate);
+
+        p.execute(configuration);
+    }
+
+    /**
+     * Call <code>harmony.newVideogamePlatformById</code>
+     */
+    public static void newvideogameplatformbyid(
+          Configuration configuration
+        , Integer mediaid
+        , Integer platformid
+    ) {
+        Newvideogameplatformbyid p = new Newvideogameplatformbyid();
+        p.setMediaid(mediaid);
+        p.setPlatformid(platformid);
 
         p.execute(configuration);
     }

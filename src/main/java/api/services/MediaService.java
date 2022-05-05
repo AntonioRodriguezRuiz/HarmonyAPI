@@ -25,7 +25,7 @@ public class MediaService {
         List<Media> result = null;
 
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
             if (type==null && order==null && genre==null){
                 result = create.select(MEDIA.fields())
                         .from(MEDIA)
@@ -115,7 +115,7 @@ public class MediaService {
     public MediaResponseHelper postMedia(MediaRequestHelper media, Table table) throws SQLException {
         MediaResponseHelper newMedia = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             MovieRequestHelper movie = null;
             SeriesRequestHelper series = null;
@@ -185,7 +185,7 @@ public class MediaService {
 
     public void putMedia(MediaRequestHelper media, Table table, Media oldMedia) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             MediaRequestHelper newMedia = new MediaRequestHelper(null, null, null, null, null, null, null);
             newMedia.setMediaid(media.getMediaid());
@@ -267,7 +267,7 @@ public class MediaService {
 
     public void canBePost(MediaRequestHelper media) throws SQLException {
         try(Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)){
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             List<Media> oldMedia = create.select()
                     .from(MEDIA)
@@ -289,7 +289,7 @@ public class MediaService {
     public Media canBePut(MediaRequestHelper media, Table table) throws SQLException {
         Media oldMedia = null;
         try(Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)){
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             List<Media> oldMediaList = create.select()
                     .from(MEDIA)

@@ -62,7 +62,7 @@ public class MediaSpecificController {
         return new ResponseEntity<>(mediaService.postSeason(id, season), HttpStatus.CREATED);
     }
 
-    @Operation(summary = "Deletes a series season")
+    @Operation(summary = "Modifies a series season")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Item destroyed"),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
@@ -254,6 +254,10 @@ public class MediaSpecificController {
     public ResponseEntity removePerson(@PathVariable Integer id, @PathVariable Integer personid, @RequestBody PeopleMediaRequestHelper person) throws SQLException {
         UserMiddlewares.isAdmin(person.getUserid());
         person.setPersonid(personid);
+        person.setPersonid(personid);
+        if(person.getRole()==null || person.getRoleType()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
         mediaService.removePerson(id, person);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -294,6 +298,9 @@ public class MediaSpecificController {
     public ResponseEntity removePersonEpisode(@PathVariable Integer id, @PathVariable Integer seasonid, @PathVariable Integer episodeid, @PathVariable Integer personid, @RequestBody PeopleMediaRequestHelper person) throws SQLException {
         UserMiddlewares.isAdmin(person.getUserid());
         person.setPersonid(personid);
+        if(person.getRole()==null || person.getRoleType()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
         mediaService.removePersonEpisode(id, seasonid, episodeid, person);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

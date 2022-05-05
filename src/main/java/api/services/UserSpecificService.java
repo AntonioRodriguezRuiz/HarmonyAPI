@@ -29,7 +29,7 @@ public class UserSpecificService {
     public UserResponseHelper getUser(Integer userId) throws SQLException {
         UserResponseHelper user = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
             user = new UserResponseHelper(create.select()
                 .from(USERS)
                 .where(USERS.USERID.eq(userId))
@@ -46,7 +46,7 @@ public class UserSpecificService {
     public List<TrackerResponseHelper> getTracking(Integer userId) throws SQLException {
         List<TrackerResponseHelper> trackers = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
             trackers = create.select()
                 .from(TRACKERS)
                 .where(TRACKERS.USERID.eq(userId))

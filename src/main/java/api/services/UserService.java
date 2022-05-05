@@ -28,7 +28,7 @@ import static src.main.java.model.Tables.*;
 public class UserService {
     public boolean userExists(UserRequestHelper user) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
             return !create.select()
                 .from(USERS)
                 .where(USERS.USERNAME.eq(user.username()))
@@ -47,7 +47,7 @@ public class UserService {
     public UserResponseHelper postUser(UserRequestHelper user) throws SQLException {
         UserResponseHelper newUser = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             Routines.newuser(
                 create.configuration(),

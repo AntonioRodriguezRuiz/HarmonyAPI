@@ -22,7 +22,7 @@ public class UserMiddlewares {
 
     public static void isAdmin(Integer userid) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
             List<Admins> result = create.select()
                     .from(ADMINS)
                     .where(ADMINS.USERID.eq(userid))
@@ -42,7 +42,7 @@ public class UserMiddlewares {
 
     public static void isOwnerOfReview(Integer userid, Integer reviewid) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             Result<Record> review = create.select()
                                         .from(REVIEWS)

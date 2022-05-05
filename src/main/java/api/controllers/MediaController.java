@@ -213,7 +213,7 @@ public class MediaController {
 
     private void isValidGenre(String genreString) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
             List<Genres> result = create.select()
                     .from(GENRES)
                     .where(GENRES.NAME.eq(genreString))

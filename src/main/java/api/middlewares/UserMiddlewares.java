@@ -15,8 +15,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
-import static src.main.java.model.Tables.ADMINS;
-import static src.main.java.model.Tables.REVIEWS;
+import static src.main.java.model.Tables.*;
 
 public class UserMiddlewares {
 
@@ -38,6 +37,27 @@ public class UserMiddlewares {
             }
             e.printStackTrace();
         }
+    }
+
+    public static boolean isListOwner(Integer userid, Integer listid) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            if (!create.select()
+                .from(LISTS)
+                .where(LISTS.LISTID.eq(listid))
+                .fetch()
+                .get(0)
+                .get(LISTS.USERID)
+                .equals(userid)) {
+                    throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+                }
+        } catch (ResponseStatusException | SQLException e){
+            if(e instanceof ResponseStatusException){
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public static void isOwnerOfReview(Integer userid, Integer reviewid) throws SQLException {

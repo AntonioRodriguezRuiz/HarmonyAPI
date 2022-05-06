@@ -8,15 +8,1541 @@ info:
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-tags:
-  - name: 'Media'
-    description: |
-      Media related endpoints.
 paths:
-  /api/v1/media:
+  "/api/v1/media":
     get:
-      summary: "GET api/v1/media"
-      operationId: "getAllMedia"
+      tags:
+        - General Media Operations
+      summary: Get all media and filter by media type, genre, title and sort by parameters
+      operationId: getAllMedia
+      parameters:
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: type
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: order
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: genre
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
-        "200":
-          description: "OK"
+        '200':
+          description: Search successful
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Media"
+  "/api/v1/media/videogames":
+    post:
+      tags:
+        - General Media Operations
+      summary: Post a new videogame to the database
+      operationId: postVideogame
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userid:
+                  type: integer
+                  format: int32
+                title:
+                  type: string
+                releasedate:
+                  type: string
+                  format: date
+                coverimage:
+                  type: string
+                backgroundimage:
+                  type: string
+                synopsis:
+                  type: string
+                company:
+                  type: string
+        required: true
+      responses:
+        '201':
+          description: Item created
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/MediaResponseHelper"
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '409':
+          description: Item already exists
+    put:
+      tags:
+        - General Media Operations
+      summary: Modifies a videogame in the database
+      operationId: putVideogame
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/VideogameRequestHelper"
+        required: true
+      responses:
+        '204':
+          description: Item modified
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/VideogameRequestHelper"
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '404':
+          description: Item doesn't exists
+  "/api/v1/media/series":
+    post:
+      tags:
+        - General Media Operations
+      summary: Post a new series to the database
+      operationId: postSeries
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userid:
+                  type: integer
+                  format: int32
+                title:
+                  type: string
+                releasedate:
+                  type: string
+                  format: date
+                coverimage:
+                  type: string
+                backgroundimage:
+                  type: string
+                synopsis:
+                  type: string
+        required: true
+      responses:
+        '201':
+          description: Item created
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/MediaResponseHelper"
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '409':
+          description: Item already exists
+    put:
+      tags:
+        - General Media Operations
+      summary: Modifies a series in the database
+      operationId: putSeries
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/SeriesRequestHelper"
+        required: true
+      responses:
+        '204':
+          description: Item modified
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/SeriesRequestHelper"
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '404':
+          description: Item doesn't exists
+  "/api/v1/media/movies":
+    post:
+      tags:
+        - General Media Operations
+      summary: Post a new movie to the database
+      operationId: postMovie
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userid:
+                  type: integer
+                  format: int32
+                title:
+                  type: string
+                releasedate:
+                  type: string
+                  format: date
+                coverimage:
+                  type: string
+                backgroundimage:
+                  type: string
+                synopsis:
+                  type: string
+        required: true
+      responses:
+        '201':
+          description: Item created
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/MediaResponseHelper"
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '409':
+          description: Item already exists
+    put:
+      tags:
+        - General Media Operations
+      summary: Modifies a movie in the database
+      operationId: putMovie
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/MovieRequestHelper"
+        required: true
+      responses:
+        '204':
+          description: Item modified
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/MovieRequestHelper"
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '404':
+          description: Item doesn't exists
+  "/api/v1/media/books":
+    post:
+      tags:
+        - General Media Operations
+      summary: Post a new book to the database
+      operationId: postBook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userid:
+                  type: integer
+                  format: int32
+                title:
+                  type: string
+                releasedate:
+                  type: string
+                  format: date
+                coverimage:
+                  type: string
+                backgroundimage:
+                  type: string
+                synopsis:
+                  type: string
+                collection:
+                  type: string
+        required: true
+      responses:
+        '201':
+          description: Item created
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/MediaResponseHelper"
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '409':
+          description: Item already exists
+    put:
+      tags:
+        - General Media Operations
+      summary: Modifies a book in the database
+      operationId: putBook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/BookRequestHelper"
+        required: true
+      responses:
+        '204':
+          description: Item modified
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/BookRequestHelper"
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '404':
+          description: Item doesn't exists
+  "/api/v1/media/{id}":
+    get:
+      tags:
+        - Media Specific operations
+      summary: Get information about a certain piece of media
+      operationId: getMedia
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Search successful
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/MediaResponseHelper"
+        '404':
+          description: Item doesn't exists
+    delete:
+      tags:
+        - Media Specific operations
+      summary: Deletes a piece of media
+      operationId: deleteMedia
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UseridBodyHelper"
+        required: true
+      responses:
+        '204':
+          description: Item destroyed
+          content:
+            "*/*":
+              schema:
+                type: string
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '404':
+          description: Item doesn't exists
+  "/api/v1/media/{id}/genres":
+    post:
+      tags:
+        - Media Specific operations
+      summary: Adds a new genre to a media
+      operationId: addGenre
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userid:
+                  type: integer
+                  format: int32
+                genreid:
+                  type: integer
+                  format: int32
+        required: true
+      responses:
+        '201':
+          description: Item created
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/GenreResponseHelper"
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '409':
+          description: Media already has this genre
+  "/api/v1/media/{id}/genres/{genreid}":
+    delete:
+      tags:
+        - Media Specific operations
+      summary: Removes a genre from a media list of genres
+      operationId: removeGenre
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: genreid
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UseridBodyHelper"
+        required: true
+      responses:
+        '204':
+          description: Item destroyed
+          content:
+            "*/*":
+              schema:
+                type: string
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '404':
+          description: Item doesn't exists
+  "/api/v1/media/{id}/platforms":
+    post:
+      tags:
+        - Media Specific operations
+      summary: Adds a new platform to a videogame
+      operationId: addPlatform
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/PlatformRequestHelper"
+        required: true
+      responses:
+        '201':
+          description: Item created
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/PlatformResponseHelper"
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '405':
+          description: The media item is not a videogame
+        '409':
+          description: Item already exists
+  "/api/v1/media/{id}/seasons":
+    post:
+      tags:
+        - Media Specific operations
+      summary: Post a new season of a series
+      operationId: postSeason
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userid:
+                  type: integer
+                  format: int32
+                seasonNo:
+                  type: integer
+                  format: int32
+                noEpisodes:
+                  type: integer
+                  format: int32
+        required: true
+      responses:
+        '201':
+          description: Item created
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/SeasonResponseHelper"
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '405':
+          description: The media item is not a series
+        '409':
+          description: Item already exists
+    put:
+      tags:
+        - Media Specific operations
+      summary: Modifies a series season
+      operationId: putSeason
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/SeasonRequestHelper"
+        required: true
+      responses:
+        '204':
+          description: Item destroyed
+          content:
+            "*/*":
+              schema:
+                type: string
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '404':
+          description: Item doesn't exists
+        '405':
+          description: The media item is not a series
+  "/api/v1/media/{id}/platforms/{platformid}":
+    delete:
+      tags:
+        - Media Specific operations
+      summary: Removes a platform from a videogame's list of platforms
+      operationId: removePlatform
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: platformid
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UseridBodyHelper"
+        required: true
+      responses:
+        '204':
+          description: Item destroyed
+          content:
+            "*/*":
+              schema:
+                type: string
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '404':
+          description: Item doesn't exists
+        '405':
+          description: The media item is not a videogame
+  "/api/v1/media/{id}/{seasonid}":
+    get:
+      tags:
+        - Media Specific operations
+      summary: Get information about a certain season, including episodes
+      operationId: getSeason
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: seasonid
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Search successful
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/SeasonResponseHelper"
+        '404':
+          description: Item doesn't exists
+        '405':
+          description: The media item is not a season of a series
+    post:
+      tags:
+        - Media Specific operations
+      summary: Adds a new episode to a season
+      operationId: postEpisode
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: seasonid
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                episodeid:
+                  type: integer
+                  format: int32
+                episodeNo:
+                  type: integer
+                  format: int32
+                episodeName:
+                  type: string
+        required: true
+      responses:
+        '201':
+          description: Item created
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/EpisodeResponseHelper"
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '405':
+          description: The media item is not a season of a series
+        '409':
+          description: Item already exists
+    put:
+      tags:
+        - Media Specific operations
+      summary: Modifies an existing episode
+      operationId: putEpisode
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: seasonid
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                episodeid:
+                  type: integer
+                  format: int32
+                episodeNo:
+                  type: integer
+                  format: int32
+                episodeName:
+                  type: string
+        required: true
+      responses:
+        '204':
+          description: Item modified
+          content:
+            "*/*":
+              schema:
+                type: string
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '404':
+          description: Item doesn't exists
+        '405':
+          description: The media item is not a season of a series
+    delete:
+      tags:
+        - Media Specific operations
+      summary: Removes a season from a series list of seasons
+      operationId: deleteSeason
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: seasonid
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UseridBodyHelper"
+        required: true
+      responses:
+        '204':
+          description: Item destroyed
+          content:
+            "*/*":
+              schema:
+                type: string
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '404':
+          description: Item doesn't exists
+        '405':
+          description: The media item is not a season of a series
+  "/api/v1/media/{id}/{seasonid}/{episodeid}":
+    get:
+      tags:
+        - Media Specific operations
+      summary: Get information about a certain episode
+      operationId: getEpisode
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: seasonid
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: episodeid
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Search successful
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/EpisodeResponseHelper"
+        '404':
+          description: Item doesn't exists
+        '405':
+          description: The media item is not a episode of a series
+    delete:
+      tags:
+        - Media Specific operations
+      summary: Removes an episode from a season
+      operationId: deleteEpisode
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: seasonid
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: episodeid
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UseridBodyHelper"
+        required: true
+      responses:
+        '204':
+          description: Item destroyed
+          content:
+            "*/*":
+              schema:
+                type: string
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '404':
+          description: Item doesn't exists
+        '405':
+          description: The media item is not a season of a series
+  "/api/v1/media/{id}/reviews":
+    get:
+      tags:
+        - Media Specific operations
+      summary: Get information about all the reviews of the media
+      operationId: getReviews
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Search successful
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/ReviewResponseHelper"
+        '404':
+          description: Item doesn't exists
+    put:
+      tags:
+        - Media Specific operations
+      summary: Modifies a review from a media
+      operationId: putReview
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/ReviewRequestHelper"
+        required: true
+      responses:
+        '204':
+          description: Item destroyed
+          content:
+            "*/*":
+              schema:
+                type: string
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Only the owner of the review can modify it
+        '404':
+          description: Item doesn't exists
+    post:
+      tags:
+        - Media Specific operations
+      summary: Adds a new review to a media
+      operationId: addReview
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userid:
+                  type: integer
+                  format: int32
+                rating:
+                  type: number
+                  format: double
+                review:
+                  type: string
+        required: true
+      responses:
+        '201':
+          description: Item created
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ReviewResponseHelper"
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not logged in
+        '409':
+          description: This person already has a review in this media. You can only
+            perform put operations over it
+  "/api/v1/media/{id}/people":
+    get:
+      tags:
+        - Media Specific operations
+      summary: Get information about all the people participating in the creation
+        of the media
+      operationId: getPeopleFromMedia
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Search successful
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/PeopleMediaResponseHelper"
+        '404':
+          description: Item doesn't exists
+    post:
+      tags:
+        - Media Specific operations
+      summary: Adds a new person to a media
+      operationId: addPerson
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/PeopleMediaRequestHelper"
+        required: true
+      responses:
+        '201':
+          description: Item created
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/PeopleMediaResponseHelper"
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '405':
+          description: The media item is a series, series do not have people directly
+        '409':
+          description: This person is already in this media with the same role
+  "/api/v1/media/{id}/people/{personid}":
+    delete:
+      tags:
+        - Media Specific operations
+      summary: Removes a person with a role from a media
+      operationId: removePerson
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: personid
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userid:
+                  type: integer
+                  format: int32
+                role:
+                  type: string
+                roleType:
+                  type: string
+                  enum:
+                    - CAST
+                    - CREW
+        required: true
+      responses:
+        '204':
+          description: Item destroyed
+          content:
+            "*/*":
+              schema:
+                type: string
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '404':
+          description: Item doesn't exists
+        '405':
+          description: The media item is a series, series do not have people directly
+  "/api/v1/media/{id}/{seasonid}/{episodeid}/people":
+    get:
+      tags:
+        - Media Specific operations
+      summary: Gets all the people working on an episode
+      operationId: getPeopleFromEpisode
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: seasonid
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: episodeid
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '201':
+          description: Item created
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/PeopleMediaResponseHelper"
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '409':
+          description: This person is already in this media with the same role
+    post:
+      tags:
+        - Media Specific operations
+      summary: Adds a person with a role to an episode
+      operationId: addPersonEpisode
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: seasonid
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: episodeid
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/PeopleMediaRequestHelper"
+        required: true
+      responses:
+        '204':
+          description: Item destroyed
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/PeopleEpisodeResponseHelper"
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '404':
+          description: Item doesn't exists
+  "/api/v1/media/{id}/{seasonid}/{episodeid}/people/{personid}":
+    delete:
+      tags:
+        - Media Specific operations
+      summary: Removes a person with a role from an episode
+      operationId: removePersonEpisode
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: seasonid
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: episodeid
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: personid
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userid:
+                  type: integer
+                  format: int32
+                role:
+                  type: string
+                roleType:
+                  type: string
+                  enum:
+                    - CAST
+                    - CREW
+        required: true
+      responses:
+        '204':
+          description: Item destroyed
+          content:
+            "*/*":
+              schema:
+                type: string
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '404':
+          description: Item doesn't exists
+components:
+  schemas:
+    EpisodeRequestHelper:
+      type: object
+      properties:
+        userid:
+          type: integer
+          format: int32
+        episodeid:
+          type: integer
+          format: int32
+        episodeNo:
+          type: integer
+          format: int32
+        episodeName:
+          type: string
+    SeasonRequestHelper:
+      type: object
+      properties:
+        userid:
+          type: integer
+          format: int32
+        seasonid:
+          type: integer
+          format: int32
+        seasonNo:
+          type: integer
+          format: int32
+        noEpisodes:
+          type: integer
+          format: int32
+    ReviewRequestHelper:
+      type: object
+      properties:
+        userid:
+          type: integer
+          format: int32
+        reviewid:
+          type: integer
+          format: int32
+        rating:
+          type: number
+          format: double
+        review:
+          type: string
+    VideogameRequestHelper:
+      type: object
+      properties:
+        userid:
+          type: integer
+          format: int32
+        mediaid:
+          type: integer
+          format: int32
+        title:
+          type: string
+        releasedate:
+          type: string
+          format: date
+        coverimage:
+          type: string
+        backgroundimage:
+          type: string
+        synopsis:
+          type: string
+        company:
+          type: string
+    SeriesRequestHelper:
+      type: object
+      properties:
+        userid:
+          type: integer
+          format: int32
+        mediaid:
+          type: integer
+          format: int32
+        title:
+          type: string
+        releasedate:
+          type: string
+          format: date
+        coverimage:
+          type: string
+        backgroundimage:
+          type: string
+        synopsis:
+          type: string
+    MovieRequestHelper:
+      type: object
+      properties:
+        userid:
+          type: integer
+          format: int32
+        mediaid:
+          type: integer
+          format: int32
+        title:
+          type: string
+        releasedate:
+          type: string
+          format: date
+        coverimage:
+          type: string
+        backgroundimage:
+          type: string
+        synopsis:
+          type: string
+    BookRequestHelper:
+      type: object
+      properties:
+        userid:
+          type: integer
+          format: int32
+        mediaid:
+          type: integer
+          format: int32
+        title:
+          type: string
+        releasedate:
+          type: string
+          format: date
+        coverimage:
+          type: string
+        backgroundimage:
+          type: string
+        synopsis:
+          type: string
+        collection:
+          type: string
+    EpisodeResponseHelper:
+      type: object
+      properties:
+        mediaid:
+          type: integer
+          format: int32
+        seasonid:
+          type: integer
+          format: int32
+        episodeid:
+          type: integer
+          format: int32
+        episodeNo:
+          type: integer
+          format: int32
+        episodeName:
+          type: string
+    PeopleMediaResponseHelper:
+      type: object
+      properties:
+        mediaid:
+          type: integer
+          format: int32
+        personid:
+          type: integer
+          format: int32
+        name:
+          type: string
+        birthdate:
+          type: string
+          format: date
+        role:
+          type: string
+        roleType:
+          type: string
+          enum:
+            - CAST
+            - CREW
+    PeopleEpisodeResponseHelper:
+      type: object
+      properties:
+        mediaid:
+          type: integer
+          format: int32
+        personid:
+          type: integer
+          format: int32
+        name:
+          type: string
+        birthdate:
+          type: string
+          format: date
+        role:
+          type: string
+        roleType:
+          type: string
+          enum:
+            - CAST
+            - CREW
+        seasonid:
+          type: integer
+          format: int32
+        episodeid:
+          type: integer
+          format: int32
+    Episodes:
+      type: object
+      properties:
+        episodeid:
+          type: integer
+          format: int32
+        seasonid:
+          type: integer
+          format: int32
+        episodename:
+          type: string
+        episodeno:
+          type: integer
+          format: int32
+    SeasonResponseHelper:
+      type: object
+      properties:
+        mediaid:
+          type: integer
+          format: int32
+        seasonid:
+          type: integer
+          format: int32
+        seasonNo:
+          type: integer
+          format: int32
+        noEpisodes:
+          type: integer
+          format: int32
+        episodesList:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Episodes"
+    ReviewResponseHelper:
+      type: object
+      properties:
+        reviewid:
+          type: integer
+          format: int32
+        userid:
+          type: integer
+          format: int32
+        mediaid:
+          type: integer
+          format: int32
+        creationDate:
+          type: string
+          format: date-time
+        rating:
+          type: number
+          format: double
+        review:
+          type: string
+        likes:
+          type: integer
+          format: int32
+    PlatformRequestHelper:
+      type: object
+      properties:
+        userid:
+          type: integer
+          format: int32
+        platformid:
+          type: integer
+          format: int32
+        name:
+          type: string
+    PlatformResponseHelper:
+      type: object
+      properties:
+        platformid:
+          type: integer
+          format: int32
+        name:
+          type: string
+    PeopleMediaRequestHelper:
+      type: object
+      properties:
+        userid:
+          type: integer
+          format: int32
+        personid:
+          type: integer
+          format: int32
+        role:
+          type: string
+        roleType:
+          type: string
+          enum:
+            - CAST
+            - CREW
+    GenreRequestHelper:
+      type: object
+      properties:
+        userid:
+          type: integer
+          format: int32
+        genreid:
+          type: integer
+          format: int32
+        name:
+          type: string
+    GenreResponseHelper:
+      type: object
+      properties:
+        genreid:
+          type: integer
+          format: int32
+        name:
+          type: string
+    Genres:
+      type: object
+      properties:
+        genreid:
+          type: integer
+          format: int32
+        name:
+          type: string
+    MediaResponseHelper:
+      type: object
+      properties:
+        mediaid:
+          type: integer
+          format: int32
+        title:
+          type: string
+        releasedate:
+          type: string
+          format: date
+        coverimage:
+          type: string
+        backgroundimage:
+          type: string
+        synopsis:
+          type: string
+        genresList:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Genres"
+    Media:
+      type: object
+      properties:
+        mediaid:
+          type: integer
+          format: int32
+        title:
+          type: string
+        releasedate:
+          type: string
+          format: date
+        coverimage:
+          type: string
+        backgroundimage:
+          type: string
+        synopsis:
+          type: string
+        avgrating:
+          type: number
+          format: double
+    UseridBodyHelper:
+      type: object
+      properties:
+        userid:
+          type: integer
+          format: int32
+

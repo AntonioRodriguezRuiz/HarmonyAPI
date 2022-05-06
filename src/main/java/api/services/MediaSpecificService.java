@@ -959,7 +959,7 @@ public class MediaSpecificService {
         return peopleList;
     }
 
-    public PeopleMediaResponseHelper addPersonEpisode(Integer id, Integer seasonid, Integer episodeid, PeopleEpisodeRequestHelper person) throws SQLException {
+    public PeopleMediaResponseHelper addPersonEpisode(Integer id, Integer seasonid, Integer episodeid, PeopleMediaRequestHelper person) throws SQLException {
         PeopleMediaResponseHelper personResult = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);

@@ -69,17 +69,17 @@ public class ReviewsRecord extends UpdatableRecordImpl<ReviewsRecord> implements
     }
 
     /**
-     * Setter for <code>harmony.reviews.datetime</code>.
+     * Setter for <code>harmony.reviews.creationDate</code>.
      */
-    public ReviewsRecord setDatetime(LocalDateTime value) {
+    public ReviewsRecord setCreationdate(LocalDateTime value) {
         set(3, value);
         return this;
     }
 
     /**
-     * Getter for <code>harmony.reviews.datetime</code>.
+     * Getter for <code>harmony.reviews.creationDate</code>.
      */
-    public LocalDateTime getDatetime() {
+    public LocalDateTime getCreationdate() {
         return (LocalDateTime) get(3);
     }
 
@@ -168,7 +168,7 @@ public class ReviewsRecord extends UpdatableRecordImpl<ReviewsRecord> implements
 
     @Override
     public Field<LocalDateTime> field4() {
-        return Reviews.REVIEWS.DATETIME;
+        return Reviews.REVIEWS.CREATIONDATE;
     }
 
     @Override
@@ -203,7 +203,7 @@ public class ReviewsRecord extends UpdatableRecordImpl<ReviewsRecord> implements
 
     @Override
     public LocalDateTime component4() {
-        return getDatetime();
+        return getCreationdate();
     }
 
     @Override
@@ -238,7 +238,7 @@ public class ReviewsRecord extends UpdatableRecordImpl<ReviewsRecord> implements
 
     @Override
     public LocalDateTime value4() {
-        return getDatetime();
+        return getCreationdate();
     }
 
     @Override
@@ -276,7 +276,7 @@ public class ReviewsRecord extends UpdatableRecordImpl<ReviewsRecord> implements
 
     @Override
     public ReviewsRecord value4(LocalDateTime value) {
-        setDatetime(value);
+        setCreationdate(value);
         return this;
     }
 
@@ -324,13 +324,13 @@ public class ReviewsRecord extends UpdatableRecordImpl<ReviewsRecord> implements
     /**
      * Create a detached, initialised ReviewsRecord
      */
-    public ReviewsRecord(Integer reviewid, Integer userid, Integer mediaid, LocalDateTime datetime, Double rating, String review, Integer likes) {
+    public ReviewsRecord(Integer reviewid, Integer userid, Integer mediaid, LocalDateTime creationdate, Double rating, String review, Integer likes) {
         super(Reviews.REVIEWS);
 
         setReviewid(reviewid);
         setUserid(userid);
         setMediaid(mediaid);
-        setDatetime(datetime);
+        setCreationdate(creationdate);
         setRating(rating);
         setReview(review);
         setLikes(likes);

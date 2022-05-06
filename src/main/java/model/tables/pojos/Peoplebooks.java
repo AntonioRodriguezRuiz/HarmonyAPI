@@ -19,6 +19,7 @@ public class Peoplebooks implements Serializable {
     private Integer bookid;
     private Integer personid;
     private String  role;
+    private Byte    roletype;
 
     public Peoplebooks() {}
 
@@ -27,18 +28,21 @@ public class Peoplebooks implements Serializable {
         this.bookid = value.bookid;
         this.personid = value.personid;
         this.role = value.role;
+        this.roletype = value.roletype;
     }
 
     public Peoplebooks(
         Integer peoplebooksid,
         Integer bookid,
         Integer personid,
-        String  role
+        String  role,
+        Byte    roletype
     ) {
         this.peoplebooksid = peoplebooksid;
         this.bookid = bookid;
         this.personid = personid;
         this.role = role;
+        this.roletype = roletype;
     }
 
     /**
@@ -101,6 +105,21 @@ public class Peoplebooks implements Serializable {
         return this;
     }
 
+    /**
+     * Getter for <code>harmony.peopleBooks.roletype</code>.
+     */
+    public Byte getRoletype() {
+        return this.roletype;
+    }
+
+    /**
+     * Setter for <code>harmony.peopleBooks.roletype</code>.
+     */
+    public Peoplebooks setRoletype(Byte roletype) {
+        this.roletype = roletype;
+        return this;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -134,6 +153,12 @@ public class Peoplebooks implements Serializable {
         }
         else if (!role.equals(other.role))
             return false;
+        if (roletype == null) {
+            if (other.roletype != null)
+                return false;
+        }
+        else if (!roletype.equals(other.roletype))
+            return false;
         return true;
     }
 
@@ -145,6 +170,7 @@ public class Peoplebooks implements Serializable {
         result = prime * result + ((this.bookid == null) ? 0 : this.bookid.hashCode());
         result = prime * result + ((this.personid == null) ? 0 : this.personid.hashCode());
         result = prime * result + ((this.role == null) ? 0 : this.role.hashCode());
+        result = prime * result + ((this.roletype == null) ? 0 : this.roletype.hashCode());
         return result;
     }
 
@@ -156,6 +182,7 @@ public class Peoplebooks implements Serializable {
         sb.append(", ").append(bookid);
         sb.append(", ").append(personid);
         sb.append(", ").append(role);
+        sb.append(", ").append(roletype);
 
         sb.append(")");
         return sb.toString();

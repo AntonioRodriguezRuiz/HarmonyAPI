@@ -6,8 +6,12 @@ import api.helpers.response.TrackerResponseHelper;
 import api.services.MediaService;
 import api.services.TrackerService;
 import api.services.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -33,9 +37,17 @@ public class TrackerController {
     @Autowired
     private TrackerService trackerService;
 
+    @Operation(summary = "Get all trackers for a user")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Trackers found"),
+        @ApiResponse(responseCode = "404", description = "User not found")
+    })
     @GetMapping
-    public List<TrackerResponseHelper> getTracking(@PathVariable Integer id) throws SQLException {
-        return trackerService.getTracking(id);
+    public ResponseEntity<List<TrackerResponseHelper>> getTracking(@PathVariable Integer id) throws SQLException {
+        if (!userService.userExists(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(trackerService.getTracking(id), HttpStatus.OK);
     }
 
     @PostMapping

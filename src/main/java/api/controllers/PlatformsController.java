@@ -1,15 +1,19 @@
 package api.controllers;
 
+import api.helpers.request.PlatformRequestHelper;
+import api.helpers.response.PlatformResponseHelper;
+import api.middlewares.UserMiddlewares;
 import api.services.PlatformsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import src.main.java.model.tables.pojos.Platforms;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -27,4 +31,9 @@ public class PlatformsController {
         return platformsService.getAllPlatforms();
     }
 
+    @PostMapping
+    public ResponseEntity<PlatformResponseHelper> postPlatform(@RequestBody PlatformRequestHelper platform) throws SQLException {
+        UserMiddlewares.isAdmin(platform.getUserid());
+        return new ResponseEntity<>(platformsService.postPlatform(platform), HttpStatus.CREATED);
+    }
 }

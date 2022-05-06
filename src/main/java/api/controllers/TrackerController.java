@@ -50,8 +50,15 @@ public class TrackerController {
         return new ResponseEntity<>(trackerService.getTracking(id), HttpStatus.OK);
     }
 
+    @Operation(summary = "Creates a new tracker")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Tracker created"),
+        @ApiResponse(responseCode = "404", description = "User not found"),
+        @ApiResponse(responseCode = "409", description = "Tracker already exists"),
+        @ApiResponse(responseCode = "400", description = "Invalid request")
+    })
     @PostMapping
-    public TrackerResponseHelper postTracker(@PathVariable Integer id, @RequestBody TrackerRequestHelper tracker) throws SQLException {
+    public ResponseEntity<TrackerResponseHelper> postTracker(@PathVariable Integer id, @RequestBody TrackerRequestHelper tracker) throws SQLException {
         if (TrackerState.of(tracker.state()) == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
@@ -61,6 +68,6 @@ public class TrackerController {
         if (!userService.userExists(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return trackerService.postTracker(id, tracker);
+        return new ResponseEntity<>(trackerService.postTracker(id, tracker), HttpStatus.OK);
     }
 }

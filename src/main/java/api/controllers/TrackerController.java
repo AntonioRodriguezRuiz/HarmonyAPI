@@ -44,11 +44,17 @@ public class TrackerController {
         @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
     @GetMapping
-    public ResponseEntity<List<TrackerResponseHelper>> getTracking(@PathVariable Integer id) throws SQLException {
+    public ResponseEntity<List<TrackerResponseHelper>> getTracking(
+        @PathVariable Integer id,
+        @RequestParam(name = "state", required = false) Integer state
+    ) throws SQLException {
         if (!userService.userExists(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(trackerService.getTracking(id), HttpStatus.OK);
+        if (state != null && TrackerState.of(state) == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(trackerService.getTracking(id, state == null ? null : TrackerState.of(state)), HttpStatus.OK);
     }
 
     @Operation(summary = "Creates a new tracker")

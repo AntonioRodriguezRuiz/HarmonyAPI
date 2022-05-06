@@ -1,6 +1,7 @@
 package api.services;
 
 import api.GlobalValues;
+import api.helpers.enums.TrackerState;
 import api.helpers.request.TrackerRequestHelper;
 import api.helpers.response.TrackerResponseHelper;
 import org.jooq.DSLContext;
@@ -28,7 +29,7 @@ import src.main.java.model.tables.pojos.Media;
 @Service
 public class TrackerService {
 
-    public List<TrackerResponseHelper> getTracking(Integer userId) throws SQLException {
+    public List<TrackerResponseHelper> getTracking(Integer userId, TrackerState state) throws SQLException {
         List<TrackerResponseHelper> trackers = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
@@ -46,6 +47,11 @@ public class TrackerService {
                         .into(Media.class)
                 ))
                 .toList();
+            if (state != null) {
+                trackers = trackers.stream()
+                    .filter(t -> t.state() == state)
+                    .toList();
+            }
         } catch (ResponseStatusException | SQLException e) {
             if (e instanceof ResponseStatusException) {
                 throw e;

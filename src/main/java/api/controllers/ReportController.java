@@ -26,20 +26,6 @@ public class ReportController {
     @Autowired
     ReportService reportService;
 
-    @Operation(summary= "Deletes a report.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item destroyed"),
-            @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
-            @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)
-    })
-    @DeleteMapping("/{id}")
-    public ResponseEntity deleteReport(@PathVariable Integer id, @RequestBody UseridBodyHelper useridBody) throws SQLException {
-        UserMiddlewares.isAdmin(useridBody.userid());
-        reportService.deleteReport(id);
-        return new ResponseEntity(HttpStatus.FORBIDDEN);
-    }
-
 
     @Operation(summary = "Get all reports")
     @ApiResponses(value = {
@@ -52,12 +38,32 @@ public class ReportController {
         return ReportService.getAllReports(offset);
     }
 
+
+    @Operation(summary = "Report an user's review")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Item created"),
+            @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
+            @ApiResponse(responseCode = "409", description = "Item already exists", content = @Content)})
     @PostMapping
     public ResponseEntity<ReportResponseHelper> postReport(@RequestBody ReportRequestHelper report) throws SQLException {
         if(report.useridreported() == null || report.reviewid() == null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(reportService.postReport(report), HttpStatus.CREATED);
+    }
+
+    @Operation(summary= "Deletes a report.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Item destroyed"),
+            @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteReport(@PathVariable Integer id, @RequestBody UseridBodyHelper useridBody) throws SQLException {
+        UserMiddlewares.isAdmin(useridBody.userid());
+        reportService.deleteReport(id);
+        return new ResponseEntity(HttpStatus.FORBIDDEN);
     }
 
 }

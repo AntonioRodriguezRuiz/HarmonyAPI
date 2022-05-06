@@ -36,7 +36,7 @@ public class ListController {
     @Autowired
     private UserService userService;
 
-    @Operation
+    @Operation(summary = "Get all lists of a user")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Lists found", content = @Content),
         @ApiResponse(responseCode = "404", description = "User not found", content = @Content)

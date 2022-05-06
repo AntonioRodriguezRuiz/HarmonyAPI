@@ -49,8 +49,8 @@ public class UserSpecificController {
     @Operation(summary = "Modifies an user's information")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User modified"),
-            @ApiResponse(responseCode = "404", description = "User not found")
-
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid request")
     })
     @PutMapping
     public ResponseEntity<UserResponseHelper> putUser(@PathVariable Integer id, @RequestBody UserRequestHelper user) throws SQLException {

@@ -9,7 +9,6 @@ import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import src.main.java.model.Routines;
-import src.main.java.model.tables.records.UsersRecord;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -33,6 +32,23 @@ public class UserService {
                 .from(USERS)
                 .where(USERS.USERNAME.eq(user.username()))
                 .or(USERS.EMAIL.eq(user.email()))
+                .fetch()
+                .isEmpty();
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean userExists(Integer userId) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            return !create.select()
+                .from(USERS)
+                .where(USERS.USERID.eq(userId))
                 .fetch()
                 .isEmpty();
         } catch (ResponseStatusException | SQLException e) {

@@ -1,5 +1,6 @@
 package api.controllers;
 
+import api.helpers.request.ReviewLikesRequestHelper;
 import api.helpers.request.ReviewRequestHelper;
 import api.helpers.request.UseridBodyHelper;
 import api.helpers.response.ReviewResponseHelper;
@@ -46,4 +47,32 @@ public class ReviewSpecificController {
         return new ResponseEntity((HttpStatus.NO_CONTENT));
     }
 
+    @Operation(summary = "Like a review.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Item created"),
+            @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
+            @ApiResponse(responseCode = "409", description = "You have already liked this", content = @Content)})
+    @PostMapping("/likes")
+    public ResponseEntity<ReviewResponseHelper> postReview(@PathVariable Integer id, @RequestBody ReviewLikesRequestHelper reviewlikes) throws SQLException {
+        if(reviewlikes.userid() == null){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        if(reviewlikes.reviewid()== null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<ReviewResponseHelper>(reviewSpecificService.postLike(id, reviewlikes), HttpStatus.CREATED);
+    }
+    @Operation(summary = "Unlikes a review.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Item destroyed"),
+            @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
+    @DeleteMapping("/likes/{likeid}")
+    public ResponseEntity deleteReview(@PathVariable Integer id, @PathVariable Integer likeid, @RequestBody ReviewRequestHelper review) throws SQLException {
+        UserMiddlewares.isOwnerOfLike(review.userid(), review.reviewid());
+        return new ResponseEntity<>((HttpStatus.NO_CONTENT));
+    }
 }

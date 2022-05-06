@@ -1,6 +1,7 @@
 package api.services;
 
 import api.GlobalValues;
+import api.helpers.request.TrackerRequestHelper;
 import api.helpers.response.TrackerResponseHelper;
 import api.helpers.response.UserResponseHelper;
 import org.jooq.DSLContext;
@@ -16,6 +17,7 @@ import java.util.List;
 
 import static src.main.java.model.Tables.*;
 import src.main.java.model.tables.pojos.Media;
+import src.main.java.model.Routines;
 
 /**
  * UserSpecificService
@@ -68,5 +70,36 @@ public class UserSpecificService {
             e.printStackTrace();
         }
         return trackers;
+    }
+
+    public TrackerResponseHelper postTracker(Integer userId, TrackerRequestHelper tracker) throws SQLException {
+        TrackerResponseHelper response = null;
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            Routines.newtracker(
+                create.configuration(),
+                userId,
+                tracker.mediaId(),
+                tracker.state()
+            );
+            response = new TrackerResponseHelper(
+                create.select()
+                    .from(TRACKERS)
+                    .orderBy(TRACKERS.TRACKERID.desc())
+                    .fetch()
+                    .get(0),
+                create.select()
+                    .from(MEDIA)
+                    .where(MEDIA.MEDIAID.eq(tracker.mediaId()))
+                    .fetch().get(0)
+                    .into(Media.class)
+            );
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return response;
     }
 }

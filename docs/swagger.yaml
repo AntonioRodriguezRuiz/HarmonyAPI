@@ -502,7 +502,7 @@ paths:
                 noEpisodes:
                   type: integer
                   format: int32
-      required: true
+        required: true
       responses:
         '201':
           description: Item created

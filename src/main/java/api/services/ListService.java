@@ -1,6 +1,7 @@
 package api.services;
 
 import api.GlobalValues;
+import api.helpers.request.ListRequestHelper;
 import api.helpers.response.ListResponseHelper;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -11,10 +12,12 @@ import org.springframework.web.server.ResponseStatusException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static src.main.java.model.Tables.*;
 import src.main.java.model.tables.pojos.Media;
+import src.main.java.model.Routines;
 
 /**
  * ListService
@@ -50,5 +53,33 @@ public class ListService {
         }
         return lists;
 
+    }
+
+    public ListResponseHelper postList(Integer userId, ListRequestHelper list) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            Routines.newlist(
+                create.configuration(),
+                userId,
+                list.listName(),
+                list.icon()
+            );
+            return new ListResponseHelper(
+                create.select()
+                    .from(LISTS)
+                    .where(LISTS.USERID.eq(userId))
+                    .orderBy(LISTS.LISTID.desc())
+                    .limit(1)
+                    .fetch()
+                    .get(0),
+                new ArrayList<>()
+            );
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return null;
     }
 }

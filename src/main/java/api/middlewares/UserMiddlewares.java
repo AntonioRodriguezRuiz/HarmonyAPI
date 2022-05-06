@@ -16,6 +16,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static src.main.java.model.Tables.*;
+import static src.main.java.model.Tables.*;
+import static src.main.java.model.Tables.USERS;
 
 public class UserMiddlewares {
 
@@ -60,6 +62,27 @@ public class UserMiddlewares {
 
             if(reviewUser.isEmpty()){
                 throw  new ResponseStatusException(HttpStatus.FORBIDDEN);
+            }
+
+        } catch (ResponseStatusException | SQLException e){
+            if(e instanceof ResponseStatusException){
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
+
+    public static void existsUser(Integer userid) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+
+            Result<Record> userList = create.select()
+                    .from(USERS)
+                    .where(USERS.USERID.eq(userid))
+                    .fetch();
+
+            if(userList.isEmpty()){
+                throw  new ResponseStatusException(HttpStatus.BAD_REQUEST);
             }
 
         } catch (ResponseStatusException | SQLException e){

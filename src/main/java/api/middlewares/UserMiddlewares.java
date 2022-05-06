@@ -15,8 +15,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
-import static src.main.java.model.Tables.ADMINS;
-import static src.main.java.model.Tables.REVIEWS;
+import static src.main.java.model.Tables.*;
 
 public class UserMiddlewares {
 
@@ -71,4 +70,34 @@ public class UserMiddlewares {
         }
     }
 
+    public static void isOwnerOfLike(Integer userid, Integer reviewid) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+
+            Result<Record> review = create.select()
+                    .from(REVIEWLIKES)
+                    .where(REVIEWLIKES.REVIEWID.eq(reviewid))
+                    .fetch();
+
+            if(review.isEmpty()){
+                throw  new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+
+            Result<Record> reviewUser = create.select()
+                    .from(REVIEWLIKES)
+                    .where(REVIEWLIKES.REVIEWID.eq(reviewid)
+                            .and(REVIEWLIKES.USERID.eq(userid)))
+                    .fetch();
+
+            if(reviewUser.isEmpty()){
+                throw  new ResponseStatusException(HttpStatus.FORBIDDEN);
+            }
+
+        } catch (ResponseStatusException | SQLException e){
+            if(e instanceof ResponseStatusException){
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
 }

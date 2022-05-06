@@ -26,7 +26,7 @@ import java.sql.SQLException;
  **/
 
 @RestController
-@RequestMapping("/api/v1/user/{id}")
+@RequestMapping("/api/v1/user/{userId}")
 public class UserSpecificController {
 
     @Autowired
@@ -40,11 +40,11 @@ public class UserSpecificController {
             @ApiResponse(responseCode = "404", description = "User not found")
     })
     @GetMapping
-    public ResponseEntity<UserResponseHelper> getUser(@PathVariable Integer id) throws SQLException {
-        if (!userService.userExists(id)) {
+    public ResponseEntity<UserResponseHelper> getUser(@PathVariable Integer userId) throws SQLException {
+        if (!userService.userExists(userId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(userSpecificService.getUser(id), HttpStatus.OK);
+        return new ResponseEntity<>(userSpecificService.getUser(userId), HttpStatus.OK);
     }
 
     @Operation(summary = "Modifies an user's information")
@@ -54,12 +54,12 @@ public class UserSpecificController {
             @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content)
     })
     @PutMapping
-    public ResponseEntity<UserResponseHelper> putUser(@PathVariable Integer id, @RequestBody UserRequestHelper user) throws SQLException {
-        if (!userService.userExists(id)) {
+    public ResponseEntity<UserResponseHelper> putUser(@PathVariable Integer userId, @RequestBody UserRequestHelper user) throws SQLException {
+        if (!userService.userExists(userId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        UserMiddlewares.isAccountOwner(id);
-        return new ResponseEntity<>(userSpecificService.putUser(id, user), HttpStatus.OK);
+        UserMiddlewares.isAccountOwner(userId);
+        return new ResponseEntity<>(userSpecificService.putUser(userId, user), HttpStatus.OK);
     }
 
     @Operation(summary = "Deletes an user")
@@ -68,12 +68,12 @@ public class UserSpecificController {
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
     @DeleteMapping
-    public ResponseEntity<UserResponseHelper> deleteUser(@PathVariable Integer id) throws SQLException {
-        if (!userService.userExists(id)) {
+    public ResponseEntity<UserResponseHelper> deleteUser(@PathVariable Integer userId) throws SQLException {
+        if (!userService.userExists(userId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        UserMiddlewares.isAccountOwnerOrAdmin(id);
-        userSpecificService.deleteUser(id);
+        UserMiddlewares.isAccountOwnerOrAdmin(userId);
+        userSpecificService.deleteUser(userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

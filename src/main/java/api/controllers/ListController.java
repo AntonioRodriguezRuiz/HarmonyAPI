@@ -26,7 +26,7 @@ import java.util.List;
  **/
 
 @RestController
-@RequestMapping("/api/v1/user/{id}/lists")
+@RequestMapping("/api/v1/user/{userId}/lists")
 public class ListController {
 
     @Autowired
@@ -40,11 +40,11 @@ public class ListController {
         @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
     @GetMapping
-    public ResponseEntity<List<ListResponseHelper>> getLists(@PathVariable Integer id) throws SQLException {
-        if (!userService.userExists(id)) {
+    public ResponseEntity<List<ListResponseHelper>> getLists(@PathVariable Integer userId) throws SQLException {
+        if (!userService.userExists(userId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(listService.getLists(id), HttpStatus.OK);
+        return new ResponseEntity<>(listService.getLists(userId), HttpStatus.OK);
     }
 
     @Operation(summary = "Creates a new list for the user")
@@ -53,10 +53,10 @@ public class ListController {
         @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
     @PostMapping
-    public ResponseEntity<ListResponseHelper> postList(@PathVariable Integer id, ListRequestHelper list) throws SQLException {
-        if (!userService.userExists(id)) {
+    public ResponseEntity<ListResponseHelper> postList(@PathVariable Integer userId, ListRequestHelper list) throws SQLException {
+        if (!userService.userExists(userId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(listService.postList(id, list), HttpStatus.CREATED);
+        return new ResponseEntity<>(listService.postList(userId, list), HttpStatus.CREATED);
     }
 }

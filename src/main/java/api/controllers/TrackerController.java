@@ -28,7 +28,7 @@ import java.util.List;
  **/
 
 @RestController
-@RequestMapping("/api/v1/user/{id}/tracking")
+@RequestMapping("/api/v1/user/{userId}/tracking")
 public class TrackerController {
 
     @Autowired
@@ -45,16 +45,16 @@ public class TrackerController {
     })
     @GetMapping
     public ResponseEntity<List<TrackerResponseHelper>> getTracking(
-        @PathVariable Integer id,
+        @PathVariable Integer userId,
         @RequestParam(name = "state", required = false) Integer state
     ) throws SQLException {
-        if (!userService.userExists(id)) {
+        if (!userService.userExists(userId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         if (state != null && TrackerState.of(state) == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(trackerService.getTracking(id, state == null ? null : TrackerState.of(state)), HttpStatus.OK);
+        return new ResponseEntity<>(trackerService.getTracking(userId, state == null ? null : TrackerState.of(state)), HttpStatus.OK);
     }
 
     @Operation(summary = "Creates a new tracker")
@@ -65,16 +65,16 @@ public class TrackerController {
         @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content)
     })
     @PostMapping
-    public ResponseEntity<TrackerResponseHelper> postTracker(@PathVariable Integer id, @RequestBody TrackerRequestHelper tracker) throws SQLException {
+    public ResponseEntity<TrackerResponseHelper> postTracker(@PathVariable Integer userId, @RequestBody TrackerRequestHelper tracker) throws SQLException {
         if (TrackerState.of(tracker.state()) == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         if (!mediaService.mediaExists(tracker.mediaId())) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        if (!userService.userExists(id)) {
+        if (!userService.userExists(userId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(trackerService.postTracker(id, tracker), HttpStatus.OK);
+        return new ResponseEntity<>(trackerService.postTracker(userId, tracker), HttpStatus.OK);
     }
 }

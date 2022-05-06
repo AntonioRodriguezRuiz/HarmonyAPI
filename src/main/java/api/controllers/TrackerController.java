@@ -4,8 +4,8 @@ import api.helpers.enums.TrackerState;
 import api.helpers.request.TrackerRequestHelper;
 import api.helpers.response.TrackerResponseHelper;
 import api.services.MediaService;
+import api.services.TrackerService;
 import api.services.UserService;
-import api.services.UserSpecificService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -31,11 +31,11 @@ public class TrackerController {
     @Autowired
     private UserService userService;
     @Autowired
-    private UserSpecificService userSpecificService;
+    private TrackerService trackerService;
 
     @GetMapping
     public List<TrackerResponseHelper> getTracking(@PathVariable Integer id) throws SQLException {
-        return userSpecificService.getTracking(id);
+        return trackerService.getTracking(id);
     }
 
     @PostMapping
@@ -49,6 +49,6 @@ public class TrackerController {
         if (!userService.userExists(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return userSpecificService.postTracker(id, tracker);
+        return trackerService.postTracker(id, tracker);
     }
 }

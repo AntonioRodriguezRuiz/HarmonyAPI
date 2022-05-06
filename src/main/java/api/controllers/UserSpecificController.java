@@ -68,6 +68,21 @@ public class UserSpecificController {
         return new ResponseEntity<>(userSpecificService.putUser(id, user), HttpStatus.OK);
     }
 
+    @Operation(summary = "Deletes an user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "User deleted"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    @DeleteMapping
+    public ResponseEntity<UserResponseHelper> deleteUser(@PathVariable Integer id) throws SQLException {
+        if (!userService.userExists(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        UserMiddlewares.isAccountOwnerOrAdmin(id);
+        userSpecificService.deleteUser(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @GetMapping("/tracking")
     public List<TrackerResponseHelper> getTracking(@PathVariable Integer id) throws SQLException {
         return userSpecificService.getTracking(id);

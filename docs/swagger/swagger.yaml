@@ -1,0 +1,22 @@
+openapi: 3.0.0
+servers: []
+info:
+  description: |
+    This is the API documentation for Harmony.
+  version: 1.0.0
+  title: Harmony API
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: 'Media'
+    description: |
+      Media related endpoints.
+paths:
+  /api/v1/media:
+    get:
+      summary: "GET api/v1/media"
+      operationId: "getAllMedia"
+      responses:
+        "200":
+          description: "OK"

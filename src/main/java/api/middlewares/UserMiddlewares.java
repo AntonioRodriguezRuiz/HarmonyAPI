@@ -74,4 +74,13 @@ public class UserMiddlewares {
     public static void isAccountOwner(Integer userid) throws SQLException {
         // TODO: implement
     }
+
+    public static void isAccountOwnerOrAdmin(Integer id) throws SQLException {
+        try {
+            isAccountOwner(id);
+        }
+        catch (ResponseStatusException e){
+            isAdmin(id);
+        }
+    }
 }

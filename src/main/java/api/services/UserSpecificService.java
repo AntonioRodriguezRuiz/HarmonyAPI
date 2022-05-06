@@ -72,14 +72,27 @@ public class UserSpecificService {
                     .fetch().get(0)
             );
 
-        }
-        catch (ResponseStatusException | SQLException e) {
+        } catch (ResponseStatusException | SQLException e) {
             if (e instanceof ResponseStatusException) {
                 throw e;
             }
             e.printStackTrace();
         }
         return response;
+    }
+
+    public void deleteUser(Integer id) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            create.deleteFrom(USERS)
+                .where(USERS.USERID.eq(id))
+                .execute();
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
     }
 
     public List<TrackerResponseHelper> getTracking(Integer userId) throws SQLException {

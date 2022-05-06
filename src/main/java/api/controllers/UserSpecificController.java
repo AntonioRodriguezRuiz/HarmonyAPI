@@ -2,8 +2,10 @@ package api.controllers;
 
 import api.helpers.enums.TrackerState;
 import api.helpers.request.TrackerRequestHelper;
+import api.helpers.request.UserRequestHelper;
 import api.helpers.response.TrackerResponseHelper;
 import api.helpers.response.UserResponseHelper;
+import api.middlewares.UserMiddlewares;
 import api.services.MediaService;
 import api.services.UserService;
 import api.services.UserSpecificService;
@@ -49,6 +51,21 @@ public class UserSpecificController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(userSpecificService.getUser(id), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Modifies an user's information")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User modified"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+
+    })
+    @PutMapping
+    public ResponseEntity<UserResponseHelper> putUser(@PathVariable Integer id, @RequestBody UserRequestHelper user) throws SQLException {
+        if (!userService.userExists(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        UserMiddlewares.isAccountOwner(id);
+        return new ResponseEntity<>(userSpecificService.putUser(id, user), HttpStatus.OK);
     }
 
     @GetMapping("/tracking")

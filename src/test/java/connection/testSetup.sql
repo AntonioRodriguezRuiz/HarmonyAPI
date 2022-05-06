@@ -254,7 +254,7 @@ CREATE TABLE trackers(
                          FOREIGN KEY (mediaid) REFERENCES media(mediaid) ON DELETE CASCADE,
                          FOREIGN KEY (userid) REFERENCES users(userid) ON DELETE CASCADE,
 
-                         CONSTRAINT invalidState CHECK ( state >= 1 AND state <=4)
+                         CONSTRAINT invalidState CHECK ( state >= 0 AND state <=4)
 );
 
 CREATE TABLE lists(
@@ -342,7 +342,7 @@ DELIMITER //
 ##############################################################################
 #              PART 1 -> NEW ENTRIES PROCEDURES (INSERTIONS)                 #
 ##############################################################################
-
+DROP PROCEDURE IF EXISTS newUser;
 CREATE PROCEDURE newUser(username VARCHAR(15), email VARCHAR(100), password VARCHAR(36), isAdmin BOOLEAN)
 BEGIN
     START TRANSACTION;
@@ -373,6 +373,7 @@ BEGIN
     END;
 END//
 
+DROP PROCEDURE IF EXISTS newSeries;
 CREATE PROCEDURE newSeries(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500))
 BEGIN
 START TRANSACTION;
@@ -409,6 +410,7 @@ COMMIT;
 END;
 END //
 
+DROP PROCEDURE IF EXISTS newSeason;
 CREATE PROCEDURE newSeason(title VARCHAR(120), releaseDate DATE, seasonNo INT, noEpisodes INT)
 BEGIN
     START TRANSACTION;
@@ -454,6 +456,7 @@ COMMIT;
 END;
 END //
 
+DROP PROCEDURE IF EXISTS newEpisode;
 CREATE PROCEDURE newEpisode(title VARCHAR(120), releaseDate DATE, seasonNo INT, episodeName VARCHAR(60), episodeNo INT)
 BEGIN
     START TRANSACTION;
@@ -480,6 +483,7 @@ BEGIN
 END //
 
 DELIMITER //
+DROP PROCEDURE IF EXISTS newEpisodeById;
 CREATE PROCEDURE newEpisodeById(seasonid INT, episodeName VARCHAR(60), episodeNo INT)
 BEGIN
     START TRANSACTION;
@@ -499,6 +503,7 @@ BEGIN
     END;
 END //
 
+DROP PROCEDURE IF EXISTS newVideogame;
 CREATE PROCEDURE newVideogame(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500), company VARCHAR(60))
 BEGIN
     START TRANSACTION;
@@ -535,6 +540,7 @@ BEGIN
     END;
 END //
 
+DROP PROCEDURE IF EXISTS newPlatform;
 CREATE PROCEDURE newPlatform(platformName VARCHAR(60))
 BEGIN
     START TRANSACTION;
@@ -552,6 +558,7 @@ BEGIN
     END;
 END //
 
+DROP PROCEDURE IF EXISTS newVideogamePlatform;
 CREATE PROCEDURE newVideogamePlatform(platformName VARCHAR(60), title VARCHAR(120), releaseDate DATE)
 BEGIN
     START TRANSACTION;
@@ -578,6 +585,7 @@ BEGIN
 END //
 
 DELIMITER //
+DROP PROCEDURE IF EXISTS newVideogamePlatformById;
 CREATE PROCEDURE newVideogamePlatformById(mediaid INT, platformid INT)
 BEGIN
     START TRANSACTION;
@@ -600,6 +608,7 @@ BEGIN
     END;
 END //
 
+DROP PROCEDURE IF EXISTS newBook;
 CREATE PROCEDURE newBook(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500), collection VARCHAR(120))
 BEGIN
     START TRANSACTION;
@@ -636,6 +645,7 @@ BEGIN
     END;
 END //
 
+DROP PROCEDURE IF EXISTS newMovie;
 CREATE PROCEDURE newMovie(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500))
 BEGIN
     START TRANSACTION;
@@ -672,6 +682,7 @@ BEGIN
     END;
 END //
 
+DROP PROCEDURE IF EXISTS newGenre;
 CREATE PROCEDURE newGenre(name VARCHAR(50))
 BEGIN
     START TRANSACTION;
@@ -690,6 +701,7 @@ BEGIN
     END;
 END //
 
+DROP PROCEDURE IF EXISTS newMediaGenre;
 CREATE PROCEDURE newMediaGenre(title VARCHAR(120), releaseDate DATE, genre VARCHAR(50))
 BEGIN
     START TRANSACTION;
@@ -718,6 +730,7 @@ BEGIN
 END //
 
 DELIMITER //
+DROP PROCEDURE IF EXISTS newMediaGenreById;
 CREATE PROCEDURE newMediaGenreById(mediaid INT, genreid INT)
 BEGIN
     START TRANSACTION;
@@ -737,6 +750,7 @@ BEGIN
     END;
 END //
 
+DROP PROCEDURE IF EXISTS newTracker;
 CREATE PROCEDURE newTracker(media INT, user INT, state INT)
 BEGIN
     START TRANSACTION;
@@ -756,6 +770,7 @@ BEGIN
     END;
 END //
 
+DROP PROCEDURE IF EXISTS newList;
 CREATE PROCEDURE newList(user INT, listName VARCHAR(60), icon NVARCHAR(1))
 BEGIN
     START TRANSACTION;
@@ -775,6 +790,7 @@ BEGIN
     END;
 END //
 
+DROP PROCEDURE IF EXISTS newListMedia;
 CREATE PROCEDURE newListMedia(list INT, media INT)
 BEGIN
     START TRANSACTION;
@@ -794,6 +810,7 @@ BEGIN
     END;
 END //
 
+DROP PROCEDURE IF EXISTS newReview;
 CREATE PROCEDURE newReview(user INT, media INT, rating FLOAT, review NVARCHAR(2800))
 BEGIN
     START TRANSACTION;
@@ -814,6 +831,7 @@ BEGIN
     END;
 END //
 
+DROP PROCEDURE IF EXISTS newReport;
 CREATE PROCEDURE newReport(userReporter INT, userReported INT, review INT, reason VARCHAR(120))
 BEGIN
     START TRANSACTION;
@@ -833,6 +851,7 @@ BEGIN
     END;
 END //
 
+DROP PROCEDURE IF EXISTS newPerson;
 CREATE PROCEDURE newPerson(name VARCHAR(60), birthdate DATE, picture VARCHAR(240))
 BEGIN
     START TRANSACTION;
@@ -858,6 +877,7 @@ BEGIN
     END;
 END //
 
+DROP PROCEDURE IF EXISTS newPersonMovie;
 CREATE PROCEDURE newPersonMovie(personname VARCHAR(60), date DATE, title VARCHAR(120), releaseDate DATE, role VARCHAR(120), roletype TINYINT)
 BEGIN
     START TRANSACTION;
@@ -889,6 +909,7 @@ BEGIN
     END;
 END //
 
+DROP PROCEDURE IF EXISTS newPersonBook;
 CREATE PROCEDURE newPersonBook(personname VARCHAR(60), date DATE, title VARCHAR(120), releaseDate DATE, role VARCHAR(120))
 BEGIN
     START TRANSACTION;
@@ -920,6 +941,7 @@ BEGIN
     END;
 END //
 
+DROP PROCEDURE IF EXISTS newPersonVideogame;
 CREATE PROCEDURE newPersonVideogame(personname VARCHAR(60), date DATE, title VARCHAR(120), releaseDate DATE, role VARCHAR(120), roletype TINYINT)
 BEGIN
     START TRANSACTION;
@@ -951,6 +973,7 @@ BEGIN
     END;
 END //
 
+DROP PROCEDURE IF EXISTS newPersonEpisode;
 CREATE PROCEDURE newPersonEpisode(personname VARCHAR(60), date DATE, title VARCHAR(120), releaseDate DATE, seasonNo INT, episodeNo INT, role VARCHAR(120), roletype TINYINT)
 BEGIN
     START TRANSACTION;
@@ -987,6 +1010,7 @@ BEGIN
 END //
 
 DELIMITER //
+DROP PROCEDURE IF EXISTS newPersonEpisodeById;
 CREATE PROCEDURE newPersonEpisodeById(personid INT, episodeid INT, role VARCHAR(120), roletype TINYINT)
 BEGIN
     START TRANSACTION;
@@ -1001,7 +1025,7 @@ END//
 ##############################################################################
 #                   PART 2 -> Reviews RELATED PROCEDURES                     #
 ##############################################################################
-
+DROP PROCEDURE IF EXISTS updateReview;
 CREATE PROCEDURE updateReview(id INT, newreview NVARCHAR(2800), newrating FLOAT(3))
 BEGIN
     START TRANSACTION;
@@ -1022,6 +1046,7 @@ BEGIN
     END;
 END //
 
+DROP PROCEDURE IF EXISTS likeReview;
 CREATE PROCEDURE likeReview(user INT, review INT)
 BEGIN
     START TRANSACTION;
@@ -1042,6 +1067,7 @@ BEGIN
     END;
 END //
 
+DROP PROCEDURE IF EXISTS unlikeReview;
 CREATE PROCEDURE unlikeReview(user INT, review INT)
 BEGIN
     START TRANSACTION;

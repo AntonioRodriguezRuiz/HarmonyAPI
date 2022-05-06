@@ -34,8 +34,6 @@ import java.util.List;
 public class UserSpecificController {
 
     @Autowired
-    private MediaService mediaService;
-    @Autowired
     private UserService userService;
     @Autowired
     private UserSpecificService userSpecificService;
@@ -81,24 +79,5 @@ public class UserSpecificController {
         UserMiddlewares.isAccountOwnerOrAdmin(id);
         userSpecificService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @GetMapping("/tracking")
-    public List<TrackerResponseHelper> getTracking(@PathVariable Integer id) throws SQLException {
-        return userSpecificService.getTracking(id);
-    }
-
-    @PostMapping("/tracking")
-    public TrackerResponseHelper postTracker(@PathVariable Integer id, @RequestBody TrackerRequestHelper tracker) throws SQLException {
-        if (TrackerState.of(tracker.state()) == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-        if (!mediaService.mediaExists(tracker.mediaId())) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        if (!userService.userExists(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        return userSpecificService.postTracker(id, tracker);
     }
 }

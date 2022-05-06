@@ -5,6 +5,7 @@ import api.helpers.response.PlatformResponseHelper;
 import api.middlewares.UserMiddlewares;
 import api.services.PlatformsService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,12 @@ public class PlatformsController {
         return platformsService.getAllPlatforms();
     }
 
+    @Operation(summary = "Adds a new videogame platform")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Item created"),
+            @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
+            @ApiResponse(responseCode = "409", description = "This platform is already registered", content = @Content)})
     @PostMapping
     public ResponseEntity<PlatformResponseHelper> postPlatform(@RequestBody PlatformRequestHelper platform) throws SQLException {
         UserMiddlewares.isAdmin(platform.getUserid());

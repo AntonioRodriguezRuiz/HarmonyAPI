@@ -1,25 +1,20 @@
 package api.controllers;
 
-import api.helpers.enums.TrackerState;
-import api.helpers.request.TrackerRequestHelper;
 import api.helpers.request.UserRequestHelper;
-import api.helpers.response.TrackerResponseHelper;
 import api.helpers.response.UserResponseHelper;
 import api.middlewares.UserMiddlewares;
-import api.services.MediaService;
 import api.services.UserService;
 import api.services.UserSpecificService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * UserSpecificCOntroller

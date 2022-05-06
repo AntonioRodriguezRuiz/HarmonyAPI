@@ -280,7 +280,7 @@ public class MediaSpecificController {
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
     @PostMapping("/{seasonid}/{episodeid}/people")
-    public ResponseEntity<PeopleMediaResponseHelper> addPersonEpisode(@PathVariable Integer id, @PathVariable Integer seasonid, @PathVariable Integer episodeid, @RequestBody PeopleEpisodeRequestHelper person) throws SQLException {
+    public ResponseEntity<PeopleMediaResponseHelper> addPersonEpisode(@PathVariable Integer id, @PathVariable Integer seasonid, @PathVariable Integer episodeid, @RequestBody PeopleMediaRequestHelper person) throws SQLException {
         UserMiddlewares.isAdmin(person.getUserid());
         if(person.getPersonid()==null || person.getRole()==null || person.getRoleType()==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);

@@ -1,6 +1,5 @@
 package api.controllers;
 
-import api.helpers.request.ReviewLikesRequestHelper;
 import api.helpers.request.ReviewRequestHelper;
 import api.helpers.request.UseridBodyHelper;
 import api.helpers.response.ReviewResponseHelper;
@@ -41,8 +40,8 @@ public class ReviewSpecificController {
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
     @DeleteMapping
-    public ResponseEntity deleteReview(@PathVariable Integer id, @RequestBody ReviewRequestHelper review) throws SQLException{
-        UserMiddlewares.isOwnerOfReview(review.userid(), review.reviewid());
+    public ResponseEntity deleteReview(@PathVariable Integer id, @RequestBody UseridBodyHelper user) throws SQLException{
+        UserMiddlewares.isOwnerOfReview(user.userid(), id);
         reviewSpecificService.deleteReview(id);
         return new ResponseEntity((HttpStatus.NO_CONTENT));
     }
@@ -51,18 +50,14 @@ public class ReviewSpecificController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Item created"),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "409", description = "You have already liked this", content = @Content)})
     @PostMapping("/likes")
-    public ResponseEntity<ReviewResponseHelper> postReview(@PathVariable Integer id, @RequestBody ReviewLikesRequestHelper reviewlikes) throws SQLException {
-        if(reviewlikes.userid() == null){
+    public ResponseEntity<ReviewResponseHelper> postReviewLike(@PathVariable Integer id, @RequestBody UseridBodyHelper user) throws SQLException {
+        if(user.userid() == null){
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
-
-        if(reviewlikes.reviewid()== null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity<ReviewResponseHelper>(reviewSpecificService.postLike(id, reviewlikes), HttpStatus.CREATED);
+        return new ResponseEntity<>(reviewSpecificService.postLike(id, user), HttpStatus.CREATED);
     }
     @Operation(summary = "Unlikes a review.")
     @ApiResponses(value = {
@@ -71,8 +66,9 @@ public class ReviewSpecificController {
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
     @DeleteMapping("/likes/{likeid}")
-    public ResponseEntity deleteReview(@PathVariable Integer id, @PathVariable Integer likeid, @RequestBody ReviewRequestHelper review) throws SQLException {
-        UserMiddlewares.isOwnerOfLike(review.userid(), review.reviewid());
+    public ResponseEntity deleteReviewLike(@PathVariable Integer id, @PathVariable Integer likeid, @RequestBody UseridBodyHelper user) throws SQLException {
+        UserMiddlewares.isOwnerOfLike(user.userid(), id);
+        reviewSpecificService.deleteLike(likeid);
         return new ResponseEntity<>((HttpStatus.NO_CONTENT));
     }
 }

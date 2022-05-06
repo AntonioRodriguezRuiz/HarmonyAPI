@@ -16,6 +16,7 @@ import java.util.List;
 
 import static src.main.java.model.Tables.MEDIA;
 import static src.main.java.model.Tables.TRACKERS;
+import src.main.java.model.tables.pojos.Media;
 
 /**
  * TrackerService
@@ -42,7 +43,7 @@ public class TrackerService {
                         .from(MEDIA)
                         .where(MEDIA.MEDIAID.eq(t.get(TRACKERS.MEDIAID)))
                         .fetch().get(0)
-                        .into(src.main.java.model.tables.pojos.Media.class)
+                        .into(Media.class)
                 ))
                 .toList();
         } catch (ResponseStatusException | SQLException e) {

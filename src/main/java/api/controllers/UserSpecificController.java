@@ -6,6 +6,7 @@ import api.middlewares.UserMiddlewares;
 import api.services.UserService;
 import api.services.UserSpecificService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +49,9 @@ public class UserSpecificController {
 
     @Operation(summary = "Modifies an user's information")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User modified"),
-            @ApiResponse(responseCode = "404", description = "User not found"),
-            @ApiResponse(responseCode = "400", description = "Invalid request")
+            @ApiResponse(responseCode = "200", description = "User modified", content = @Content),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content)
     })
     @PutMapping
     public ResponseEntity<UserResponseHelper> putUser(@PathVariable Integer id, @RequestBody UserRequestHelper user) throws SQLException {
@@ -63,8 +64,8 @@ public class UserSpecificController {
 
     @Operation(summary = "Deletes an user")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "User deleted"),
-            @ApiResponse(responseCode = "404", description = "User not found")
+            @ApiResponse(responseCode = "204", description = "User deleted", content = @Content),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
     @DeleteMapping
     public ResponseEntity<UserResponseHelper> deleteUser(@PathVariable Integer id) throws SQLException {

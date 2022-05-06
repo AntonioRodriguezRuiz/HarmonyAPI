@@ -7,6 +7,7 @@ import api.services.MediaService;
 import api.services.TrackerService;
 import api.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +40,8 @@ public class TrackerController {
 
     @Operation(summary = "Get all trackers for a user")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Trackers found"),
-        @ApiResponse(responseCode = "404", description = "User not found")
+        @ApiResponse(responseCode = "200", description = "Trackers found", content = @Content),
+        @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
     @GetMapping
     public ResponseEntity<List<TrackerResponseHelper>> getTracking(@PathVariable Integer id) throws SQLException {
@@ -52,10 +53,10 @@ public class TrackerController {
 
     @Operation(summary = "Creates a new tracker")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Tracker created"),
-        @ApiResponse(responseCode = "404", description = "User not found"),
-        @ApiResponse(responseCode = "409", description = "Tracker already exists"),
-        @ApiResponse(responseCode = "400", description = "Invalid request")
+        @ApiResponse(responseCode = "201", description = "Tracker created", content = @Content),
+        @ApiResponse(responseCode = "404", description = "User not found", content = @Content),
+        @ApiResponse(responseCode = "409", description = "Tracker already exists", content = @Content),
+        @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content)
     })
     @PostMapping
     public ResponseEntity<TrackerResponseHelper> postTracker(@PathVariable Integer id, @RequestBody TrackerRequestHelper tracker) throws SQLException {

@@ -29,7 +29,7 @@ public class ReviewSpecificService {
 
             reviewList = create.select()
                     .from(REVIEWS)
-                    .where(REVIEWS.MEDIAID.eq(id))
+                    .where(REVIEWS.REVIEWID.eq(id))
                     .fetch();
 
 
@@ -81,10 +81,7 @@ public class ReviewSpecificService {
                 throw new ResponseStatusException((HttpStatus.NOT_FOUND));
             }
 
-            Record review = create.select()
-                    .from(REVIEWS)
-                    .where(REVIEWS.REVIEWID.eq(id))
-                    .fetch().get(0);
+            Record review = reviewList.get(0);
 
             reviewResult = ReviewResponseHelper.of(review);
         } catch (ResponseStatusException | SQLException e) {

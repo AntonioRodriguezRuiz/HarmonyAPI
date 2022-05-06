@@ -7,10 +7,14 @@ import api.helpers.response.UserResponseHelper;
 import api.services.MediaService;
 import api.services.UserService;
 import api.services.UserSpecificService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -34,9 +38,17 @@ public class UserSpecificController {
     @Autowired
     private UserSpecificService userSpecificService;
 
+    @Operation(summary = "Gets an user's information")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User found"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     @GetMapping
-    public UserResponseHelper getUser(@PathVariable Integer id) throws SQLException {
-        return userSpecificService.getUser(id);
+    public ResponseEntity<UserResponseHelper> getUser(@PathVariable Integer id) throws SQLException {
+        if (!userService.userExists(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(userSpecificService.getUser(id), HttpStatus.OK);
     }
 
     @GetMapping("/tracking")

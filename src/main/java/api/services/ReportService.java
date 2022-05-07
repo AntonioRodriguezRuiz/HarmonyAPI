@@ -2,7 +2,6 @@ package api.services;
 
 import api.GlobalValues;
 import api.helpers.request.ReportRequestHelper;
-import api.helpers.request.UseridBodyHelper;
 import api.helpers.response.ReportResponseHelper;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -63,6 +62,26 @@ public class ReportService {
         }
     }
 
+    private Result<Record> existsReport(Integer id) throws SQLException {
+        Result<Record> reportList = null;
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+
+            reportList = create.select()
+                    .from(REPORTS)
+                    .where(REPORTS.REPORTID.eq(id))
+                    .fetch();
+
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return reportList;
+    }
+
     private Result<Record> existsReview(Integer id) throws SQLException {
         Result<Record> reviewList = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
@@ -119,6 +138,11 @@ public class ReportService {
     public void deleteReport(Integer id) {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+
+            Result<Record> reportList = existsReport(id);
+            if(reportList.isEmpty()){
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
 
             create.deleteFrom(REPORTS)
                     .where(REPORTS.REPORTID.eq(id)).execute();

@@ -68,4 +68,20 @@ public class PeopleController {
         return new ResponseEntity(peopleService.postPerson(person), HttpStatus.CREATED);
     }
 
+    @Operation(summary = "modifies a person")
+    @ApiResponse(value = {
+            @ApiResponse(responseCode = "204", description = "Item modified"),
+            @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
+    @PutMapping("/people")
+    public ResponseEntity<PeopleRequestHelper> putPerson(@RequestBody PeopleRequestHelper person) throws SQLException {
+        UserMiddlewares.isAdmin(person.getPersonid());
+        if(person.getPersonid()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        peopleService.putPerson(person);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 }

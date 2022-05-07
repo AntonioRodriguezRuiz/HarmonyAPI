@@ -67,6 +67,7 @@ public class TrackerController {
     public ResponseEntity<TrackerResponseHelper> postTracker(@PathVariable Integer userId, @RequestBody TrackerRequestHelper tracker) throws SQLException {
         UserMiddlewares.userExists(userId);
         MediaMiddlewares.mediaExists(tracker.mediaId());
+        TrackerMiddlewares.validate(tracker.state());
         return new ResponseEntity<>(trackerService.postTracker(userId, tracker), HttpStatus.OK);
     }
 }

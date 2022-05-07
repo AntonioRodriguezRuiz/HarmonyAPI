@@ -1,17 +1,13 @@
 package api.services;
 
 import api.GlobalValues;
-import api.helpers.response.GenreResponseHelper;
 import org.jooq.DSLContext;
-import org.jooq.Record;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 
 import static src.main.java.model.Tables.GENRES;
 

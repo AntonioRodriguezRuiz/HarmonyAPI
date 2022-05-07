@@ -28,7 +28,7 @@ public class GenresMiddlewares {
                     .where(GENRES.NAME.eq(name))
                     .fetch()
                     .isEmpty()){
-                throw new ResponseStatusException(HttpStatus.CONFLICT);
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Genre already exists");
             }
 
         } catch (ResponseStatusException | SQLException e){
@@ -47,7 +47,7 @@ public class GenresMiddlewares {
                     .where(GENRES.GENREID.eq(id))
                     .fetch()
                     .isEmpty()){
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Genre does not exist");
             }
 
         } catch (ResponseStatusException | SQLException e){

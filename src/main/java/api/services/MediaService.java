@@ -265,6 +265,23 @@ public class MediaService {
         putMedia(videogame, VIDEOGAMES, canBePut(videogame, VIDEOGAMES));
     }
 
+    public boolean mediaExists(Integer mediaid) throws SQLException {
+        try(Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)){
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            return !create.select()
+                .from(MEDIA)
+                .where(MEDIA.MEDIAID.eq(mediaid))
+                .fetch()
+                .isEmpty();
+        } catch (ResponseStatusException | SQLException e){
+            if(e instanceof ResponseStatusException){
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public void canBePost(MediaRequestHelper media) throws SQLException {
         try(Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)){
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);

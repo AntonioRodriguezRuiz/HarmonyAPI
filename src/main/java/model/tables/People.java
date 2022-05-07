@@ -57,17 +57,17 @@ public class People extends TableImpl<PeopleRecord> {
     /**
      * The column <code>harmony.people.name</code>.
      */
-    public final TableField<PeopleRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR(60), this, "");
+    public final TableField<PeopleRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR(60).defaultValue(DSL.field("NULL", SQLDataType.VARCHAR)), this, "");
 
     /**
      * The column <code>harmony.people.birthdate</code>.
      */
-    public final TableField<PeopleRecord, LocalDate> BIRTHDATE = createField(DSL.name("birthdate"), SQLDataType.LOCALDATE, this, "");
+    public final TableField<PeopleRecord, LocalDate> BIRTHDATE = createField(DSL.name("birthdate"), SQLDataType.LOCALDATE.defaultValue(DSL.field("NULL", SQLDataType.LOCALDATE)), this, "");
 
     /**
      * The column <code>harmony.people.picture</code>.
      */
-    public final TableField<PeopleRecord, String> PICTURE = createField(DSL.name("picture"), SQLDataType.VARCHAR(240), this, "");
+    public final TableField<PeopleRecord, String> PICTURE = createField(DSL.name("picture"), SQLDataType.VARCHAR(240).defaultValue(DSL.field("NULL", SQLDataType.VARCHAR)), this, "");
 
     private People(Name alias, Table<PeopleRecord> aliased) {
         this(alias, aliased, null);

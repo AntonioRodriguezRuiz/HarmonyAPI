@@ -112,7 +112,7 @@ public class ListSpecificController {
         UserMiddlewares.userExists(userId);
         ListMiddlewares.listExists(listId);
         ListMiddlewares.isListOwner(userId, listId);
-        ListMiddlewares.isMediaInList(listId, mediaId);
+        ListMiddlewares.isMediaNotInList(listId, mediaId);
         listSpecificService.deleteMedia(listId, mediaId);
         return getList(userId, listId);
     }

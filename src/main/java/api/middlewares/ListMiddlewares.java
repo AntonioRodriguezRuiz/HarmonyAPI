@@ -59,6 +59,26 @@ public class ListMiddlewares {
         }
     }
 
+    public static void isMediaNotInList(Integer listId, Integer mediaId) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            if (create.select()
+                .from(LISTS)
+                .join(LISTMEDIA)
+                .on(LISTS.LISTID.eq(LISTMEDIA.LISTID))
+                .where(LISTS.LISTID.eq(listId)
+                    .and(LISTMEDIA.MEDIAID.eq(mediaId)))
+                .fetch().isNotEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Media is already in list");
+            }
+        } catch (ResponseStatusException | SQLException e){
+            if(e instanceof ResponseStatusException){
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
+
     public static boolean isListOwner(Integer userid, Integer listid) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);

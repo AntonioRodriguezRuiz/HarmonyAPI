@@ -7,6 +7,7 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
+import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Connection;
@@ -15,6 +16,7 @@ import java.sql.SQLException;
 
 import static src.main.java.model.Tables.PEOPLE;
 
+@Service
 public class PeopleSpecificService {
     public PeopleResponseHelper getPerson(Integer id) throws SQLException{
         PeopleResponseHelper personResult=null;

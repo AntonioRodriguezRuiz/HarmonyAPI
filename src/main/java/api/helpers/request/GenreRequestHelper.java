@@ -1,5 +1,8 @@
 package api.helpers.request;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 public class GenreRequestHelper {
     private Integer userid;
     private Integer genreid;
@@ -34,4 +37,11 @@ public class GenreRequestHelper {
         this.genreid = genreid;
         this.name = name;
     }
+
+    public void validateName(){
+        if(this.name==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "'name' parameter cannot be null");
+        }
+    }
+
 }

@@ -134,7 +134,7 @@ public class ReviewSpecificService {
                     id);
 
             record = create.select()
-                    .from(REVIEWS)
+                    .from(REVIEWLIKES)
                     .naturalJoin(REVIEWLIKES)
                     .orderBy(REVIEWLIKES.REVIEWLIKEID.desc())
                     .fetch().get(0);

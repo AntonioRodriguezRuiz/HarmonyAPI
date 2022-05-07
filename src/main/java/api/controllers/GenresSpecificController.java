@@ -1,6 +1,7 @@
 package api.controllers;
 
 import api.helpers.request.UseridBodyHelper;
+import api.middlewares.GenresMiddlewares;
 import api.middlewares.UserMiddlewares;
 import api.services.GenresSpecificService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,7 +22,7 @@ public class GenresSpecificController {
     @Autowired
     GenresSpecificService genresSpecificService;
 
-    @Operation(summary = "Deletes a type of genre")
+    @Operation(summary = "Deletes a of genre")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Item destroyed"),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
@@ -30,6 +31,7 @@ public class GenresSpecificController {
     @DeleteMapping
     public ResponseEntity deleteGenre(@PathVariable Integer id, @RequestBody UseridBodyHelper useridBody) throws SQLException {
         UserMiddlewares.isAdmin(useridBody.userid());
+        GenresMiddlewares.doesNotExistsGenre(id);
         genresSpecificService.deleteGenre(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }

@@ -33,4 +33,23 @@ public class GenresMiddlewares {
             e.printStackTrace();
         }
     }
+
+    public static void doesNotExistsGenre(Integer id) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            if(create.select()
+                    .from(GENRES)
+                    .where(GENRES.GENREID.eq(id))
+                    .fetch()
+                    .isEmpty()){
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+
+        } catch (ResponseStatusException | SQLException e){
+            if(e instanceof ResponseStatusException){
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
 }

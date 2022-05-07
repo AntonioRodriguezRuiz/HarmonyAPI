@@ -10,9 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.List;
 
-import static src.main.java.model.Tables.ADMINS;
 import static src.main.java.model.Tables.GENRES;
 
 public class GenresMiddlewares {
@@ -25,7 +23,7 @@ public class GenresMiddlewares {
                     .where(GENRES.NAME.eq(name))
                     .fetch()
                     .isEmpty()){
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+                throw new ResponseStatusException(HttpStatus.CONFLICT);
             }
 
         } catch (ResponseStatusException | SQLException e){

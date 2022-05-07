@@ -4,6 +4,7 @@ import api.GlobalValues;
 import api.helpers.request.BookRequestHelper;
 import api.helpers.request.GenreRequestHelper;
 import api.helpers.response.MediaResponseHelper;
+import api.middlewares.GenresMiddlewares;
 import api.middlewares.UserMiddlewares;
 import api.services.GenresService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -60,6 +61,7 @@ public class GenresController {
     @PostMapping
     public ResponseEntity postGenre (@RequestBody GenreRequestHelper genre) throws SQLException {
         UserMiddlewares.isAdmin(genre.getUserid());
+        GenresMiddlewares.existsGenre(genre.getName());
         if(genre.getName()==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }

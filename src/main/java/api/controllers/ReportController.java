@@ -31,8 +31,8 @@ public class ReportController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Search successful")})
     @GetMapping
-    public List<Reports> getAllReports(@RequestParam(name="page", required = false) Integer pageParam, @RequestBody UseridBodyHelper user) throws SQLException{
-        UserMiddlewares.isAdmin(user.userid());
+    public List<Reports> getAllReports(@RequestParam(name="page", required = false) Integer pageParam, @RequestParam Integer userid) throws SQLException{
+        UserMiddlewares.isAdmin(userid);
         Integer page = pageParam!=null ? pageParam : 1;
         Integer offset = page * GlobalValues.PAGE_SIZE - GlobalValues.PAGE_SIZE;
         return ReportService.getAllReports(offset);

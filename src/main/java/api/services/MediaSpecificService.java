@@ -95,7 +95,7 @@ public class MediaSpecificService {
         return peopleTable;
     }
 
-    private Result<Record> existsMedia(Integer id) throws SQLException {
+    public Result<Record> existsMedia(Integer id) throws SQLException {
         Result<Record> mediaList = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);

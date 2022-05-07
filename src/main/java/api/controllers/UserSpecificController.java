@@ -51,10 +51,11 @@ public class UserSpecificController {
             @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content)
     })
     @PutMapping
-    public ResponseEntity<UserResponseHelper> putUser(@PathVariable Integer userId, @RequestBody UserRequestHelper user) throws SQLException {
+    public ResponseEntity<UserRequestHelper> putUser(@PathVariable Integer userId, @RequestBody UserRequestHelper user) throws SQLException {
         UserMiddlewares.userExists(userId);
         UserMiddlewares.isAccountOwner(userId);
-        return new ResponseEntity<>(userSpecificService.putUser(userId, user), HttpStatus.OK);
+        userSpecificService.putUser(userId, user);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Operation(summary = "Deletes an user")

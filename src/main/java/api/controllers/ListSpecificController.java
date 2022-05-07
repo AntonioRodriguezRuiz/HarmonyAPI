@@ -79,11 +79,12 @@ public class ListSpecificController {
         @ApiResponse(responseCode = "404", description = "User or list not found", content = @Content)
     })
     @PutMapping
-    public ResponseEntity<ListResponseHelper> putList(@PathVariable Integer userId, @PathVariable Integer listId, @RequestBody ListRequestHelper list) throws SQLException {
+    public ResponseEntity<ListRequestHelper> putList(@PathVariable Integer userId, @PathVariable Integer listId, @RequestBody ListRequestHelper list) throws SQLException {
         UserMiddlewares.userExists(userId);
         ListMiddlewares.listExists(listId);
         ListMiddlewares.isListOwner(userId, listId);
-        return new ResponseEntity<>(listSpecificService.putList(listId, list), HttpStatus.OK);
+        listSpecificService.putList(listId, list);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Operation(summary = "Deletes the list")

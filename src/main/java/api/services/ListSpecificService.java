@@ -72,8 +72,7 @@ public class ListSpecificService {
         return list;
     }
 
-    public ListResponseHelper putList(Integer listId, ListRequestHelper list) throws SQLException {
-        ListResponseHelper response = null;
+    public void putList(Integer listId, ListRequestHelper list) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
             var oldlist = getList(listId);
@@ -84,15 +83,12 @@ public class ListSpecificService {
                 .set(LISTS.ICON, newlist.icon())
                 .where(LISTS.LISTID.eq(listId))
                 .execute();
-
-            response = getList(listId);
         } catch (ResponseStatusException | SQLException e) {
             if (e instanceof ResponseStatusException) {
                 throw e;
             }
             e.printStackTrace();
         }
-        return response;
     }
 
     public void deleteList(Integer listId) throws SQLException {

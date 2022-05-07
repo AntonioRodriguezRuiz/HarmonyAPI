@@ -57,25 +57,6 @@ public class PeopleMiddlewares {
         }
     }
 
-    public static void doesNotExistsPerson(Integer personid) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-            if(!create.select()
-                    .from(PEOPLE)
-                    .where(PEOPLE.PERSONID.eq(personid))
-                    .fetch()
-                    .isEmpty()){
-                throw new ResponseStatusException(HttpStatus.CONFLICT);
-            }
-
-        } catch (ResponseStatusException | SQLException e){
-            if(e instanceof ResponseStatusException){
-                throw e;
-            }
-            e.printStackTrace();
-        }
-    }
-
     public static void doesNotExistsPerson(PeopleRequestHelper person) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);

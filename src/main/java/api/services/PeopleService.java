@@ -28,7 +28,6 @@ public class PeopleService {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
             peopleList = create.select()
                                 .from(PEOPLE)
-                                .orderBy(PEOPLE.PERSONID)
                                 .fetchInto(People.class);
         }
         catch (Exception exception){

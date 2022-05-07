@@ -3,10 +3,19 @@ package api.helpers.request;
 import java.time.LocalDate;
 
 public class PeopleRequestHelper {
+    private Integer userid;
     private Integer personid;
     private String name;
     private LocalDate birthdate;
     private String picture;
+
+    public Integer getUserid() {
+        return userid;
+    }
+
+    public void setUserid(Integer userid) {
+        this.userid = userid;
+    }
 
     public Integer getPersonid() {
         return personid;
@@ -28,10 +37,12 @@ public class PeopleRequestHelper {
 
     public void setPicture(String picture) { this.picture = picture;}
 
-    public PeopleRequestHelper(Integer personid, String name, LocalDate birthdate, String picture) {
+    public PeopleRequestHelper(Integer userid, Integer personid, String name, LocalDate birthdate, String picture) {
+        this.userid = userid;
         this.personid = personid;
         this.name = name;
         this.birthdate = birthdate;
         this.picture = picture;
     }
+
 }

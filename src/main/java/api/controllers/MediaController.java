@@ -108,7 +108,7 @@ public class MediaController {
 
     @Operation(summary = "Modifies a movie in the database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item modified"),
+            @ApiResponse(responseCode = "204", description = "Item modified", content = @Content),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
@@ -138,7 +138,7 @@ public class MediaController {
 
     @Operation(summary = "Modifies a series in the database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item modified"),
+            @ApiResponse(responseCode = "204", description = "Item modified", content = @Content),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
@@ -169,7 +169,7 @@ public class MediaController {
 
     @Operation(summary = "Modifies a book in the database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item modified"),
+            @ApiResponse(responseCode = "204", description = "Item modified", content = @Content),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
@@ -200,7 +200,7 @@ public class MediaController {
 
     @Operation(summary = "Modifies a videogame in the database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item modified"),
+            @ApiResponse(responseCode = "204", description = "Item modified", content = @Content),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})

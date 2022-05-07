@@ -37,7 +37,7 @@ public class ListController {
 
     @Operation(summary = "Get all lists of a user")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Lists found", content = @Content),
+        @ApiResponse(responseCode = "200", description = "Lists found"),
         @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
     @GetMapping
@@ -48,7 +48,7 @@ public class ListController {
 
     @Operation(summary = "Creates a new list for the user")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "List created", content = @Content),
+        @ApiResponse(responseCode = "201", description = "List created"),
         @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
     @PostMapping

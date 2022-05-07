@@ -5,6 +5,7 @@ import api.helpers.request.BookRequestHelper;
 import api.helpers.request.GenreRequestHelper;
 import api.helpers.request.PeopleRequestHelper;
 import api.helpers.response.MediaResponseHelper;
+import api.middlewares.PeopleMiddlewares;
 import api.middlewares.UserMiddlewares;
 import api.services.PeopleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -65,21 +66,23 @@ public class PeopleController {
         if(person.getName()==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
+        PeopleMiddlewares.existsPerson(person);
         return new ResponseEntity(peopleService.postPerson(person), HttpStatus.CREATED);
     }
 
     @Operation(summary = "modifies a person")
-    @ApiResponse(value = {
-            @ApiResponse(responseCode = "204", description = "Item modified"),
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Item created"),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
+            @ApiResponse(responseCode = "409", description = "Item already exists", content = @Content)})
     @PutMapping("/people")
     public ResponseEntity<PeopleRequestHelper> putPerson(@RequestBody PeopleRequestHelper person) throws SQLException {
         UserMiddlewares.isAdmin(person.getPersonid());
         if(person.getPersonid()==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
+        PeopleMiddlewares.DoesNotExistsPerson(person.getPersonid());
         peopleService.putPerson(person);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

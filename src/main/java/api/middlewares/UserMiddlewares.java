@@ -79,37 +79,6 @@ public class UserMiddlewares {
         }
     }
 
-    public static void isOwnerOfReview(Integer userid, Integer reviewid) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-
-            Result<Record> review = create.select()
-                                        .from(REVIEWS)
-                                        .where(REVIEWS.REVIEWID.eq(reviewid))
-                                        .fetch();
-
-            if(review.isEmpty()){
-                throw  new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
-
-            Result<Record> reviewUser = create.select()
-                    .from(REVIEWS)
-                    .where(REVIEWS.REVIEWID.eq(reviewid)
-                            .and(REVIEWS.USERID.eq(userid)))
-                    .fetch();
-
-            if(reviewUser.isEmpty()){
-                throw  new ResponseStatusException(HttpStatus.FORBIDDEN);
-            }
-
-        } catch (ResponseStatusException | SQLException e){
-            if(e instanceof ResponseStatusException){
-                throw e;
-            }
-            e.printStackTrace();
-        }
-    }
-
     public static void isAccountOwner(Integer userid) throws SQLException {
         // TODO: implement
     }

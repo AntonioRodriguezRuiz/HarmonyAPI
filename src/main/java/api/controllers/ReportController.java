@@ -50,9 +50,9 @@ public class ReportController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
-        UserMiddlewares.existsUser(report.useridreported());
-        UserMiddlewares.existsUser(report.useridreporter());
-        
+        UserMiddlewares.userExists(report.useridreported());
+        UserMiddlewares.userExists(report.useridreporter());
+
         return new ResponseEntity<>(reportService.postReport(report), HttpStatus.CREATED);
     }
 
@@ -67,7 +67,7 @@ public class ReportController {
     public ResponseEntity deleteReport(@PathVariable Integer id, @RequestBody UseridBodyHelper useridBody) throws SQLException {
         UserMiddlewares.isAdmin(useridBody.userid());
         reportService.deleteReport(id);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }

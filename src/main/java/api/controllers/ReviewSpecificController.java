@@ -1,15 +1,14 @@
 package api.controllers;
 
-import api.helpers.request.ReviewRequestHelper;
+
 import api.helpers.request.UseridBodyHelper;
 import api.helpers.response.ReviewResponseHelper;
-import api.middlewares.UserMiddlewares;
+import api.middlewares.ReviewMiddlewares;
 import api.services.ReviewSpecificService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.jooq.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,9 +40,9 @@ public class ReviewSpecificController {
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
     @DeleteMapping
     public ResponseEntity deleteReview(@PathVariable Integer id, @RequestBody UseridBodyHelper user) throws SQLException{
-        UserMiddlewares.isOwnerOfReview(user.userid(), id);
+        ReviewMiddlewares.isOwnerOfReview(user.userid(), id);
         reviewSpecificService.deleteReview(id);
-        return new ResponseEntity((HttpStatus.NO_CONTENT));
+        return new ResponseEntity<>((HttpStatus.NO_CONTENT));
     }
 
     @Operation(summary = "Like a review.")
@@ -59,6 +58,7 @@ public class ReviewSpecificController {
         }
         return new ResponseEntity<>(reviewSpecificService.postLike(id, user), HttpStatus.CREATED);
     }
+
     @Operation(summary = "Unlikes a review.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Item destroyed"),
@@ -67,7 +67,7 @@ public class ReviewSpecificController {
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
     @DeleteMapping("/likes/{likeid}")
     public ResponseEntity deleteReviewLike(@PathVariable Integer id, @PathVariable Integer likeid, @RequestBody UseridBodyHelper user) throws SQLException {
-        UserMiddlewares.isOwnerOfLike(user.userid(), id);
+        ReviewMiddlewares.isOwnerOfLike(user.userid(), id);
         reviewSpecificService.deleteLike(likeid);
         return new ResponseEntity<>((HttpStatus.NO_CONTENT));
     }

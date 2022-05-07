@@ -128,4 +128,18 @@ public class ListSpecificService {
         }
         return response;
     }
+
+    public void deleteList(Integer listId) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            create.delete(LISTS)
+                .where(LISTS.LISTID.eq(listId))
+                .execute();
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
 }

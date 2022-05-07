@@ -99,4 +99,23 @@ public class ListSpecificController {
         UserMiddlewares.isListOwner(userId, listId);
         return new ResponseEntity<>(listSpecificService.putList(listId, list), HttpStatus.OK);
     }
+
+    @Operation(summary = "Deletes the list")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "List deleted successfully"),
+        @ApiResponse(responseCode = "403", description = "User not authorized to access the list"),
+        @ApiResponse(responseCode = "404", description = "User or list not found")
+    })
+    @DeleteMapping
+    public ResponseEntity<ListResponseHelper> deleteList(@PathVariable Integer userId, @PathVariable Integer listId) throws SQLException {
+        if (!userService.userExists(userId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+        if (!listSpecificService.listExists(listId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "List not found");
+        }
+        UserMiddlewares.isListOwner(userId, listId);
+        listSpecificService.deleteList(listId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

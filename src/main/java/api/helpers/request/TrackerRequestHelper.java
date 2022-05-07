@@ -1,5 +1,7 @@
 package api.helpers.request;
 
+import api.helpers.enums.TrackerState;
+
 /**
  * TrackerRequestHelper
  * Project HarmonyAPI
@@ -7,5 +9,5 @@ package api.helpers.request;
  *
  * @author juagallop1
  **/
-public record TrackerRequestHelper(Integer mediaId, Integer state) {
+public record TrackerRequestHelper(Integer mediaId, TrackerState state) {
 }

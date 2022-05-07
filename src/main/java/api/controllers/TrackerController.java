@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -67,7 +66,6 @@ public class TrackerController {
     public ResponseEntity<TrackerResponseHelper> postTracker(@PathVariable Integer userId, @RequestBody TrackerRequestHelper tracker) throws SQLException {
         UserMiddlewares.userExists(userId);
         MediaMiddlewares.mediaExists(tracker.mediaId());
-        TrackerMiddlewares.validate(tracker.state());
         return new ResponseEntity<>(trackerService.postTracker(userId, tracker), HttpStatus.OK);
     }
 }

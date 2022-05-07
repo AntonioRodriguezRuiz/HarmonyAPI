@@ -69,7 +69,7 @@ public class TrackerService {
                 create.configuration(),
                 userId,
                 tracker.mediaId(),
-                tracker.state()
+                tracker.state().ordinal()
             );
             response = new TrackerResponseHelper(
                 create.select()

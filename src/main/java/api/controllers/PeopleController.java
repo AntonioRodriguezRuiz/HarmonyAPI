@@ -54,7 +54,7 @@ public class PeopleController {
         if(person.getName()==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        PeopleMiddlewares.existsPerson(person);
+        PeopleMiddlewares.doesNotExistsPerson(person);
         return new ResponseEntity(peopleService.postPerson(person), HttpStatus.CREATED);
     }
 
@@ -70,7 +70,7 @@ public class PeopleController {
         if(person.getPersonid()==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        PeopleMiddlewares.DoesNotExistsPerson(person.getPersonid());
+        PeopleMiddlewares.doesNotExistsPerson(person.getPersonid());
         peopleService.putPerson(person);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

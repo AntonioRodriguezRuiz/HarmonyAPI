@@ -13,7 +13,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import static src.main.java.model.Tables.*;
+import static src.main.java.model.Tables.REVIEWLIKES;
+import static src.main.java.model.Tables.REVIEWS;
 
 public class ReviewMiddlewares{
     public static void isOwnerOfReview(Integer userid, Integer reviewid) throws SQLException {

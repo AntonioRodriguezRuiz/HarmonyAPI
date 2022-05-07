@@ -14,7 +14,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import static src.main.java.model.Tables.*;
+import static src.main.java.model.Tables.USERS;
 
 /**
  * UserService

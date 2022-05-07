@@ -9,6 +9,7 @@ import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import src.main.java.model.tables.pojos.Media;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -17,7 +18,6 @@ import java.util.List;
 
 import static src.main.java.model.Tables.MEDIA;
 import static src.main.java.model.Tables.TRACKERS;
-import src.main.java.model.tables.pojos.Media;
 
 /**
  * TrackerService

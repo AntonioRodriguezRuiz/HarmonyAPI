@@ -1,7 +1,5 @@
 package api.helpers.request;
 
-import org.jooq.Record;
-
 public class EpisodeRequestHelper {
     private Integer userid;
     private Integer episodeid;

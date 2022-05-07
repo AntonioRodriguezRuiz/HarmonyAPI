@@ -36,7 +36,7 @@ public class MediaSpecificController {
 
     @Operation(summary = "Deletes a piece of media")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item destroyed"),
+            @ApiResponse(responseCode = "204", description = "Item destroyed", content = @Content),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
@@ -65,7 +65,7 @@ public class MediaSpecificController {
 
     @Operation(summary = "Modifies a series season")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item modified"),
+            @ApiResponse(responseCode = "204", description = "Item destroyed", content = @Content),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content),
@@ -98,7 +98,7 @@ public class MediaSpecificController {
 
     @Operation(summary = "Removes a platform from a videogame's list of platforms")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item destroyed"),
+            @ApiResponse(responseCode = "204", description = "Item destroyed", content = @Content),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content),
@@ -138,7 +138,7 @@ public class MediaSpecificController {
 
     @Operation(summary = "Modifies an existing episode")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item modified"),
+            @ApiResponse(responseCode = "204", description = "Item modified", content = @Content),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content),
@@ -155,7 +155,7 @@ public class MediaSpecificController {
 
     @Operation(summary = "Removes a season from a series list of seasons")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item destroyed"),
+            @ApiResponse(responseCode = "204", description = "Item destroyed", content = @Content),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content),
@@ -179,7 +179,7 @@ public class MediaSpecificController {
 
     @Operation(summary = "Removes an episode from a season")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item destroyed"),
+            @ApiResponse(responseCode = "204", description = "Item destroyed", content = @Content),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content),
@@ -208,7 +208,7 @@ public class MediaSpecificController {
 
     @Operation(summary = "Removes a genre from a media list of genres")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item destroyed"),
+            @ApiResponse(responseCode = "204", description = "Item destroyed", content = @Content),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
@@ -246,7 +246,7 @@ public class MediaSpecificController {
 
     @Operation(summary = "Removes a person with a role from a media")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item destroyed"),
+            @ApiResponse(responseCode = "204", description = "Item destroyed", content = @Content),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content),
@@ -276,7 +276,7 @@ public class MediaSpecificController {
 
     @Operation(summary = "Adds a person with a role to an episode")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item destroyed"),
+            @ApiResponse(responseCode = "201", description = "Item created"),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
@@ -291,7 +291,7 @@ public class MediaSpecificController {
 
     @Operation(summary = "Removes a person with a role from an episode")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item destroyed"),
+            @ApiResponse(responseCode = "204", description = "Item destroyed", content = @Content),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
@@ -335,7 +335,7 @@ public class MediaSpecificController {
 
     @Operation(summary = "Modifies a review from a media")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item destroyed"),
+            @ApiResponse(responseCode = "204", description = "Item destroyed", content = @Content),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Only the owner of the review can modify it", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})

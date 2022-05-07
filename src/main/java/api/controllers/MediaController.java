@@ -10,7 +10,6 @@ import api.middlewares.UserMiddlewares;
 import api.services.MediaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.jooq.DSLContext;
@@ -22,19 +21,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import org.springframework.web.server.ResponseStatusException;
+import src.main.java.model.tables.pojos.Genres;
 import src.main.java.model.tables.pojos.Media;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 import static src.main.java.model.tables.Genres.GENRES;
 import static src.main.java.model.tables.Media.MEDIA;
-import src.main.java.model.tables.pojos.Genres;
 
 
 @RestController
@@ -108,7 +105,7 @@ public class MediaController {
 
     @Operation(summary = "Modifies a movie in the database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item modified"),
+            @ApiResponse(responseCode = "204", description = "Item modified", content = @Content),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
@@ -138,7 +135,7 @@ public class MediaController {
 
     @Operation(summary = "Modifies a series in the database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item modified"),
+            @ApiResponse(responseCode = "204", description = "Item modified", content = @Content),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
@@ -169,7 +166,7 @@ public class MediaController {
 
     @Operation(summary = "Modifies a book in the database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item modified"),
+            @ApiResponse(responseCode = "204", description = "Item modified", content = @Content),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
@@ -200,7 +197,7 @@ public class MediaController {
 
     @Operation(summary = "Modifies a videogame in the database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item modified"),
+            @ApiResponse(responseCode = "204", description = "Item modified", content = @Content),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})

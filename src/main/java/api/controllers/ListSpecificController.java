@@ -10,6 +10,7 @@ import api.services.ListSpecificService;
 import api.services.MediaSpecificService;
 import api.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +44,8 @@ public class ListSpecificController {
     @Operation(summary = "Get a specific list", description = "Get a specific list")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "List fetched successfully"),
-        @ApiResponse(responseCode = "403", description = "User not authorized to access the list"),
-        @ApiResponse(responseCode = "404", description = "User or list not found"),
+        @ApiResponse(responseCode = "403", description = "User not authorized to access the list", content = @Content),
+        @ApiResponse(responseCode = "404", description = "User or list not found", content = @Content),
     })
     @GetMapping
     public ResponseEntity<ListResponseHelper> getList(@PathVariable Integer userId, @PathVariable Integer listId) throws SQLException {
@@ -56,10 +57,10 @@ public class ListSpecificController {
 
     @Operation(summary = "Add a media to the list")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Media added successfully"),
-        @ApiResponse(responseCode = "400", description = "Media already in the list"),
-        @ApiResponse(responseCode = "403", description = "User not authorized to access the list"),
-        @ApiResponse(responseCode = "404", description = "User, list or media not found"),
+        @ApiResponse(responseCode = "201", description = "Media added successfully"),
+        @ApiResponse(responseCode = "400", description = "Media already in the list", content = @Content),
+        @ApiResponse(responseCode = "403", description = "User not authorized to access the list", content = @Content),
+        @ApiResponse(responseCode = "404", description = "User, list or media not found", content = @Content),
     })
     @PostMapping
     public ResponseEntity<ListResponseHelper> addMedia(@PathVariable Integer userId, @PathVariable Integer listId, @RequestBody ListMediaRequestHelper media) throws SQLException {
@@ -68,14 +69,14 @@ public class ListSpecificController {
         MediaMiddlewares.mediaExists(media.mediaId());
         ListMiddlewares.isListOwner(userId, listId);
         ListMiddlewares.isMediaInList(listId, media.mediaId());
-        return new ResponseEntity<>(listSpecificService.addMedia(listId, media), HttpStatus.OK);
+        return new ResponseEntity<>(listSpecificService.addMedia(listId, media), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Updates information on the list")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "204", description = "Item modified"),
-        @ApiResponse(responseCode = "403", description = "User not authorized to access the list"),
-        @ApiResponse(responseCode = "404", description = "User or list not found")
+        @ApiResponse(responseCode = "200", description = "List updated successfully"),
+        @ApiResponse(responseCode = "403", description = "User not authorized to access the list", content = @Content),
+        @ApiResponse(responseCode = "404", description = "User or list not found", content = @Content)
     })
     @PutMapping
     public ResponseEntity<ListRequestHelper> putList(@PathVariable Integer userId, @PathVariable Integer listId, @RequestBody ListRequestHelper list) throws SQLException {
@@ -89,8 +90,8 @@ public class ListSpecificController {
     @Operation(summary = "Deletes the list")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "List deleted successfully"),
-        @ApiResponse(responseCode = "403", description = "User not authorized to access the list"),
-        @ApiResponse(responseCode = "404", description = "User or list not found")
+        @ApiResponse(responseCode = "403", description = "User not authorized to access the list", content = @Content),
+        @ApiResponse(responseCode = "404", description = "User or list not found", content = @Content)
     })
     @DeleteMapping
     public ResponseEntity<ListResponseHelper> deleteList(@PathVariable Integer userId, @PathVariable Integer listId) throws SQLException {
@@ -103,10 +104,10 @@ public class ListSpecificController {
 
     @Operation(summary = "Deletes the media from the list")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Media deleted successfully"),
-        @ApiResponse(responseCode = "400", description = "Media not found in list"),
-        @ApiResponse(responseCode = "403", description = "User not authorized to access the list"),
-        @ApiResponse(responseCode = "404", description = "User or list not found")
+        @ApiResponse(responseCode = "204", description = "Media deleted successfully", content = @Content),
+        @ApiResponse(responseCode = "400", description = "Media not found in list", content = @Content),
+        @ApiResponse(responseCode = "403", description = "User not authorized to access the list", content = @Content),
+        @ApiResponse(responseCode = "404", description = "User or list not found", content = @Content)
     })
     @DeleteMapping("/{mediaId}")
     public ResponseEntity<ListRequestHelper> deleteMedia(@PathVariable Integer userId, @PathVariable Integer listId, @PathVariable Integer mediaId) throws SQLException {

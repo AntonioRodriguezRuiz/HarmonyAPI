@@ -1,7 +1,5 @@
 package api.helpers.enums;
 
-import org.jooq.TableField;
-
 public enum RoleType {
     CAST, CREW;
 

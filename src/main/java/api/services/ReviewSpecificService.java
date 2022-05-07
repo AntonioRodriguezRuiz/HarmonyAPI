@@ -12,13 +12,14 @@ import org.jooq.impl.DSL;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import src.main.java.model.Routines;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import src.main.java.model.Routines;
 
-import static src.main.java.model.Tables.*;
+import static src.main.java.model.Tables.REVIEWLIKES;
+import static src.main.java.model.Tables.REVIEWS;
 
 @Service
 public class ReviewSpecificService {

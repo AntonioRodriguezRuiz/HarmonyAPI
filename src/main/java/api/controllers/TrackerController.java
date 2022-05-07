@@ -41,7 +41,7 @@ public class TrackerController {
 
     @Operation(summary = "Get all trackers for a user")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Trackers found", content = @Content),
+        @ApiResponse(responseCode = "200", description = "Trackers found"),
         @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
     @GetMapping
@@ -55,7 +55,7 @@ public class TrackerController {
 
     @Operation(summary = "Creates a new tracker")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Tracker created", content = @Content),
+        @ApiResponse(responseCode = "201", description = "Tracker created"),
         @ApiResponse(responseCode = "404", description = "User not found", content = @Content),
         @ApiResponse(responseCode = "409", description = "Tracker already exists", content = @Content),
         @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content)

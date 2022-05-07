@@ -27,6 +27,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static src.main.java.model.tables.Media.MEDIA;
+import src.main.java.model.Tables;
 
 
 @RestController
@@ -56,10 +57,10 @@ public class MediaController {
         TableLike typeTable = null;
         if(typeParam!=null){
             switch (typeParam){
-                case "movie": typeTable = src.main.java.model.Tables.MOVIES; break;
-                case "series": typeTable = src.main.java.model.Tables.SERIES; break;
-                case "videogame": typeTable = src.main.java.model.Tables.VIDEOGAMES; break;
-                case "book": typeTable = src.main.java.model.Tables.BOOKS; break;
+                case "movie": typeTable = Tables.MOVIES; break;
+                case "series": typeTable = Tables.SERIES; break;
+                case "videogame": typeTable = Tables.VIDEOGAMES; break;
+                case "book": typeTable = Tables.BOOKS; break;
                 default: throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             }
         }

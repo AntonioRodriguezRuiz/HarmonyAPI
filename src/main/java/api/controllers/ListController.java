@@ -53,7 +53,7 @@ public class ListController {
         @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
     @PostMapping
-    public ResponseEntity<ListResponseHelper> postList(@PathVariable Integer userId, ListRequestHelper list) throws SQLException {
+    public ResponseEntity<ListResponseHelper> postList(@PathVariable Integer userId, @RequestBody ListRequestHelper list) throws SQLException {
         if (!userService.userExists(userId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }

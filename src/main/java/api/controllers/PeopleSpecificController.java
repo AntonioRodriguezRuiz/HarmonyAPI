@@ -2,6 +2,7 @@ package api.controllers;
 
 import api.helpers.response.PeopleResponseHelper;
 import api.helpers.request.*;
+import api.middlewares.PeopleMiddlewares;
 import api.middlewares.UserMiddlewares;
 import api.services.PeopleSpecificService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,6 +29,7 @@ public class PeopleSpecificController {
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
     @GetMapping
     public PeopleResponseHelper getPerson(@PathVariable Integer id) throws SQLException {
+        PeopleMiddlewares.existsPerson(id);
         return peopleSpecificService.getPerson(id);
     }
 
@@ -40,6 +42,7 @@ public class PeopleSpecificController {
     @DeleteMapping
     public ResponseEntity deletePerson(@PathVariable Integer id, @RequestBody UseridBodyHelper useridBody) throws SQLException {
         UserMiddlewares.isAdmin(useridBody.userid());
+        PeopleMiddlewares.DoesNotExistsPerson(id);
         peopleSpecificService.deletePerson(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }

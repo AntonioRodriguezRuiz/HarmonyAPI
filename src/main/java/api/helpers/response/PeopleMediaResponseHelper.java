@@ -15,6 +15,7 @@ public class PeopleMediaResponseHelper {
     private Integer personid;
     private String name;
     private LocalDate birthdate;
+    private String picture;
     private String role;
     private RoleType roleType;
 
@@ -48,6 +49,14 @@ public class PeopleMediaResponseHelper {
 
     public void setBirthdate(LocalDate birthdate) {
         this.birthdate = birthdate;
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
     }
 
     public String getRole() {

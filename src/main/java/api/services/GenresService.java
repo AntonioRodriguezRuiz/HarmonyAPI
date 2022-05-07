@@ -24,17 +24,17 @@ import src.main.java.model.Routines;
 @Service
 public class GenresService {
 
-    public static Result<Record>getAllGenres(){
-        Result<Record> result=null;
+    public List<Genres>getAllGenres(){
+        List<Genres> genresList=null;
 
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-            result=create.select().from(GENRES).orderBy(GENRES.GENREID).fetch();
+            genresList=create.select().from(GENRES).orderBy(GENRES.GENREID).fetchInto(Genres.class);
         }
         catch (Exception exception){
             exception.printStackTrace();
         }
-        return result;
+        return genresList;
     }
 
     public GenreResponseHelper postGenre(GenreRequestHelper genre) throws SQLException {

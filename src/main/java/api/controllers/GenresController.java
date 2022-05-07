@@ -46,8 +46,8 @@ public class GenresController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Search successful")})
     @GetMapping
-    public Result<Record> getAllGenres() throws SQLException {
-        return GenresService.getAllGenres();
+    public List<Genres> getAllGenres() throws SQLException {
+        return genresService.getAllGenres();
 
     }
 
@@ -57,7 +57,7 @@ public class GenresController {
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "409", description = "Item already exists", content = @Content)})
-    @PostMapping("/genres")
+    @PostMapping
     public ResponseEntity postGenre (@RequestBody GenreRequestHelper genre) throws SQLException {
         UserMiddlewares.isAdmin(genre.getUserid());
         if(genre.getName()==null){

@@ -12,16 +12,17 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import static src.main.java.model.Tables.MEDIA;
+import static src.main.java.model.Tables.SERIES;
 
 /**
- * MediaMiddlewares
+ * SeriesMiddleware
  * Project HarmonyAPI
  * Created: 2022-05-07
  *
  * @author juagallop1
  **/
-public class MediaMiddlewares {
-    public static void mediaExists(Integer mediaId) throws SQLException {
+public class SeriesMiddlewares {
+    public static void isSeries(Integer mediaId) throws SQLException {
         if(mediaId==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "MediaId cannot be null");
         }
@@ -29,10 +30,11 @@ public class MediaMiddlewares {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
             if (create.select()
                 .from(MEDIA)
+                .naturalJoin(SERIES)
                 .where(MEDIA.MEDIAID.eq(mediaId))
                 .fetch()
                 .isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Media does not exist");
+                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Media is not a series");
             }
         } catch (ResponseStatusException | SQLException e) {
             if (e instanceof ResponseStatusException) {
@@ -40,6 +42,6 @@ public class MediaMiddlewares {
             }
             e.printStackTrace();
         }
-    }
 
+    }
 }

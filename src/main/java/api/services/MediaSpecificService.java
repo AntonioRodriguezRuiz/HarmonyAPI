@@ -395,15 +395,19 @@ public class MediaSpecificService {
 
     }
 
-    public void deleteMedia(Integer id) {
+    public void deleteMedia(Integer id) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             create.deleteFrom(MEDIA)
-                    .where(MEDIA.MEDIAID.eq(id)).execute();
+                .where(MEDIA.MEDIAID.eq(id))
+                .execute();
 
-        } catch (Exception exception) {
-            exception.printStackTrace();
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
         }
     }
 
@@ -450,24 +454,18 @@ public class MediaSpecificService {
                 throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
             }
 
-            List<Seasons> seasonList = create.select()
-                    .from(SEASONS)
-                    .where(SEASONS.SEASONID.eq(season.getSeasonid()))
-                    .fetchInto(Seasons.class);
+            Seasons oldSeason = create.select()
+                .from(SEASONS)
+                .where(SEASONS.SEASONID.eq(season.getSeasonid()))
+                .fetchInto(Seasons.class)
+                .get(0);
 
-            if (seasonList.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
-
-            Seasons oldSeason = seasonList.get(0);
-
-            SeasonRequestHelper newSeason = new SeasonRequestHelper(null, null, null, null, null);
-            newSeason.setSeasonNo(season.getSeasonNo() == null ? oldSeason.getSeasonno() : season.getSeasonNo());
-            newSeason.setNoEpisodes(season.getNoEpisodes() == null ? oldSeason.getNoepisodes() : season.getNoEpisodes());
+            season.setSeasonNo(season.getSeasonNo() == null ? oldSeason.getSeasonno() : season.getSeasonNo());
+            season.setNoEpisodes(season.getNoEpisodes() == null ? oldSeason.getNoepisodes() : season.getNoEpisodes());
 
             create.update(SEASONS)
-                    .set(SEASONS.SEASONNO, newSeason.getSeasonNo())
-                    .set(SEASONS.NOEPISODES, newSeason.getNoEpisodes())
+                    .set(SEASONS.SEASONNO, season.getSeasonNo())
+                    .set(SEASONS.NOEPISODES, season.getNoEpisodes())
                     .where(SEASONS.SEASONID.eq(season.getSeasonid()))
                     .execute();
 

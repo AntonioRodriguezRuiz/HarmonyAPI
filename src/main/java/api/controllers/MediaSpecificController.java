@@ -2,7 +2,10 @@ package api.controllers;
 
 import api.helpers.request.*;
 import api.helpers.response.*;
+import api.middlewares.MediaMiddlewares;
 import api.middlewares.ReviewMiddlewares;
+import api.middlewares.SeriesMiddlewares;
+import api.middlewares.SeasonMiddlewares;
 import api.middlewares.UserMiddlewares;
 import api.services.MediaSpecificService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,6 +34,7 @@ public class MediaSpecificController {
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
     @GetMapping
     public MediaResponseHelper getMedia(@PathVariable Integer id) throws SQLException {
+        MediaMiddlewares.mediaExists(id);
         return mediaService.getMedia(id);
     }
 
@@ -43,6 +47,7 @@ public class MediaSpecificController {
     @DeleteMapping
     public ResponseEntity deleteMedia(@PathVariable Integer id, @RequestBody UseridBodyHelper useridBody) throws SQLException {
         UserMiddlewares.isAdmin(useridBody.userid());
+        MediaMiddlewares.mediaExists(id);
         mediaService.deleteMedia(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
@@ -57,9 +62,7 @@ public class MediaSpecificController {
     @PostMapping("/seasons")
     public ResponseEntity<SeasonResponseHelper> postSeason(@PathVariable Integer id, @RequestBody SeasonRequestHelper season) throws SQLException {
         UserMiddlewares.isAdmin(season.getUserid());
-        if(season.getSeasonNo()==null || season.getNoEpisodes()==null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        season.validate();
         return new ResponseEntity<>(mediaService.postSeason(id, season), HttpStatus.CREATED);
     }
 
@@ -73,9 +76,10 @@ public class MediaSpecificController {
     @PutMapping("/seasons")
     public ResponseEntity putSeason(@PathVariable Integer id, @RequestBody SeasonRequestHelper season) throws SQLException {
         UserMiddlewares.isAdmin(season.getUserid());
-        if(season.getSeasonid()==null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        MediaMiddlewares.mediaExists(id);
+        SeriesMiddlewares.isSeries(id);
+        SeasonMiddlewares.seasonExists(season.getSeasonid());
+        SeasonMiddlewares.isSeasonOf(id, season.getSeasonid());
         mediaService.putSeason(id, season);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

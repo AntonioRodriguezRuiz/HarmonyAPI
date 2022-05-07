@@ -1,5 +1,8 @@
 package api.helpers.request;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 public class SeasonRequestHelper {
     private Integer userid;
     private Integer seasonid;
@@ -44,5 +47,13 @@ public class SeasonRequestHelper {
         this.seasonid = seasonid;
         this.seasonNo = seasonNo;
         this.noEpisodes = noEpisodes;
+    }
+
+    public void validate() {
+        if (userid == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Userid is required");
+        } else if (seasonid == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Seasonid is required");
+        }
     }
 }

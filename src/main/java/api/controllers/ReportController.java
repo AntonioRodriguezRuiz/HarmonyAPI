@@ -47,7 +47,8 @@ public class ReportController {
             @ApiResponse(responseCode = "409", description = "Item already exists", content = @Content)})
     @PostMapping
     public ResponseEntity<ReportResponseHelper> postReport(@RequestBody ReportRequestHelper report) throws SQLException {
-        if(report.useridreporter() == null || report.useridreported() == null || report.reviewid() == null){
+        if(report.useridreporter() == null || report.useridreported() == null || report.reviewid() == null
+        || report.useridreported().equals(report.useridreporter())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 

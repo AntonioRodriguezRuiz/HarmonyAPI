@@ -1,7 +1,6 @@
 package api.services;
 
 import api.GlobalValues;
-import api.helpers.enums.RoleType;
 import api.helpers.request.*;
 import api.helpers.response.*;
 import org.jooq.*;
@@ -477,7 +476,7 @@ public class MediaSpecificService {
         }
     }
 
-    public PlatformResponseHelper addPlatform(Integer id, PlatformRequestHelper platform) throws SQLException {
+    public PlatformResponseHelper postPlatform(Integer id, PlatformRequestHelper platform) throws SQLException {
         PlatformResponseHelper newVideogamePlatform = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);

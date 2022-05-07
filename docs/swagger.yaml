@@ -445,7 +445,7 @@ paths:
       tags:
         - Media Specific operations
       summary: Adds a new platform to a videogame
-      operationId: addPlatform
+      operationId: postPlatform
       parameters:
         - name: id
           in: path

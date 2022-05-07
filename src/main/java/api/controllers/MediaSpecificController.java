@@ -92,12 +92,10 @@ public class MediaSpecificController {
             @ApiResponse(responseCode = "405", description = "The media item is not a videogame", content = @Content),
             @ApiResponse(responseCode = "409", description = "Item already exists", content = @Content)})
     @PostMapping("/platforms")
-    public ResponseEntity<PlatformResponseHelper> addPlatform(@PathVariable Integer id, @RequestBody PlatformRequestHelper platform) throws SQLException {
+    public ResponseEntity<PlatformResponseHelper> postPlatform(@PathVariable Integer id, @RequestBody PlatformRequestHelper platform) throws SQLException {
         UserMiddlewares.isAdmin(platform.getUserid());
-        if(platform.getPlatformid()==null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(mediaService.addPlatform(id, platform), HttpStatus.CREATED);
+        platform.validate();
+        return new ResponseEntity<>(mediaService.postPlatform(id, platform), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Removes a platform from a videogame's list of platforms")

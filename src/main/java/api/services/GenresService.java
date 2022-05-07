@@ -29,7 +29,9 @@ public class GenresService {
 
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-            genresList=create.select().from(GENRES).orderBy(GENRES.GENREID).fetchInto(Genres.class);
+            genresList=create.select()
+                            .from(GENRES)
+                            .fetchInto(Genres.class);
         }
         catch (Exception exception){
             exception.printStackTrace();

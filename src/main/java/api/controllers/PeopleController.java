@@ -50,7 +50,7 @@ public class PeopleController {
             @ApiResponse(responseCode = "409", description = "Item already exists", content = @Content)})
     @PostMapping
     public ResponseEntity postPerson (@RequestBody PeopleRequestHelper person) throws SQLException {
-        UserMiddlewares.isAdmin(person.getPersonid());
+        UserMiddlewares.isAdmin(person.getUserid());
         if(person.getName()==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
@@ -66,7 +66,7 @@ public class PeopleController {
             @ApiResponse(responseCode = "409", description = "Item already exists", content = @Content)})
     @PutMapping("/people")
     public ResponseEntity<PeopleRequestHelper> putPerson(@RequestBody PeopleRequestHelper person) throws SQLException {
-        UserMiddlewares.isAdmin(person.getPersonid());
+        UserMiddlewares.isAdmin(person.getUserid());
         if(person.getPersonid()==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }

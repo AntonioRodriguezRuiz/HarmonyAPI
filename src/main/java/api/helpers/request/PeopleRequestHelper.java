@@ -1,5 +1,8 @@
 package api.helpers.request;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.time.LocalDate;
 
 public class PeopleRequestHelper {
@@ -43,6 +46,18 @@ public class PeopleRequestHelper {
         this.name = name;
         this.birthdate = birthdate;
         this.picture = picture;
+    }
+
+    public void validateId(){
+        if (this.personid==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Personid cannot be null");
+        }
+    }
+
+    public void validateName(){
+        if(this.name==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Person name cannot be null");
+        }
     }
 
 }

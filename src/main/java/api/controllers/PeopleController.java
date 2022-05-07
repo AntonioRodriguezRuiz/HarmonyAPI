@@ -51,6 +51,7 @@ public class PeopleController {
     @PostMapping
     public ResponseEntity postPerson (@RequestBody PeopleRequestHelper person) throws SQLException {
         UserMiddlewares.isAdmin(person.getUserid());
+        person.validateName();
         PeopleMiddlewares.doesNotExistsPerson(person);
         return new ResponseEntity(peopleService.postPerson(person), HttpStatus.CREATED);
     }
@@ -64,6 +65,7 @@ public class PeopleController {
     @PutMapping("/people")
     public ResponseEntity<PeopleRequestHelper> putPerson(@RequestBody PeopleRequestHelper person) throws SQLException {
         UserMiddlewares.isAdmin(person.getUserid());
+        person.validateId();
         PeopleMiddlewares.existsPerson(person.getPersonid());
         peopleService.putPerson(person);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

@@ -22,10 +22,6 @@ public class PeopleMiddlewares {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            if(personid==null){
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Personid cannot be null");
-            }
-
             if(create.select()
                     .from(PEOPLE)
                     .where(PEOPLE.PERSONID.eq(personid))
@@ -45,10 +41,6 @@ public class PeopleMiddlewares {
     public static void doesNotExistsPerson(PeopleRequestHelper person) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-
-            if(person.getName()==null){
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Person name cannot be null");
-            }
 
             if(person.getBirthdate()!=null && !create.select()
                     .from(PEOPLE)

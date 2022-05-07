@@ -62,7 +62,7 @@ public class PeopleController {
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "409", description = "Item already exists", content = @Content)})
-    @PutMapping("/people")
+    @PutMapping
     public ResponseEntity<PeopleRequestHelper> putPerson(@RequestBody PeopleRequestHelper person) throws SQLException {
         UserMiddlewares.isAdmin(person.getUserid());
         person.validateId();

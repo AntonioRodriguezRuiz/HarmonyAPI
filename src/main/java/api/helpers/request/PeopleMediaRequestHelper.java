@@ -2,14 +2,9 @@ package api.helpers.request;
 
 import api.helpers.enums.RoleType;
 
-import java.time.LocalDate;
-
 public class PeopleMediaRequestHelper {
     private Integer userid;
     private Integer personid;
-    private String name;
-    private LocalDate birthdate;
-    private String picture;
     private String role;
     private RoleType roleType;
 
@@ -29,18 +24,6 @@ public class PeopleMediaRequestHelper {
         this.personid = personid;
     }
 
-    public String getName() {return name;}
-
-    public void setName(String name) {this.name=name;}
-
-    public LocalDate getBirthdate() {return birthdate;}
-
-    public void setBirthdate(LocalDate birthdate) {this.birthdate=birthdate;}
-
-    public String getPicture() { return picture;}
-
-    public void setPicture(String picture) { this.picture = picture;}
-
     public String getRole() {
         return role;
     }
@@ -57,12 +40,9 @@ public class PeopleMediaRequestHelper {
         this.roleType = roleType;
     }
 
-    public PeopleMediaRequestHelper(Integer userid, Integer personid, String name, LocalDate birthdate, String picture, String role, RoleType roleType) {
+    public PeopleMediaRequestHelper(Integer userid, Integer personid, String role, RoleType roleType) {
         this.userid = userid;
         this.personid = personid;
-        this.name=name;
-        this.birthdate=birthdate;
-        this.picture=picture;
         this.role = role;
         this.roleType = roleType;
     }

@@ -2,8 +2,7 @@ package api.services;
 
 import api.GlobalValues;
 import api.helpers.request.*;
-import api.helpers.response.GenreResponseHelper;
-import api.helpers.response.PeopleMediaResponseHelper;
+import api.helpers.response.PeopleResponseHelper;
 import org.jooq.*;
 import org.jooq.Record;
 import org.jooq.Result;
@@ -39,8 +38,8 @@ public class PeopleService {
         return peopleList;
     }
 
-    public PeopleMediaResponseHelper postPerson(PeopleMediaRequestHelper person) throws SQLException {
-        PeopleMediaResponseHelper newPerson=null;
+    public PeopleResponseHelper postPerson(PeopleRequestHelper person) throws SQLException {
+        PeopleResponseHelper newPerson=null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
@@ -61,11 +60,11 @@ public class PeopleService {
         return newPerson;
     }
 
-    public void putPerson(PeopleMediaRequestHelper people, People oldperson) throws SQLException{
+    public void putPerson(PeopleRequestHelper people, People oldperson) throws SQLException{
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            PeopleMediaRequestHelper newPerson=new PeopleMediaRequestHelper(null,null,null,null,null,null,null);
+            PeopleRequestHelper newPerson=new PeopleRequestHelper(null,null,null,null);
             newPerson.setPersonid(people.getPersonid());
 
             newPerson.setName(people.getName() != null ? people.getName() : oldperson.getName());

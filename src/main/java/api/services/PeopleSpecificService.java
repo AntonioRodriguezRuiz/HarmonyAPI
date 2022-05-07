@@ -2,7 +2,7 @@ package api.services;
 
 import api.GlobalValues;
 import api.helpers.response.GenreResponseHelper;
-import api.helpers.response.PeopleMediaResponseHelper;
+import api.helpers.response.PeopleResponseHelper;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
@@ -16,14 +16,14 @@ import java.sql.SQLException;
 import static src.main.java.model.Tables.PEOPLE;
 
 public class PeopleSpecificService {
-    public PeopleMediaResponseHelper getPerson(Integer id) {
-        PeopleMediaResponseHelper personResult=null;
+    public PeopleResponseHelper getPerson(Integer id) throws SQLException{
+        PeopleResponseHelper personResult=null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)){
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             Record person=create.select().from(PEOPLE).where(PEOPLE.PERSONID.eq(id)).fetch().get(0);
 
-            personResult= new PeopleMediaResponseHelper(person);
+            personResult= new PeopleResponseHelper(person);
 
         } catch (ResponseStatusException | SQLException e) {
             if (e instanceof ResponseStatusException) {

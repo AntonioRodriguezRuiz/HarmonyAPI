@@ -47,15 +47,16 @@ public class UserSpecificController {
 
     @Operation(summary = "Modifies an user's information")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User modified", content = @Content),
+            @ApiResponse(responseCode = "204", description = "Item modified"),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content),
             @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content)
     })
     @PutMapping
-    public ResponseEntity<UserResponseHelper> putUser(@PathVariable Integer userId, @RequestBody UserRequestHelper user) throws SQLException {
+    public ResponseEntity<UserRequestHelper> putUser(@PathVariable Integer userId, @RequestBody UserRequestHelper user) throws SQLException {
         UserMiddlewares.userExists(userId);
         UserMiddlewares.isAccountOwner(userId);
-        return new ResponseEntity<>(userSpecificService.putUser(userId, user), HttpStatus.OK);
+        userSpecificService.putUser(userId, user);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Operation(summary = "Deletes an user")

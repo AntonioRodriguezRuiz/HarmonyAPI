@@ -73,16 +73,17 @@ public class ListSpecificController {
 
     @Operation(summary = "Updates information on the list")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "List updated successfully"),
+        @ApiResponse(responseCode = "204", description = "Item modified"),
         @ApiResponse(responseCode = "403", description = "User not authorized to access the list"),
         @ApiResponse(responseCode = "404", description = "User or list not found")
     })
     @PutMapping
-    public ResponseEntity<ListResponseHelper> putList(@PathVariable Integer userId, @PathVariable Integer listId, @RequestBody ListRequestHelper list) throws SQLException {
+    public ResponseEntity<ListRequestHelper> putList(@PathVariable Integer userId, @PathVariable Integer listId, @RequestBody ListRequestHelper list) throws SQLException {
         UserMiddlewares.userExists(userId);
         ListMiddlewares.listExists(listId);
         ListMiddlewares.isListOwner(userId, listId);
-        return new ResponseEntity<>(listSpecificService.putList(listId, list), HttpStatus.OK);
+        listSpecificService.putList(listId, list);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Operation(summary = "Deletes the list")
@@ -108,12 +109,12 @@ public class ListSpecificController {
         @ApiResponse(responseCode = "404", description = "User or list not found")
     })
     @DeleteMapping("/{mediaId}")
-    public ResponseEntity<ListResponseHelper> deleteMedia(@PathVariable Integer userId, @PathVariable Integer listId, @PathVariable Integer mediaId) throws SQLException {
+    public ResponseEntity<ListRequestHelper> deleteMedia(@PathVariable Integer userId, @PathVariable Integer listId, @PathVariable Integer mediaId) throws SQLException {
         UserMiddlewares.userExists(userId);
         ListMiddlewares.listExists(listId);
         ListMiddlewares.isListOwner(userId, listId);
         ListMiddlewares.isMediaNotInList(listId, mediaId);
         listSpecificService.deleteMedia(listId, mediaId);
-        return getList(userId, listId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

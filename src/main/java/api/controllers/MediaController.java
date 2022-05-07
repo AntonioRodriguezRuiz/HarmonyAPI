@@ -58,7 +58,7 @@ public class MediaController {
         String search = searchParam!=null ? searchParam : "";
 
         if(genreParam!=null){
-            isValidGenre(genreParam);
+            GenresMiddlewares.existsGenre(genreParam);
         }
 
         TableLike typeTable = null;
@@ -212,25 +212,5 @@ public class MediaController {
         }
         mediaService.putVideogame(videogame);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    private void isValidGenre(String genreString) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-            List<Genres> result = create.select()
-                    .from(GENRES)
-                    .where(GENRES.NAME.eq(genreString))
-                    .fetchInto(Genres.class);
-
-            if(result.isEmpty()){
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-            }
-
-        } catch (ResponseStatusException | SQLException e){
-            if(e instanceof ResponseStatusException){
-                throw e;
-            }
-            e.printStackTrace();
-        }
     }
 }

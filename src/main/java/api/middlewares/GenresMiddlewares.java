@@ -12,6 +12,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import static src.main.java.model.Tables.GENRES;
+import src.main.java.model.tables.pojos.Genres;
 
 public class GenresMiddlewares {
 
@@ -35,7 +36,7 @@ public class GenresMiddlewares {
         }
     }
 
-    public static void existsGenre(Integer id)throws SQLException {
+    public static void existsGenre(Integer id) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
@@ -47,6 +48,24 @@ public class GenresMiddlewares {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Genre does not exist");
             }
 
+        } catch (ResponseStatusException | SQLException e){
+            if(e instanceof ResponseStatusException){
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
+
+    public static void existsGenre(String genre) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            if (create.select()
+                .from(GENRES)
+                .where(GENRES.NAME.eq(genre))
+                .fetchInto(Genres.class)
+                .isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Genre does not exist");
+            }
         } catch (ResponseStatusException | SQLException e){
             if(e instanceof ResponseStatusException){
                 throw e;

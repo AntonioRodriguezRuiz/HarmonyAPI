@@ -136,9 +136,11 @@ public class MediaSpecificController {
     @PostMapping("/{seasonid}")
     public ResponseEntity<EpisodeResponseHelper> postEpisode(@PathVariable Integer id, @PathVariable Integer seasonid, @RequestBody EpisodeRequestHelper episode) throws SQLException {
         UserMiddlewares.isAdmin(episode.getUserid());
-        if(episode.getEpisodeNo()==null || episode.getEpisodeName()==null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        MediaMiddlewares.mediaExists(id);
+        SeriesMiddlewares.isSeries(id);
+        SeasonMiddlewares.seasonExists(seasonid);
+        SeasonMiddlewares.isSeasonOf(id, seasonid);
+        episode.validate();
         return new ResponseEntity<>(mediaService.postEpisode(id, seasonid, episode), HttpStatus.CREATED);
     }
 

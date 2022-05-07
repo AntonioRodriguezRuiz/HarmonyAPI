@@ -1,6 +1,8 @@
 package api.helpers.request;
 
 import org.jooq.Record;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 public class EpisodeRequestHelper {
     private Integer userid;
@@ -46,6 +48,16 @@ public class EpisodeRequestHelper {
         this.episodeid = episodeid;
         this.episodeNo = episodeNo;
         this.episodeName = episodeName;
+    }
+
+    public void validate() {
+        if (userid == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Userid is required");
+        } else if (episodeNo == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "EpisodeNo is required");
+        } else if (episodeName == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "EpisodeName is required");
+        }
     }
 
 }

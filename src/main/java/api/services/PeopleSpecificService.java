@@ -1,7 +1,6 @@
 package api.services;
 
 import api.GlobalValues;
-import api.helpers.response.GenreResponseHelper;
 import api.helpers.response.PeopleResponseHelper;
 import org.jooq.DSLContext;
 import org.jooq.Record;

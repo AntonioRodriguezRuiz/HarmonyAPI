@@ -1,12 +1,14 @@
 package api.services;
 
 import api.GlobalValues;
-import api.helpers.request.*;
+import api.helpers.request.PeopleRequestHelper;
 import api.helpers.response.PeopleResponseHelper;
-import org.jooq.*;
+import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import src.main.java.model.Routines;
 import src.main.java.model.tables.pojos.People;
 
 import java.sql.Connection;
@@ -14,9 +16,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
-import src.main.java.model.Routines;
-
-import static src.main.java.model.Tables.*;
+import static src.main.java.model.Tables.PEOPLE;
 
 @Service
 public class PeopleService {

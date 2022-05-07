@@ -1,12 +1,14 @@
 package api.services;
 
 import api.GlobalValues;
-import api.helpers.request.*;
+import api.helpers.request.GenreRequestHelper;
 import api.helpers.response.GenreResponseHelper;
-import org.jooq.*;
+import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import src.main.java.model.Routines;
 import src.main.java.model.tables.pojos.Genres;
 
 import java.sql.Connection;
@@ -15,7 +17,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static src.main.java.model.Tables.GENRES;
-import src.main.java.model.Routines;
 
 @Service
 public class GenresService {

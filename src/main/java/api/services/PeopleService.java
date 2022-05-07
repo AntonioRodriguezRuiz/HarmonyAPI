@@ -4,10 +4,7 @@ import api.GlobalValues;
 import api.helpers.request.*;
 import api.helpers.response.PeopleResponseHelper;
 import org.jooq.*;
-import org.jooq.Record;
-import org.jooq.Result;
 import org.jooq.impl.DSL;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import src.main.java.model.tables.pojos.People;
@@ -20,7 +17,6 @@ import java.util.List;
 import src.main.java.model.Routines;
 
 import static src.main.java.model.Tables.*;
-import static src.main.java.model.Tables.GENRES;
 
 @Service
 public class PeopleService {
@@ -60,22 +56,24 @@ public class PeopleService {
         return newPerson;
     }
 
-    public void putPerson(PeopleRequestHelper people, People oldperson) throws SQLException{
+    public void putPerson(PeopleRequestHelper person) throws SQLException{
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            PeopleRequestHelper newPerson=new PeopleRequestHelper(null,null,null,null);
-            newPerson.setPersonid(people.getPersonid());
+            People oldPerson = create.select()
+                                    .from(PEOPLE)
+                                    .where(PEOPLE.PERSONID.eq(person.getPersonid()))
+                                    .fetchInto(People.class).get(0);
 
-            newPerson.setName(people.getName() != null ? people.getName() : oldperson.getName());
-            newPerson.setBirthdate(people.getBirthdate() != null ? people.getBirthdate() : oldperson.getBirthdate());
-            newPerson.setPicture(people.getPicture() != null ? people.getPicture() : oldperson.getPicture());
+            person.setName(person.getName()==null ? oldPerson.getName() : person.getName());
+            person.setBirthdate(person.getBirthdate()==null ? oldPerson.getBirthdate() : person.getBirthdate());
+            person.setPicture(person.getPicture()==null ? oldPerson.getPicture() : person.getPicture());
 
             create.update(PEOPLE)
-                    .set(PEOPLE.NAME, newPerson.getName())
-                    .set(PEOPLE.BIRTHDATE, newPerson.getBirthdate())
-                    .set(PEOPLE.PICTURE, newPerson.getPicture())
-                    .where(PEOPLE.PERSONID.eq(newPerson.getPersonid()))
+                    .set(PEOPLE.NAME, person.getName())
+                    .set(PEOPLE.BIRTHDATE, person.getBirthdate())
+                    .set(PEOPLE.PICTURE, person.getPicture())
+                    .where(PEOPLE.PERSONID.eq(person.getPersonid()))
                     .execute();
 
         } catch (ResponseStatusException | SQLException e) {

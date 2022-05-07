@@ -7,12 +7,10 @@ import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
-import src.main.java.model.tables.pojos.People;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.List;
 
 import static src.main.java.model.Tables.PEOPLE;
 

@@ -1,10 +1,8 @@
 package api.helpers.response;
 
 import api.helpers.enums.RoleType;
-import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Table;
-import org.jooq.TableField;
 
 import java.time.LocalDate;
 

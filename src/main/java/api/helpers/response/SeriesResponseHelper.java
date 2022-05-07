@@ -2,12 +2,12 @@ package api.helpers.response;
 
 import org.jooq.Record;
 import src.main.java.model.tables.pojos.Genres;
+import src.main.java.model.tables.pojos.Seasons;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import static src.main.java.model.tables.Media.MEDIA;
-import src.main.java.model.tables.pojos.Seasons;
 
 public class SeriesResponseHelper extends MediaResponseHelper{
 

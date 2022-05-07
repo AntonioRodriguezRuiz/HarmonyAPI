@@ -2,11 +2,11 @@ package api.helpers.response;
 
 import api.helpers.enums.TrackerState;
 import org.jooq.Record;
-
-import static src.main.java.model.Tables.TRACKERS;
 import src.main.java.model.tables.pojos.Media;
 
 import java.time.LocalDateTime;
+
+import static src.main.java.model.Tables.TRACKERS;
 
 /**
  * TrackerResponseHelper

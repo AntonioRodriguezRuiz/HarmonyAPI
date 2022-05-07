@@ -1,6 +1,8 @@
 package api.helpers.response;
-import static src.main.java.model.Tables.*;
+
 import org.jooq.Record;
+
+import static src.main.java.model.Tables.REPORTS;
 
 public record ReportResponseHelper(Integer reportid, Integer useridreporter, Integer useridreported,
                                    Integer reviewid, String reason) {

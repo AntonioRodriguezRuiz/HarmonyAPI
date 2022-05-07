@@ -3,8 +3,6 @@ package api.middlewares;
 import api.GlobalValues;
 import api.helpers.request.UserRequestHelper;
 import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.Result;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.springframework.http.HttpStatus;
@@ -15,7 +13,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import static src.main.java.model.Tables.*;
+import static src.main.java.model.Tables.ADMINS;
+import static src.main.java.model.Tables.USERS;
 
 public class UserMiddlewares {
 

@@ -8,6 +8,7 @@ import org.jooq.impl.DSL;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import src.main.java.model.Routines;
 import src.main.java.model.tables.pojos.Media;
 
 import java.sql.Connection;
@@ -16,7 +17,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static src.main.java.model.Tables.*;
-import src.main.java.model.Routines;
 
 @Service
 public class MediaService {

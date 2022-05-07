@@ -10,7 +10,6 @@ import api.middlewares.UserMiddlewares;
 import api.services.MediaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.jooq.DSLContext;
@@ -22,19 +21,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import org.springframework.web.server.ResponseStatusException;
+import src.main.java.model.tables.pojos.Genres;
 import src.main.java.model.tables.pojos.Media;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 import static src.main.java.model.tables.Genres.GENRES;
 import static src.main.java.model.tables.Media.MEDIA;
-import src.main.java.model.tables.pojos.Genres;
 
 
 @RestController

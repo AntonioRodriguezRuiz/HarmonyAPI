@@ -9,13 +9,14 @@ import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import src.main.java.model.Routines;
+import src.main.java.model.tables.pojos.Media;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
 import static src.main.java.model.Tables.*;
-import src.main.java.model.tables.pojos.Media;
-import src.main.java.model.Routines;
 
 /**
  * ListSpecificService

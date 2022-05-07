@@ -325,7 +325,7 @@ public class MediaSpecificController {
         if(review.userid()==null){
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
-        UserMiddlewares.existsUser(review.userid());
+        UserMiddlewares.userExists(review.userid());
         if(review.rating()==null || 0.0 > review.rating() || 5.0 < review.rating()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }

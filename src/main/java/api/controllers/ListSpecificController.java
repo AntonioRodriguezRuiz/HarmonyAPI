@@ -1,6 +1,7 @@
 package api.controllers;
 
 import api.helpers.request.ListMediaRequestHelper;
+import api.helpers.request.ListRequestHelper;
 import api.helpers.response.ListResponseHelper;
 import api.middlewares.UserMiddlewares;
 import api.services.ListSpecificService;
@@ -79,5 +80,23 @@ public class ListSpecificController {
         }
         UserMiddlewares.isListOwner(userId, listId);
         return new ResponseEntity<>(listSpecificService.addMedia(listId, media), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Updates information on the list")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "List updated successfully"),
+        @ApiResponse(responseCode = "403", description = "User not authorized to access the list"),
+        @ApiResponse(responseCode = "404", description = "User or list not found")
+    })
+    @PutMapping
+    public ResponseEntity<ListResponseHelper> putList(@PathVariable Integer userId, @PathVariable Integer listId, @RequestBody ListRequestHelper list) throws SQLException {
+        if (!userService.userExists(userId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+        if (!listSpecificService.listExists(listId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "List not found");
+        }
+        UserMiddlewares.isListOwner(userId, listId);
+        return new ResponseEntity<>(listSpecificService.putList(listId, list), HttpStatus.OK);
     }
 }

@@ -2,6 +2,7 @@ package api.services;
 
 import api.GlobalValues;
 import api.helpers.request.ListMediaRequestHelper;
+import api.helpers.request.ListRequestHelper;
 import api.helpers.response.ListResponseHelper;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -103,5 +104,28 @@ public class ListSpecificService {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public ListResponseHelper putList(Integer listId, ListRequestHelper list) throws SQLException {
+        ListResponseHelper response = null;
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            var oldlist = getList(listId);
+            var newlist = new ListRequestHelper(oldlist, list);
+
+            create.update(LISTS)
+                .set(LISTS.LISTNAME, newlist.listName())
+                .set(LISTS.ICON, newlist.icon())
+                .where(LISTS.LISTID.eq(listId))
+                .execute();
+
+            response = getList(listId);
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return response;
     }
 }

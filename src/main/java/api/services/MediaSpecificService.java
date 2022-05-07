@@ -462,12 +462,13 @@ public class MediaSpecificService {
             Seasons oldSeason = seasonList.get(0);
 
             SeasonRequestHelper newSeason = new SeasonRequestHelper(null, null, null, null, null);
-            newSeason.setSeasonNo(season.getSeasonNo() == null ? season.getSeasonNo() : oldSeason.getSeasonno());
-            newSeason.setNoEpisodes(season.getNoEpisodes() == null ? season.getNoEpisodes() : oldSeason.getNoepisodes());
+            newSeason.setSeasonNo(season.getSeasonNo() == null ? oldSeason.getSeasonno() : season.getSeasonNo());
+            newSeason.setNoEpisodes(season.getNoEpisodes() == null ? oldSeason.getNoepisodes() : season.getNoEpisodes());
 
             create.update(SEASONS)
                     .set(SEASONS.SEASONNO, newSeason.getSeasonNo())
                     .set(SEASONS.NOEPISODES, newSeason.getNoEpisodes())
+                    .where(SEASONS.SEASONID.eq(season.getSeasonid()))
                     .execute();
 
         } catch (ResponseStatusException | SQLException e) {

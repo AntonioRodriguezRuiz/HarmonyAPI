@@ -25,41 +25,6 @@ import static src.main.java.model.Tables.*;
  **/
 @Service
 public class UserService {
-    public boolean userExists(UserRequestHelper user) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-            return !create.select()
-                .from(USERS)
-                .where(USERS.USERNAME.eq(user.username()))
-                .or(USERS.EMAIL.eq(user.email()))
-                .fetch()
-                .isEmpty();
-        } catch (ResponseStatusException | SQLException e) {
-            if (e instanceof ResponseStatusException) {
-                throw e;
-            }
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public boolean userExists(Integer userId) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-            return !create.select()
-                .from(USERS)
-                .where(USERS.USERID.eq(userId))
-                .fetch()
-                .isEmpty();
-        } catch (ResponseStatusException | SQLException e) {
-            if (e instanceof ResponseStatusException) {
-                throw e;
-            }
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     public UserResponseHelper postUser(UserRequestHelper user) throws SQLException {
         UserResponseHelper newUser = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
@@ -83,7 +48,6 @@ public class UserService {
             }
             e.printStackTrace();
         }
-
         return newUser;
     }
 }

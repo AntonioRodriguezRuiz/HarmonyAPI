@@ -4,6 +4,7 @@ import api.helpers.request.ListMediaRequestHelper;
 import api.helpers.request.ListRequestHelper;
 import api.helpers.response.ListResponseHelper;
 import api.middlewares.ListMiddlewares;
+import api.middlewares.MediaMiddlewares;
 import api.middlewares.UserMiddlewares;
 import api.services.ListSpecificService;
 import api.services.MediaSpecificService;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.SQLException;
 
@@ -48,13 +48,9 @@ public class ListSpecificController {
     })
     @GetMapping
     public ResponseEntity<ListResponseHelper> getList(@PathVariable Integer userId, @PathVariable Integer listId) throws SQLException {
-        if (!userService.userExists(userId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        if (!listSpecificService.listExists(listId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        UserMiddlewares.isListOwner(userId, listId);
+        UserMiddlewares.userExists(userId);
+        ListMiddlewares.listExists(listId);
+        ListMiddlewares.isListOwner(userId, listId);
         return new ResponseEntity<>(listSpecificService.getList(listId), HttpStatus.OK);
     }
 
@@ -67,19 +63,11 @@ public class ListSpecificController {
     })
     @PostMapping
     public ResponseEntity<ListResponseHelper> addMedia(@PathVariable Integer userId, @PathVariable Integer listId, @RequestBody ListMediaRequestHelper media) throws SQLException {
-        if (!userService.userExists(userId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
-        }
-        if (!listSpecificService.listExists(listId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "List not found");
-        }
-        if (mediaSpecificService.existsMedia(media.mediaId()).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Media not found");
-        }
-        if (listSpecificService.isMediaInList(listId, media.mediaId())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Media already in list");
-        }
-        UserMiddlewares.isListOwner(userId, listId);
+        UserMiddlewares.userExists(userId);
+        ListMiddlewares.listExists(listId);
+        MediaMiddlewares.mediaExists(media.mediaId());
+        ListMiddlewares.isListOwner(userId, listId);
+        ListMiddlewares.isMediaInList(listId, media.mediaId());
         return new ResponseEntity<>(listSpecificService.addMedia(listId, media), HttpStatus.OK);
     }
 
@@ -91,13 +79,9 @@ public class ListSpecificController {
     })
     @PutMapping
     public ResponseEntity<ListResponseHelper> putList(@PathVariable Integer userId, @PathVariable Integer listId, @RequestBody ListRequestHelper list) throws SQLException {
-        if (!userService.userExists(userId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
-        }
-        if (!listSpecificService.listExists(listId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "List not found");
-        }
-        UserMiddlewares.isListOwner(userId, listId);
+        UserMiddlewares.userExists(userId);
+        ListMiddlewares.listExists(listId);
+        ListMiddlewares.isListOwner(userId, listId);
         return new ResponseEntity<>(listSpecificService.putList(listId, list), HttpStatus.OK);
     }
 
@@ -109,13 +93,9 @@ public class ListSpecificController {
     })
     @DeleteMapping
     public ResponseEntity<ListResponseHelper> deleteList(@PathVariable Integer userId, @PathVariable Integer listId) throws SQLException {
-        if (!userService.userExists(userId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
-        }
-        if (!listSpecificService.listExists(listId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "List not found");
-        }
-        UserMiddlewares.isListOwner(userId, listId);
+        UserMiddlewares.userExists(userId);
+        ListMiddlewares.listExists(listId);
+        ListMiddlewares.isListOwner(userId, listId);
         listSpecificService.deleteList(listId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -129,13 +109,9 @@ public class ListSpecificController {
     })
     @DeleteMapping("/{mediaId}")
     public ResponseEntity<ListResponseHelper> deleteMedia(@PathVariable Integer userId, @PathVariable Integer listId, @PathVariable Integer mediaId) throws SQLException {
-        if (!userService.userExists(userId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
-        }
-        if (!listSpecificService.listExists(listId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "List not found");
-        }
-        UserMiddlewares.isListOwner(userId, listId);
+        UserMiddlewares.userExists(userId);
+        ListMiddlewares.listExists(listId);
+        ListMiddlewares.isListOwner(userId, listId);
         ListMiddlewares.isMediaInList(listId, mediaId);
         listSpecificService.deleteMedia(listId, mediaId);
         return getList(userId, listId);

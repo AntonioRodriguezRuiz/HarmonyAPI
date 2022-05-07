@@ -2,6 +2,7 @@ package api.controllers;
 
 import api.helpers.request.UserRequestHelper;
 import api.helpers.response.UserResponseHelper;
+import api.middlewares.UserMiddlewares;
 import api.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import java.sql.SQLException;
@@ -38,12 +38,8 @@ public class UserController {
     })
     @PostMapping
     public ResponseEntity<UserResponseHelper> postUser(@RequestBody UserRequestHelper user) throws SQLException {
-        if (user.username() == null || user.password() == null || user.email() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-        if (userService.userExists(user)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
-        }
+        user.validate();
+        UserMiddlewares.userExists(user);
         return new ResponseEntity<>(userService.postUser(user), HttpStatus.CREATED);
     }
 }

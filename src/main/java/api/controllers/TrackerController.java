@@ -3,6 +3,9 @@ package api.controllers;
 import api.helpers.enums.TrackerState;
 import api.helpers.request.TrackerRequestHelper;
 import api.helpers.response.TrackerResponseHelper;
+import api.middlewares.MediaMiddlewares;
+import api.middlewares.TrackerMiddlewares;
+import api.middlewares.UserMiddlewares;
 import api.services.MediaService;
 import api.services.TrackerService;
 import api.services.UserService;
@@ -48,12 +51,8 @@ public class TrackerController {
         @PathVariable Integer userId,
         @RequestParam(name = "state", required = false) Integer state
     ) throws SQLException {
-        if (!userService.userExists(userId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        if (state != null && TrackerState.of(state) == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        UserMiddlewares.userExists(userId);
+        TrackerMiddlewares.validate(state);
         return new ResponseEntity<>(trackerService.getTracking(userId, state == null ? null : TrackerState.of(state)), HttpStatus.OK);
     }
 
@@ -66,15 +65,8 @@ public class TrackerController {
     })
     @PostMapping
     public ResponseEntity<TrackerResponseHelper> postTracker(@PathVariable Integer userId, @RequestBody TrackerRequestHelper tracker) throws SQLException {
-        if (TrackerState.of(tracker.state()) == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-        if (!mediaService.mediaExists(tracker.mediaId())) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        if (!userService.userExists(userId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+        UserMiddlewares.userExists(userId);
+        MediaMiddlewares.mediaExists(tracker.mediaId());
         return new ResponseEntity<>(trackerService.postTracker(userId, tracker), HttpStatus.OK);
     }
 }

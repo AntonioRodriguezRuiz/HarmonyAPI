@@ -2,6 +2,7 @@ package api.controllers;
 
 import api.helpers.request.ListRequestHelper;
 import api.helpers.response.ListResponseHelper;
+import api.middlewares.UserMiddlewares;
 import api.services.ListService;
 import api.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,9 +42,7 @@ public class ListController {
     })
     @GetMapping
     public ResponseEntity<List<ListResponseHelper>> getLists(@PathVariable Integer userId) throws SQLException {
-        if (!userService.userExists(userId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+        UserMiddlewares.userExists(userId);
         return new ResponseEntity<>(listService.getLists(userId), HttpStatus.OK);
     }
 
@@ -54,9 +53,7 @@ public class ListController {
     })
     @PostMapping
     public ResponseEntity<ListResponseHelper> postList(@PathVariable Integer userId, @RequestBody ListRequestHelper list) throws SQLException {
-        if (!userService.userExists(userId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+        UserMiddlewares.userExists(userId);
         return new ResponseEntity<>(listService.postList(userId, list), HttpStatus.CREATED);
     }
 }

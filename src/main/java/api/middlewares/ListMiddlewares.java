@@ -21,6 +21,24 @@ import static src.main.java.model.Tables.*;
  * @author juagallop1
  **/
 public class ListMiddlewares {
+    public static void listExists(Integer listId) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            if (create.select()
+                .from(LISTS)
+                .where(LISTS.LISTID.eq(listId))
+                .fetch()
+                .isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "List not found");
+            }
+        } catch (ResponseStatusException | SQLException e){
+            if(e instanceof ResponseStatusException){
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
+
     public static void isMediaInList(Integer listId, Integer mediaId) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
@@ -31,7 +49,7 @@ public class ListMiddlewares {
                 .where(LISTS.LISTID.eq(listId)
                     .and(LISTMEDIA.MEDIAID.eq(mediaId)))
                 .fetch().isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Media is not in list");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Media is not in list");
             }
         } catch (ResponseStatusException | SQLException e){
             if(e instanceof ResponseStatusException){
@@ -39,5 +57,26 @@ public class ListMiddlewares {
             }
             e.printStackTrace();
         }
+    }
+
+    public static boolean isListOwner(Integer userid, Integer listid) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            if (!create.select()
+                .from(LISTS)
+                .where(LISTS.LISTID.eq(listid))
+                .fetch()
+                .get(0)
+                .get(LISTS.USERID)
+                .equals(userid)) {
+                    throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not the owner of this list");
+                }
+        } catch (ResponseStatusException | SQLException e){
+            if(e instanceof ResponseStatusException){
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return false;
     }
 }

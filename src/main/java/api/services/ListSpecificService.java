@@ -26,23 +26,6 @@ import src.main.java.model.Routines;
  **/
 @Service
 public class ListSpecificService {
-    public boolean listExists(Integer listId) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-            return !create.select()
-                .from(LISTS)
-                .where(LISTS.LISTID.eq(listId))
-                .fetch()
-                .isEmpty();
-        } catch (ResponseStatusException | SQLException e) {
-            if (e instanceof ResponseStatusException) {
-                throw e;
-            }
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     public ListResponseHelper getList(Integer listId) throws SQLException {
         ListResponseHelper list = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
@@ -67,24 +50,6 @@ public class ListSpecificService {
             e.printStackTrace();
         }
         return list;
-    }
-
-    public boolean isMediaInList(Integer listId, Integer mediaId) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-            return create.select()
-                .from(LISTMEDIA)
-                .where(LISTMEDIA.LISTID.eq(listId)
-                    .and(LISTMEDIA.MEDIAID.eq(mediaId)))
-                .fetch()
-                .isNotEmpty();
-        } catch (ResponseStatusException | SQLException e) {
-            if (e instanceof ResponseStatusException) {
-                throw e;
-            }
-            e.printStackTrace();
-        }
-        return false;
     }
 
     public ListResponseHelper addMedia(Integer listId, ListMediaRequestHelper media) throws SQLException {

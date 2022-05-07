@@ -41,9 +41,7 @@ public class UserSpecificController {
     })
     @GetMapping
     public ResponseEntity<UserResponseHelper> getUser(@PathVariable Integer userId) throws SQLException {
-        if (!userService.userExists(userId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+        UserMiddlewares.userExists(userId);
         return new ResponseEntity<>(userSpecificService.getUser(userId), HttpStatus.OK);
     }
 
@@ -55,9 +53,7 @@ public class UserSpecificController {
     })
     @PutMapping
     public ResponseEntity<UserResponseHelper> putUser(@PathVariable Integer userId, @RequestBody UserRequestHelper user) throws SQLException {
-        if (!userService.userExists(userId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+        UserMiddlewares.userExists(userId);
         UserMiddlewares.isAccountOwner(userId);
         return new ResponseEntity<>(userSpecificService.putUser(userId, user), HttpStatus.OK);
     }
@@ -69,9 +65,7 @@ public class UserSpecificController {
     })
     @DeleteMapping
     public ResponseEntity<UserResponseHelper> deleteUser(@PathVariable Integer userId) throws SQLException {
-        if (!userService.userExists(userId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+        UserMiddlewares.userExists(userId);
         UserMiddlewares.isAccountOwnerOrAdmin(userId);
         userSpecificService.deleteUser(userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

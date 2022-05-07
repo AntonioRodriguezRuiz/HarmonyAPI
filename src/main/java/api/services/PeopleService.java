@@ -39,7 +39,7 @@ public class PeopleService {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            Routines.newperson(create.configuration(), newPerson.getName(), newPerson.getBirthdate(), newPerson.getPicture());
+            Routines.newperson(create.configuration(), person.getName(), person.getBirthdate(), person.getPicture());
 
             Integer newPersonID=create.select().from(PEOPLE).orderBy(PEOPLE.PERSONID.desc()).limit(1).fetch().
                     get(0).get(PEOPLE.PERSONID);

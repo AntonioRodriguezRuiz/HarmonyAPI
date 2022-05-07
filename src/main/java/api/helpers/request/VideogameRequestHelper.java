@@ -1,5 +1,8 @@
 package api.helpers.request;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 public class VideogameRequestHelper extends MediaRequestHelper{
 
     private String company;
@@ -16,6 +19,14 @@ public class VideogameRequestHelper extends MediaRequestHelper{
                              String synopsis, String company){
         super(userid, mediaid, title, releasedate, coverimage, backgroundimage, synopsis);
         this.company=company;
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        if(company == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Company is required");
+        }
     }
 
 }

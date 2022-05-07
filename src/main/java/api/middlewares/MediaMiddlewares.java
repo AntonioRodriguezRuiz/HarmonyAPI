@@ -22,6 +22,9 @@ import static src.main.java.model.Tables.MEDIA;
  **/
 public class MediaMiddlewares {
     public static void mediaExists(Integer mediaId) throws SQLException {
+        if(mediaId==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "MediaId cannot be null");
+        }
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
             if (create.select()

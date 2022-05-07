@@ -54,7 +54,7 @@ public class SeasonMiddlewares {
                 .and(SEASONS.SEASONID.eq(seasonid))
                 .fetch()
                 .isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Season is not of this media");
+                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Season is not of this media");
             }
         } catch (ResponseStatusException | SQLException e) {
             if (e instanceof ResponseStatusException) {

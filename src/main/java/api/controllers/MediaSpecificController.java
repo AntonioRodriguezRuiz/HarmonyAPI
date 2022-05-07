@@ -119,6 +119,10 @@ public class MediaSpecificController {
             @ApiResponse(responseCode = "405", description = "The media item is not a season of a series", content = @Content)})
     @GetMapping("/{seasonid}")
     public SeasonResponseHelper getSeason(@PathVariable Integer id, @PathVariable Integer seasonid) throws SQLException {
+        MediaMiddlewares.mediaExists(id);
+        SeriesMiddlewares.isSeries(id);
+        SeasonMiddlewares.seasonExists(seasonid);
+        SeasonMiddlewares.isSeasonOf(id, seasonid);
         return mediaService.getSeason(id,seasonid);
     }
 

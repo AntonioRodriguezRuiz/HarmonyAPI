@@ -142,4 +142,19 @@ public class ListSpecificService {
             e.printStackTrace();
         }
     }
+
+    public void deleteMedia(Integer listId, Integer mediaId) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            create.delete(LISTMEDIA)
+                .where(LISTMEDIA.LISTID.eq(listId))
+                    .and(LISTMEDIA.MEDIAID.eq(mediaId))
+                .execute();
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
 }

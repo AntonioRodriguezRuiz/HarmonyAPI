@@ -3,6 +3,7 @@ package api.controllers;
 import api.helpers.request.ListMediaRequestHelper;
 import api.helpers.request.ListRequestHelper;
 import api.helpers.response.ListResponseHelper;
+import api.middlewares.ListMiddlewares;
 import api.middlewares.UserMiddlewares;
 import api.services.ListSpecificService;
 import api.services.MediaSpecificService;
@@ -117,5 +118,26 @@ public class ListSpecificController {
         UserMiddlewares.isListOwner(userId, listId);
         listSpecificService.deleteList(listId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Operation(summary = "Deletes the media from the list")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Media deleted successfully"),
+        @ApiResponse(responseCode = "400", description = "Media not found in list"),
+        @ApiResponse(responseCode = "403", description = "User not authorized to access the list"),
+        @ApiResponse(responseCode = "404", description = "User or list not found")
+    })
+    @DeleteMapping("/{mediaId}")
+    public ResponseEntity<ListResponseHelper> deleteMedia(@PathVariable Integer userId, @PathVariable Integer listId, @PathVariable Integer mediaId) throws SQLException {
+        if (!userService.userExists(userId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+        if (!listSpecificService.listExists(listId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "List not found");
+        }
+        UserMiddlewares.isListOwner(userId, listId);
+        ListMiddlewares.isMediaInList(listId, mediaId);
+        listSpecificService.deleteMedia(listId, mediaId);
+        return getList(userId, listId);
     }
 }

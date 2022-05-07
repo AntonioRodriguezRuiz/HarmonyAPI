@@ -33,7 +33,7 @@ public class GenresController {
 
     }
 
-    @Operation(summary = "post a new genre")
+    @Operation(summary = "Post a new genre")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Item created"),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
@@ -43,9 +43,6 @@ public class GenresController {
     public ResponseEntity postGenre (@RequestBody GenreRequestHelper genre) throws SQLException {
         UserMiddlewares.isAdmin(genre.getUserid());
         GenresMiddlewares.existsGenre(genre.getName());
-        if(genre.getName()==null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
         return new ResponseEntity(genresService.postGenre(genre), HttpStatus.CREATED);
     }
 

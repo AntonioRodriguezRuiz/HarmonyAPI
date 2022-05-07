@@ -18,6 +18,11 @@ public class GenresMiddlewares {
     public static void existsGenre(String name) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+
+            if(name==null){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            }
+
             if(!create.select()
                     .from(GENRES)
                     .where(GENRES.NAME.eq(name))

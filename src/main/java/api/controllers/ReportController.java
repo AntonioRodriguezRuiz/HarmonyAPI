@@ -49,6 +49,10 @@ public class ReportController {
         if(report.useridreported() == null || report.reviewid() == null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
+
+        UserMiddlewares.existsUser(report.useridreported());
+        UserMiddlewares.existsUser(report.useridreporter());
+        
         return new ResponseEntity<>(reportService.postReport(report), HttpStatus.CREATED);
     }
 

@@ -26,7 +26,10 @@ public class PeopleService {
 
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-            peopleList=create.select().from(PEOPLE).orderBy(PEOPLE.PERSONID).fetchInto(People.class);
+            peopleList = create.select()
+                                .from(PEOPLE)
+                                .orderBy(PEOPLE.PERSONID)
+                                .fetchInto(People.class);
         }
         catch (Exception exception){
             exception.printStackTrace();

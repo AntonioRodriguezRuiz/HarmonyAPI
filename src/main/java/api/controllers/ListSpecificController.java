@@ -57,7 +57,7 @@ public class ListSpecificController {
 
     @Operation(summary = "Add a media to the list")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Media added successfully"),
+        @ApiResponse(responseCode = "201", description = "Media added successfully"),
         @ApiResponse(responseCode = "400", description = "Media already in the list", content = @Content),
         @ApiResponse(responseCode = "403", description = "User not authorized to access the list", content = @Content),
         @ApiResponse(responseCode = "404", description = "User, list or media not found", content = @Content),
@@ -69,7 +69,7 @@ public class ListSpecificController {
         MediaMiddlewares.mediaExists(media.mediaId());
         ListMiddlewares.isListOwner(userId, listId);
         ListMiddlewares.isMediaInList(listId, media.mediaId());
-        return new ResponseEntity<>(listSpecificService.addMedia(listId, media), HttpStatus.OK);
+        return new ResponseEntity<>(listSpecificService.addMedia(listId, media), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Updates information on the list")

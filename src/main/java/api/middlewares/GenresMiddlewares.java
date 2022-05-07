@@ -15,7 +15,7 @@ import static src.main.java.model.Tables.GENRES;
 
 public class GenresMiddlewares {
 
-    public static void existsGenre(String name) throws SQLException {
+    public static void doesNotExistsGenre(String name) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
@@ -39,7 +39,7 @@ public class GenresMiddlewares {
         }
     }
 
-    public static void doesNotExistsGenre(Integer id) throws SQLException {
+    public static void existsGenre(Integer id)throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
             if(create.select()

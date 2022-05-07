@@ -42,7 +42,7 @@ public class GenresController {
     @PostMapping
     public ResponseEntity postGenre (@RequestBody GenreRequestHelper genre) throws SQLException {
         UserMiddlewares.isAdmin(genre.getUserid());
-        GenresMiddlewares.existsGenre(genre.getName());
+        GenresMiddlewares.doesNotExistsGenre(genre.getName());
         return new ResponseEntity(genresService.postGenre(genre), HttpStatus.CREATED);
     }
 

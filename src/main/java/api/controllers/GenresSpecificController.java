@@ -31,7 +31,7 @@ public class GenresSpecificController {
     @DeleteMapping
     public ResponseEntity deleteGenre(@PathVariable Integer id, @RequestBody UseridBodyHelper useridBody) throws SQLException {
         UserMiddlewares.isAdmin(useridBody.userid());
-        GenresMiddlewares.doesNotExistsGenre(id);
+        GenresMiddlewares.existsGenre(id);
         genresSpecificService.deleteGenre(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }

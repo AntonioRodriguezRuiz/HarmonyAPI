@@ -110,10 +110,6 @@ paths:
       responses:
         '204':
           description: Item modified
-          content:
-            'Response Body':
-              schema:
-                $ref: '#/components/schemas/VideogameRequestHelper'
         '400':
           description: Some parameter does not have a valid value
         '403':
@@ -174,10 +170,6 @@ paths:
       responses:
         '204':
           description: Item modified
-          content:
-            'Response Body':
-              schema:
-                $ref: '#/components/schemas/SeriesRequestHelper'
         '400':
           description: Some parameter does not have a valid value
         '403':
@@ -238,10 +230,6 @@ paths:
       responses:
         '204':
           description: Item modified
-          content:
-            'Response Body':
-              schema:
-                $ref: '#/components/schemas/MovieRequestHelper'
         '400':
           description: Some parameter does not have a valid value
         '403':
@@ -304,10 +292,6 @@ paths:
       responses:
         '204':
           description: Item modified
-          content:
-            'Response Body':
-              schema:
-                $ref: '#/components/schemas/BookRequestHelper'
         '400':
           description: Some parameter does not have a valid value
         '403':
@@ -357,10 +341,6 @@ paths:
       responses:
         '204':
           description: Item destroyed
-          content:
-            'Response Body':
-              schema:
-                type: string
         '400':
           description: Some parameter does not have a valid value
         '403':
@@ -434,10 +414,6 @@ paths:
       responses:
         '204':
           description: Item destroyed
-          content:
-            'Response Body':
-              schema:
-                type: string
         '400':
           description: Some parameter does not have a valid value
         '403':
@@ -542,11 +518,7 @@ paths:
         required: true
       responses:
         '204':
-          description: Item destroyed
-          content:
-            'Response Body':
-              schema:
-                type: string
+          description: Item modified
         '400':
           description: Some parameter does not have a valid value
         '403':
@@ -583,10 +555,6 @@ paths:
       responses:
         '204':
           description: Item destroyed
-          content:
-            'Response Body':
-              schema:
-                type: string
         '400':
           description: Some parameter does not have a valid value
         '403':
@@ -709,10 +677,6 @@ paths:
       responses:
         '204':
           description: Item modified
-          content:
-            'Response Body':
-              schema:
-                type: string
         '400':
           description: Some parameter does not have a valid value
         '403':
@@ -748,10 +712,6 @@ paths:
       responses:
         '204':
           description: Item destroyed
-          content:
-            'Response Body':
-              schema:
-                type: string
         '400':
           description: Some parameter does not have a valid value
         '403':
@@ -829,10 +789,6 @@ paths:
       responses:
         '204':
           description: Item destroyed
-          content:
-            'Response Body':
-              schema:
-                type: string
         '400':
           description: Some parameter does not have a valid value
         '403':
@@ -885,11 +841,7 @@ paths:
         required: true
       responses:
         '204':
-          description: Item destroyed
-          content:
-            'Response Body':
-              schema:
-                type: string
+          description: Item modified
         '400':
           description: Some parameter does not have a valid value
         '403':
@@ -1036,10 +988,6 @@ paths:
       responses:
         '204':
           description: Item destroyed
-          content:
-            'Response Body':
-              schema:
-                type: string
         '400':
           description: Some parameter does not have a valid value
         '403':
@@ -1074,8 +1022,8 @@ paths:
             type: integer
             format: int32
       responses:
-        '201':
-          description: Item created
+        '200':
+          description: Items fetched
           content:
             'Response Body':
               schema:
@@ -1119,8 +1067,8 @@ paths:
               $ref: '#/components/schemas/PeopleMediaRequestHelper'
         required: true
       responses:
-        '204':
-          description: Item destroyed
+        '201':
+          description: Item created
           content:
             'Response Body':
               schema:
@@ -1182,10 +1130,6 @@ paths:
       responses:
         '204':
           description: Item destroyed
-          content:
-            'Response Body':
-              schema:
-                type: string
         '400':
           description: Some parameter does not have a valid value
         '403':
@@ -1827,10 +1771,6 @@ paths:
       responses:
         '204':
           description: Item destroyed
-          content:
-            "Response Body":
-              schema:
-                type: string
         '400':
           description: Some parameter does not have a valid value
         '403':
@@ -1897,10 +1837,6 @@ paths:
       responses:
         '204':
           description: Item destroyed
-          content:
-            "Response Body":
-              schema:
-                type: string
         '400':
           description: Some parameter does not have a valid value
         '403':
@@ -1981,10 +1917,6 @@ paths:
       responses:
         '204':
           description: Item destroyed
-          content:
-            "Response Body":
-              schema:
-                type: string
         '400':
           description: Some parameter does not have a valid value
         '403':

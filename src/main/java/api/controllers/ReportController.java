@@ -59,7 +59,7 @@ public class ReportController {
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)
     })
-    @DeleteMapping("/{id}")
+    @DeleteMapping
     public ResponseEntity deleteReport(@PathVariable Integer id, @RequestBody UseridBodyHelper useridBody) throws SQLException {
         UserMiddlewares.isAdmin(useridBody.userid());
         reportService.deleteReport(id);

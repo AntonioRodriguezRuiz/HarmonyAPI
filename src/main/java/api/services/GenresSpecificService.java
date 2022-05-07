@@ -17,23 +17,6 @@ import static src.main.java.model.Tables.GENRES;
 
 @Service
 public class GenresSpecificService {
-    public GenreResponseHelper getGenre(Integer id) throws SQLException {
-        GenreResponseHelper genreResult=null;
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)){
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-
-            Record genre=create.select().from(GENRES).where(GENRES.GENREID.eq(id)).fetch().get(0);
-
-            genreResult= new GenreResponseHelper(genre);
-
-        } catch (ResponseStatusException | SQLException e) {
-            if (e instanceof ResponseStatusException) {
-                throw e;
-            }
-            e.printStackTrace();
-        }
-        return genreResult;
-    }
 
     public void deleteGenre(Integer id) {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)){

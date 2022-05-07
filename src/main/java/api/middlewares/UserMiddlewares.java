@@ -49,7 +49,7 @@ public class UserMiddlewares {
                 .get(0)
                 .get(LISTS.USERID)
                 .equals(userid)) {
-                    throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+                    throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not the owner of this list");
                 }
         } catch (ResponseStatusException | SQLException e){
             if(e instanceof ResponseStatusException){

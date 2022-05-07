@@ -2,6 +2,7 @@ package api.services;
 
 import api.GlobalValues;
 import api.helpers.request.ReportRequestHelper;
+import api.helpers.request.UseridBodyHelper;
 import api.helpers.response.ReportResponseHelper;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -32,7 +33,7 @@ public class ReportService {
                     .from(REPORTS)
                     .offset(offset)
                     .limit(GlobalValues.PAGE_SIZE)
-                    .fetchInto(src.main.java.model.tables.pojos.Reports.class);
+                    .fetchInto(Reports.class);
 
         } catch (Exception exception) {
             exception.printStackTrace();

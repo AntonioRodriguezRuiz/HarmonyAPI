@@ -4,6 +4,7 @@ import api.GlobalValues;
 import api.helpers.request.ReportRequestHelper;
 import api.helpers.request.UseridBodyHelper;
 import api.helpers.response.ReportResponseHelper;
+import api.middlewares.ReviewMiddlewares;
 import api.middlewares.UserMiddlewares;
 import api.services.ReportService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,12 +47,13 @@ public class ReportController {
             @ApiResponse(responseCode = "409", description = "Item already exists", content = @Content)})
     @PostMapping
     public ResponseEntity<ReportResponseHelper> postReport(@RequestBody ReportRequestHelper report) throws SQLException {
-        if(report.useridreported() == null || report.reviewid() == null){
+        if(report.useridreporter() == null || report.useridreported() == null || report.reviewid() == null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
         UserMiddlewares.userExists(report.useridreported());
         UserMiddlewares.userExists(report.useridreporter());
+        ReviewMiddlewares.isOwnerOfReview(report.useridreported(), report.reviewid());
 
         return new ResponseEntity<>(reportService.postReport(report), HttpStatus.CREATED);
     }

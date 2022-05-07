@@ -4,7 +4,6 @@ import api.helpers.enums.TrackerState;
 import api.helpers.request.TrackerRequestHelper;
 import api.helpers.response.TrackerResponseHelper;
 import api.middlewares.MediaMiddlewares;
-import api.middlewares.TrackerMiddlewares;
 import api.middlewares.UserMiddlewares;
 import api.services.MediaService;
 import api.services.TrackerService;
@@ -48,11 +47,10 @@ public class TrackerController {
     @GetMapping
     public ResponseEntity<List<TrackerResponseHelper>> getTracking(
         @PathVariable Integer userId,
-        @RequestParam(name = "state", required = false) Integer state
+        @RequestParam(name = "state", required = false) TrackerState state
     ) throws SQLException {
         UserMiddlewares.userExists(userId);
-        TrackerMiddlewares.validate(state);
-        return new ResponseEntity<>(trackerService.getTracking(userId, state == null ? null : TrackerState.of(state)), HttpStatus.OK);
+        return new ResponseEntity<>(trackerService.getTracking(userId, state), HttpStatus.OK);
     }
 
     @Operation(summary = "Creates a new tracker")

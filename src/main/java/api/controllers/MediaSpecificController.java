@@ -2,6 +2,7 @@ package api.controllers;
 
 import api.helpers.request.*;
 import api.helpers.response.*;
+import api.middlewares.ReviewMiddlewares;
 import api.middlewares.UserMiddlewares;
 import api.services.MediaSpecificService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -345,7 +346,7 @@ public class MediaSpecificController {
         } else if(review.reviewid()==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        UserMiddlewares.isOwnerOfReview(review.userid(), review.reviewid());
+        ReviewMiddlewares.isOwnerOfReview(review.userid(), review.reviewid());
         if(review.rating()==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }

@@ -1,5 +1,6 @@
 package api.controllers;
 
+import api.GlobalValues;
 import api.helpers.request.PeopleRequestHelper;
 import api.middlewares.PeopleMiddlewares;
 import api.middlewares.UserMiddlewares;
@@ -12,13 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import org.springframework.web.server.ResponseStatusException;
+import src.main.java.model.tables.pojos.People;
 
 import java.sql.SQLException;
 import java.util.List;
-
-import src.main.java.model.tables.pojos.People;
 
 @RestController
 @RequestMapping("/api/v1/people")
@@ -31,12 +30,19 @@ public class PeopleController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Search successful")})
     @GetMapping
-    public List<People> getAllPeople() throws SQLException {
-        return peopleService.getAllPeople();
+    public List<People> getAllPeople(@RequestParam(name="search", required = false) String searchParam,
+                                     @RequestParam(name="page", required = false) String pageParam) throws SQLException {
+
+        String search = searchParam!=null ? searchParam : "";
+
+        Integer page = pageParam!=null ? Integer.valueOf(pageParam) : 1;
+        Integer offset = page * GlobalValues.PAGE_SIZE - GlobalValues.PAGE_SIZE;
+
+        return peopleService.getAllPeople(search, offset);
 
     }
 
-    @Operation(summary = "post a new person")
+    @Operation(summary = "Post a new person")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Item created"),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
@@ -52,7 +58,7 @@ public class PeopleController {
         return new ResponseEntity(peopleService.postPerson(person), HttpStatus.CREATED);
     }
 
-    @Operation(summary = "modifies a person")
+    @Operation(summary = "Modifies a person")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Item created"),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),

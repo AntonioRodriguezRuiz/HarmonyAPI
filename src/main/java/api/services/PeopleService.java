@@ -21,13 +21,15 @@ import static src.main.java.model.Tables.PEOPLE;
 @Service
 public class PeopleService {
 
-    public List<People> getAllPeople(){
+    public List<People> getAllPeople(String search, Integer offset){
         List<People> peopleList=null;
 
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
             peopleList = create.select()
                                 .from(PEOPLE)
+                                .where(PEOPLE.NAME.contains(search))
+                                .offset(offset)
                                 .fetchInto(People.class);
         }
         catch (Exception exception){

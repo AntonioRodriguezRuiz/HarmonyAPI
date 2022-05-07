@@ -75,7 +75,7 @@ public class Peoplebooks extends TableImpl<PeoplebooksRecord> {
     /**
      * The column <code>harmony.peopleBooks.roletype</code>.
      */
-    public final TableField<PeoplebooksRecord, Byte> ROLETYPE = createField(DSL.name("roletype"), SQLDataType.TINYINT, this, "");
+    public final TableField<PeoplebooksRecord, Byte> ROLETYPE = createField(DSL.name("roletype"), SQLDataType.TINYINT.defaultValue(DSL.field("NULL", SQLDataType.TINYINT)), this, "");
 
     private Peoplebooks(Name alias, Table<PeoplebooksRecord> aliased) {
         this(alias, aliased, null);
@@ -160,7 +160,7 @@ public class Peoplebooks extends TableImpl<PeoplebooksRecord> {
     @Override
     public List<Check<PeoplebooksRecord>> getChecks() {
         return Arrays.<Check<PeoplebooksRecord>>asList(
-              Internal.createCheck(this, DSL.name("roletypeNotValid"), "(`roletype` = 0)", true)
+              Internal.createCheck(this, DSL.name("roletypeNotValid"), "`roletype` = 0", true)
         );
     }
 

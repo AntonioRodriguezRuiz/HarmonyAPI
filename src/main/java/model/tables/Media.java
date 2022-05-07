@@ -84,7 +84,7 @@ public class Media extends TableImpl<MediaRecord> {
     /**
      * The column <code>harmony.media.avgRating</code>.
      */
-    public final TableField<MediaRecord, Double> AVGRATING = createField(DSL.name("avgRating"), SQLDataType.FLOAT, this, "");
+    public final TableField<MediaRecord, Double> AVGRATING = createField(DSL.name("avgRating"), SQLDataType.FLOAT.defaultValue(DSL.field("NULL", SQLDataType.FLOAT)), this, "");
 
     private Media(Name alias, Table<MediaRecord> aliased) {
         this(alias, aliased, null);
@@ -142,7 +142,7 @@ public class Media extends TableImpl<MediaRecord> {
     @Override
     public List<Check<MediaRecord>> getChecks() {
         return Arrays.<Check<MediaRecord>>asList(
-              Internal.createCheck(this, DSL.name("intervalRating"), "((0 <= `avgRating`) <= 5)", true)
+              Internal.createCheck(this, DSL.name("intervalRating"), "0 <= `avgRating` <= 5", true)
         );
     }
 

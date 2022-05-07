@@ -58,22 +58,22 @@ public class Reports extends TableImpl<ReportsRecord> {
     /**
      * The column <code>harmony.reports.useridreporter</code>.
      */
-    public final TableField<ReportsRecord, Integer> USERIDREPORTER = createField(DSL.name("useridreporter"), SQLDataType.INTEGER, this, "");
+    public final TableField<ReportsRecord, Integer> USERIDREPORTER = createField(DSL.name("useridreporter"), SQLDataType.INTEGER.defaultValue(DSL.field("NULL", SQLDataType.INTEGER)), this, "");
 
     /**
      * The column <code>harmony.reports.useridreported</code>.
      */
-    public final TableField<ReportsRecord, Integer> USERIDREPORTED = createField(DSL.name("useridreported"), SQLDataType.INTEGER, this, "");
+    public final TableField<ReportsRecord, Integer> USERIDREPORTED = createField(DSL.name("useridreported"), SQLDataType.INTEGER.defaultValue(DSL.field("NULL", SQLDataType.INTEGER)), this, "");
 
     /**
      * The column <code>harmony.reports.reviewid</code>.
      */
-    public final TableField<ReportsRecord, Integer> REVIEWID = createField(DSL.name("reviewid"), SQLDataType.INTEGER, this, "");
+    public final TableField<ReportsRecord, Integer> REVIEWID = createField(DSL.name("reviewid"), SQLDataType.INTEGER.defaultValue(DSL.field("NULL", SQLDataType.INTEGER)), this, "");
 
     /**
      * The column <code>harmony.reports.reason</code>.
      */
-    public final TableField<ReportsRecord, String> REASON = createField(DSL.name("reason"), SQLDataType.VARCHAR(120), this, "");
+    public final TableField<ReportsRecord, String> REASON = createField(DSL.name("reason"), SQLDataType.VARCHAR(120).defaultValue(DSL.field("NULL", SQLDataType.VARCHAR)), this, "");
 
     private Reports(Name alias, Table<ReportsRecord> aliased) {
         this(alias, aliased, null);

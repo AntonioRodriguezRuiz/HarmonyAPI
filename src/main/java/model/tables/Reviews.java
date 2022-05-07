@@ -61,7 +61,7 @@ public class Reviews extends TableImpl<ReviewsRecord> {
     /**
      * The column <code>harmony.reviews.userid</code>.
      */
-    public final TableField<ReviewsRecord, Integer> USERID = createField(DSL.name("userid"), SQLDataType.INTEGER, this, "");
+    public final TableField<ReviewsRecord, Integer> USERID = createField(DSL.name("userid"), SQLDataType.INTEGER.defaultValue(DSL.field("NULL", SQLDataType.INTEGER)), this, "");
 
     /**
      * The column <code>harmony.reviews.mediaid</code>.
@@ -81,7 +81,7 @@ public class Reviews extends TableImpl<ReviewsRecord> {
     /**
      * The column <code>harmony.reviews.review</code>.
      */
-    public final TableField<ReviewsRecord, String> REVIEW = createField(DSL.name("review"), SQLDataType.VARCHAR(2800), this, "");
+    public final TableField<ReviewsRecord, String> REVIEW = createField(DSL.name("review"), SQLDataType.VARCHAR(2800).defaultValue(DSL.field("NULL", SQLDataType.VARCHAR)), this, "");
 
     /**
      * The column <code>harmony.reviews.likes</code>.
@@ -171,8 +171,8 @@ public class Reviews extends TableImpl<ReviewsRecord> {
     @Override
     public List<Check<ReviewsRecord>> getChecks() {
         return Arrays.<Check<ReviewsRecord>>asList(
-              Internal.createCheck(this, DSL.name("invalidRatingTooHigh"), "(`rating` <= 5)", true)
-            , Internal.createCheck(this, DSL.name("invalidRatingTooLow"), "(`rating` >= 0)", true)
+              Internal.createCheck(this, DSL.name("invalidRatingTooHigh"), "`rating` <= 5", true)
+            , Internal.createCheck(this, DSL.name("invalidRatingTooLow"), "`rating` >= 0", true)
         );
     }
 

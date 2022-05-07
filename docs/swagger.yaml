@@ -1186,6 +1186,83 @@ paths:
           description: Not enough permissions
         '404':
           description: Item doesn't exists
+  "/api/v1/platforms":
+    get:
+      tags:
+        - Platforms General Operations
+      summary: Get all the platforms for videogames
+      operationId: getAllPlatforms
+      responses:
+        '200':
+          description: Fetch successful
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Platforms"
+    post:
+      tags:
+        - Platforms General Operations
+      summary: Adds a new videogame platform
+      operationId: postPlatform
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userid:
+                  type: integer
+                  format: int32
+                name:
+                  type: string
+        required: true
+      responses:
+        '201':
+          description: Item created
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/PlatformResponseHelper"
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '409':
+          description: This platform is already registered
+  "/api/v1/platforms/{id}":
+    delete:
+      tags:
+        - Platforms Specific Operations
+      summary: Deletes platform from the database
+      operationId: deletePlatform
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UseridBodyHelper"
+        required: true
+      responses:
+        '204':
+          description: Item destroyed
+          content:
+            "*/*":
+              schema:
+                type: string
+        '400':
+          description: Some parameter does not have a valid value
+        '403':
+          description: Not enough permissions
+        '404':
+          description: Item doesn't exists
 components:
   schemas:
     EpisodeRequestHelper:
@@ -1519,6 +1596,14 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/Genres"
+    Platforms:
+      type: object
+      properties:
+        platformid:
+          type: integer
+          format: int32
+        platformname:
+          type: string
     Media:
       type: object
       properties:

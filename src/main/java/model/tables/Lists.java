@@ -62,12 +62,12 @@ public class Lists extends TableImpl<ListsRecord> {
     /**
      * The column <code>harmony.lists.listName</code>.
      */
-    public final TableField<ListsRecord, String> LISTNAME = createField(DSL.name("listName"), SQLDataType.VARCHAR(60), this, "");
+    public final TableField<ListsRecord, String> LISTNAME = createField(DSL.name("listName"), SQLDataType.VARCHAR(60).defaultValue(DSL.field("NULL", SQLDataType.VARCHAR)), this, "");
 
     /**
      * The column <code>harmony.lists.icon</code>.
      */
-    public final TableField<ListsRecord, String> ICON = createField(DSL.name("icon"), SQLDataType.VARCHAR(1), this, "");
+    public final TableField<ListsRecord, String> ICON = createField(DSL.name("icon"), SQLDataType.VARCHAR(1).defaultValue(DSL.field("NULL", SQLDataType.VARCHAR)), this, "");
 
     /**
      * The column <code>harmony.lists.creationDate</code>.
@@ -77,7 +77,7 @@ public class Lists extends TableImpl<ListsRecord> {
     /**
      * The column <code>harmony.lists.modificationDate</code>.
      */
-    public final TableField<ListsRecord, LocalDateTime> MODIFICATIONDATE = createField(DSL.name("modificationDate"), SQLDataType.LOCALDATETIME(0), this, "");
+    public final TableField<ListsRecord, LocalDateTime> MODIFICATIONDATE = createField(DSL.name("modificationDate"), SQLDataType.LOCALDATETIME(0).defaultValue(DSL.field("NULL", SQLDataType.LOCALDATETIME)), this, "");
 
     private Lists(Name alias, Table<ListsRecord> aliased) {
         this(alias, aliased, null);

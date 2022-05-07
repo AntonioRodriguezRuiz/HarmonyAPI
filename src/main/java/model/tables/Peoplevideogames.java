@@ -73,7 +73,7 @@ public class Peoplevideogames extends TableImpl<PeoplevideogamesRecord> {
     /**
      * The column <code>harmony.peopleVideogames.roletype</code>.
      */
-    public final TableField<PeoplevideogamesRecord, Byte> ROLETYPE = createField(DSL.name("roletype"), SQLDataType.TINYINT, this, "");
+    public final TableField<PeoplevideogamesRecord, Byte> ROLETYPE = createField(DSL.name("roletype"), SQLDataType.TINYINT.defaultValue(DSL.field("NULL", SQLDataType.TINYINT)), this, "");
 
     private Peoplevideogames(Name alias, Table<PeoplevideogamesRecord> aliased) {
         this(alias, aliased, null);

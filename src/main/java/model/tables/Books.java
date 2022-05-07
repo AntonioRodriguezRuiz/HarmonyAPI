@@ -61,7 +61,7 @@ public class Books extends TableImpl<BooksRecord> {
     /**
      * The column <code>harmony.books.collection</code>.
      */
-    public final TableField<BooksRecord, String> COLLECTION = createField(DSL.name("collection"), SQLDataType.VARCHAR(120), this, "");
+    public final TableField<BooksRecord, String> COLLECTION = createField(DSL.name("collection"), SQLDataType.VARCHAR(120).defaultValue(DSL.field("NULL", SQLDataType.VARCHAR)), this, "");
 
     private Books(Name alias, Table<BooksRecord> aliased) {
         this(alias, aliased, null);

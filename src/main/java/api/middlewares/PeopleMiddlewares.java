@@ -19,7 +19,7 @@ public class PeopleMiddlewares {
     public static void existsPerson(PeopleRequestHelper person) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-            if(!create.select()
+            if(create.select()
                     .from(PEOPLE)
                     .where(PEOPLE.NAME.eq(person.getName())
                             .and(PEOPLE.BIRTHDATE.eq(person.getBirthdate())))
@@ -36,10 +36,29 @@ public class PeopleMiddlewares {
         }
     }
 
-    public static void DoesNotExistsPerson(Integer personid) throws SQLException {
+    public static void existsPerson(Integer personid) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
             if(create.select()
+                    .from(PEOPLE)
+                    .where(PEOPLE.PERSONID.eq(personid))
+                    .fetch()
+                    .isEmpty()){
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+
+        } catch (ResponseStatusException | SQLException e){
+            if(e instanceof ResponseStatusException){
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
+
+    public static void DoesNotExistsPerson(Integer personid) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            if(!create.select()
                     .from(PEOPLE)
                     .where(PEOPLE.PERSONID.eq(personid))
                     .fetch()

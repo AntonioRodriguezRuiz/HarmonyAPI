@@ -70,7 +70,7 @@ public class PeopleController {
         if(person.getPersonid()==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        PeopleMiddlewares.doesNotExistsPerson(person.getPersonid());
+        PeopleMiddlewares.existsPerson(person.getPersonid());
         peopleService.putPerson(person);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

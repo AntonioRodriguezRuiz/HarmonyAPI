@@ -42,7 +42,7 @@ public class PeopleSpecificController {
     @DeleteMapping
     public ResponseEntity deletePerson(@PathVariable Integer id, @RequestBody UseridBodyHelper useridBody) throws SQLException {
         UserMiddlewares.isAdmin(useridBody.userid());
-        PeopleMiddlewares.doesNotExistsPerson(id);
+        PeopleMiddlewares.existsPerson(id);
         peopleSpecificService.deletePerson(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }

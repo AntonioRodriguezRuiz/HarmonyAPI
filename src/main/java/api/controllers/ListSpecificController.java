@@ -103,18 +103,18 @@ public class ListSpecificController {
 
     @Operation(summary = "Deletes the media from the list")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Media deleted successfully"),
+        @ApiResponse(responseCode = "204", description = "Media deleted successfully", content = @Content),
         @ApiResponse(responseCode = "400", description = "Media not found in list", content = @Content),
         @ApiResponse(responseCode = "403", description = "User not authorized to access the list", content = @Content),
         @ApiResponse(responseCode = "404", description = "User or list not found", content = @Content)
     })
     @DeleteMapping("/{mediaId}")
-    public ResponseEntity<ListResponseHelper> deleteMedia(@PathVariable Integer userId, @PathVariable Integer listId, @PathVariable Integer mediaId) throws SQLException {
+    public ResponseEntity<ListRequestHelper> deleteMedia(@PathVariable Integer userId, @PathVariable Integer listId, @PathVariable Integer mediaId) throws SQLException {
         UserMiddlewares.userExists(userId);
         ListMiddlewares.listExists(listId);
         ListMiddlewares.isListOwner(userId, listId);
         ListMiddlewares.isMediaNotInList(listId, mediaId);
         listSpecificService.deleteMedia(listId, mediaId);
-        return getList(userId, listId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

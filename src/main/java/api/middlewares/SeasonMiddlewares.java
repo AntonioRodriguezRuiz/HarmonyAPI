@@ -27,7 +27,8 @@ public class SeasonMiddlewares {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
             if (create.select()
-                .from(SERIES)
+                .from(SEASONS)
+                .where(SEASONS.SEASONID.eq(seasonId))
                 .fetch()
                 .isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Season does not exist");
@@ -48,8 +49,7 @@ public class SeasonMiddlewares {
             if (create.select()
                 .from(MEDIA)
                 .naturalJoin(SERIES)
-                .join(SEASONS)
-                .on(SERIES.SERIESID.eq(SEASONS.SERIESID))
+                .naturalJoin(SEASONS)
                 .where(MEDIA.MEDIAID.eq(mediaId))
                 .and(SEASONS.SEASONID.eq(seasonid))
                 .fetch()

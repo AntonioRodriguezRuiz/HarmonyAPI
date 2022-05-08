@@ -481,26 +481,6 @@ public class MediaSpecificService {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            Table type = getType(id);
-
-            if (type != VIDEOGAMES) {
-                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
-            }
-
-            existsPlatform(platform.getPlatformid());
-
-            Result<Record> videogamePlatfomsList = create.select()
-                    .from(VIDEOGAMEPLATFORMS)
-                    .naturalJoin(VIDEOGAMES)
-                    .naturalJoin(MEDIA)
-                    .where(MEDIA.MEDIAID.eq(id)
-                            .and(VIDEOGAMEPLATFORMS.PLATFORMID.eq(platform.getPlatformid())))
-                    .fetch();
-
-            if (!videogamePlatfomsList.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT);
-            }
-
             Routines.newvideogameplatformbyid(create.configuration(),
                     id,
                     platform.getPlatformid());
@@ -523,25 +503,13 @@ public class MediaSpecificService {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            Table type = getType(id);
-
-            if (type != VIDEOGAMES) {
-                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
-            }
-
-            List<Integer> videogameidList = create.select(VIDEOGAMES.VIDEOGAMEID)
+            Integer videogameid = create.select(VIDEOGAMES.VIDEOGAMEID)
                     .from(MEDIA)
                     .naturalJoin(VIDEOGAMES)
                     .naturalJoin(VIDEOGAMEPLATFORMS)
                     .where(MEDIA.MEDIAID.eq(id)
                             .and(VIDEOGAMEPLATFORMS.PLATFORMID.eq(platformid)))
-                    .fetchInto(Integer.class);
-
-            if (videogameidList.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
-
-            Integer videogameid = videogameidList.get(0);
+                    .fetchInto(Integer.class).get(0);
 
             create.deleteFrom(VIDEOGAMEPLATFORMS)
                     .where(VIDEOGAMEPLATFORMS.PLATFORMID.eq(platformid)

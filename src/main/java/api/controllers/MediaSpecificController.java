@@ -2,11 +2,7 @@ package api.controllers;
 
 import api.helpers.request.*;
 import api.helpers.response.*;
-import api.middlewares.MediaMiddlewares;
-import api.middlewares.ReviewMiddlewares;
-import api.middlewares.SeriesMiddlewares;
-import api.middlewares.SeasonMiddlewares;
-import api.middlewares.UserMiddlewares;
+import api.middlewares.*;
 import api.services.MediaSpecificService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -96,7 +92,10 @@ public class MediaSpecificController {
     @PostMapping("/platforms")
     public ResponseEntity<PlatformResponseHelper> postPlatform(@PathVariable Integer id, @RequestBody PlatformRequestHelper platform) throws SQLException {
         UserMiddlewares.isAdmin(platform.getUserid());
+        VideogamesMiddlewares.isVideogame(id);
         platform.validate();
+        PlatformsMiddlewares.existsPlatform(null, platform.getPlatformid());
+        VideogamesMiddlewares.doesNotHavePlatform(id, platform.getPlatformid());
         return new ResponseEntity<>(mediaService.postPlatform(id, platform), HttpStatus.CREATED);
     }
 
@@ -110,6 +109,9 @@ public class MediaSpecificController {
     @DeleteMapping("/platforms/{platformid}")
     public ResponseEntity removePlatform(@PathVariable Integer id, @PathVariable Integer platformid, @RequestBody UseridBodyHelper user) throws SQLException {
         UserMiddlewares.isAdmin(user.userid());
+        VideogamesMiddlewares.isVideogame(id);
+        PlatformsMiddlewares.existsPlatform(null, platformid);
+        VideogamesMiddlewares.hasPlatform(id, platformid);
         mediaService.removePlatform(id, platformid);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

@@ -114,7 +114,7 @@ public class ListSpecificController {
         UserMiddlewares.userExists(userId);
         ListMiddlewares.listExists(listId);
         ListMiddlewares.isListOwner(userId, listId);
-        ListMiddlewares.isMediaNotInList(listId, mediaId);
+        ListMiddlewares.isMediaInList(listId, mediaId);
         listSpecificService.deleteMedia(listId, mediaId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

@@ -67,7 +67,7 @@ public class ListSpecificController {
         ListMiddlewares.listExists(listId);
         MediaMiddlewares.mediaExists(media.mediaId());
         ListMiddlewares.isListOwner(userId, listId);
-        ListMiddlewares.isMediaInList(listId, media.mediaId());
+        ListMiddlewares.isMediaNotInList(listId, media.mediaId());
         return new ResponseEntity<>(listSpecificService.addMedia(listId, media), HttpStatus.OK);
     }
 

@@ -95,7 +95,7 @@ public class MediaController {
     public ResponseEntity<MediaResponseHelper> postMovie(@RequestBody MovieRequestHelper movie) throws SQLException {
         UserMiddlewares.isAdmin(movie.getUserid());
         movie.validate();
-        MediaMiddlewares.MediaoesNotExist(movie);
+        MediaMiddlewares.MediaDoesNotExist(movie);
         return new ResponseEntity<>(mediaService.postMovie(movie), HttpStatus.CREATED);
     }
 
@@ -122,7 +122,7 @@ public class MediaController {
     public ResponseEntity<MediaResponseHelper> postSeries(@RequestBody SeriesRequestHelper series) throws SQLException {
         UserMiddlewares.isAdmin(series.getUserid());
         series.validate();
-        MediaMiddlewares.MediaoesNotExist(series);
+        MediaMiddlewares.MediaDoesNotExist(series);
         return new ResponseEntity<>(mediaService.postSeries(series), HttpStatus.CREATED);
     }
 
@@ -150,7 +150,7 @@ public class MediaController {
     public ResponseEntity<MediaResponseHelper> postBook(@RequestBody BookRequestHelper book) throws SQLException {
         UserMiddlewares.isAdmin(book.getUserid());
         book.validate();
-        MediaMiddlewares.MediaoesNotExist(book);
+        MediaMiddlewares.MediaDoesNotExist(book);
         return new ResponseEntity<>(mediaService.postBook(book), HttpStatus.CREATED);
     }
 
@@ -178,7 +178,7 @@ public class MediaController {
     public ResponseEntity<MediaResponseHelper> postVideogame(@RequestBody VideogameRequestHelper videogame) throws SQLException {
         UserMiddlewares.isAdmin(videogame.getUserid());
         videogame.validate();
-        MediaMiddlewares.MediaoesNotExist(videogame);
+        MediaMiddlewares.MediaDoesNotExist(videogame);
         return new ResponseEntity<>(mediaService.postVideogame(videogame), HttpStatus.CREATED);
     }
 

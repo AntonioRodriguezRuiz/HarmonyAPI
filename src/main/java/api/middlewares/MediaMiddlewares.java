@@ -74,7 +74,7 @@ public class MediaMiddlewares {
         return oldMedia;
     }
 
-    public static void MediaoesNotExist(MediaRequestHelper media) throws SQLException {
+    public static void MediaDoesNotExist(MediaRequestHelper media) throws SQLException {
         try(Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)){
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
@@ -165,7 +165,7 @@ public class MediaMiddlewares {
         }
     }
 
-    public static void persoInMedia(Integer id, PeopleMediaRequestHelper person, Table table) throws SQLException {
+    public static void personInMedia(Integer id, PeopleMediaRequestHelper person, Table table) throws SQLException {
         Result<Record> peopleList = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);

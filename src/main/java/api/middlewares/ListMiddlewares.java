@@ -69,7 +69,7 @@ public class ListMiddlewares {
                 .where(LISTS.LISTID.eq(listId)
                     .and(LISTMEDIA.MEDIAID.eq(mediaId)))
                 .fetch().isNotEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Media is already in list");
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Media is already in list");
             }
         } catch (ResponseStatusException | SQLException e){
             if(e instanceof ResponseStatusException){
@@ -79,12 +79,12 @@ public class ListMiddlewares {
         }
     }
 
-    public static boolean isListOwner(Integer userid, Integer listid) throws SQLException {
+    public static boolean isListOwner(Integer userid, Integer listId) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
             if (!create.select()
                 .from(LISTS)
-                .where(LISTS.LISTID.eq(listid))
+                .where(LISTS.LISTID.eq(listId))
                 .fetch()
                 .get(0)
                 .get(LISTS.USERID)

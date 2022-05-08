@@ -44,4 +44,28 @@ public class SeriesMiddlewares {
         }
 
     }
+
+    public static void isNotSeries(Integer mediaId) throws SQLException {
+        if(mediaId==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "MediaId cannot be null");
+        }
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            if (!create.select()
+                    .from(MEDIA)
+                    .naturalJoin(SERIES)
+                    .where(MEDIA.MEDIAID.eq(mediaId))
+                    .fetch()
+                    .isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Media cannot be a series");
+            }
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+
+    }
+
 }

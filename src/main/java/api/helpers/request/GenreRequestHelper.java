@@ -44,4 +44,9 @@ public class GenreRequestHelper {
         }
     }
 
+    public void validate() {
+        if(this.genreid==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "'genreid' parameter cannot be null");
+        }
+    }
 }

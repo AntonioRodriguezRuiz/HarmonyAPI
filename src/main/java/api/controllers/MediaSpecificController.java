@@ -234,9 +234,10 @@ public class MediaSpecificController {
     @PostMapping("/genres")
     public ResponseEntity<GenreResponseHelper> addGenre(@PathVariable Integer id, @RequestBody GenreRequestHelper genre) throws SQLException {
         UserMiddlewares.isAdmin(genre.getUserid());
-        if(genre.getGenreid()==null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        genre.validate();
+        MediaMiddlewares.mediaExists(id);
+        GenresMiddlewares.existsGenre(genre.getGenreid());
+        MediaMiddlewares.doesNotHaveGenre(id, genre.getGenreid());
         return new ResponseEntity<>(mediaService.addGenre(id, genre), HttpStatus.CREATED);
     }
 
@@ -249,6 +250,9 @@ public class MediaSpecificController {
     @DeleteMapping("/genres/{genreid}")
     public ResponseEntity removeGenre(@PathVariable Integer id, @PathVariable Integer genreid, @RequestBody UseridBodyHelper user) throws SQLException {
         UserMiddlewares.isAdmin(user.userid());
+        MediaMiddlewares.mediaExists(id);
+        GenresMiddlewares.existsGenre(genreid);
+        MediaMiddlewares.hasGenre(id, genreid);
         mediaService.removeGenre(id, genreid);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

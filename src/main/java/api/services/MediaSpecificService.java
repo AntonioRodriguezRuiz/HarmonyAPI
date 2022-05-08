@@ -658,19 +658,6 @@ public class MediaSpecificService {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            existsGenre(genre.getGenreid());
-
-            Result<Record> mediaGenreList = create.select()
-                    .from(MEDIA)
-                    .naturalJoin(MEDIAGENRES)
-                    .where(MEDIA.MEDIAID.eq(id)
-                            .and(MEDIAGENRES.GENREID.eq(genre.getGenreid())))
-                    .fetch();
-
-            if (!mediaGenreList.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT);
-            }
-
             Routines.newmediagenrebyid(create.configuration(),
                     id,
                     genre.getGenreid());
@@ -694,16 +681,6 @@ public class MediaSpecificService {
     public void removeGenre(Integer id, Integer genreid) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-
-            Result<Record> mediagenreList = create.select()
-                    .from(MEDIAGENRES)
-                    .where(MEDIAGENRES.MEDIAID.eq(id)
-                            .and(MEDIAGENRES.GENREID.eq(genreid)))
-                    .fetch();
-
-            if (mediagenreList.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
 
             create.deleteFrom(MEDIAGENRES)
                     .where(MEDIAGENRES.MEDIAID.eq(id)

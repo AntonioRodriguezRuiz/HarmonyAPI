@@ -14,23 +14,17 @@ import java.sql.SQLException;
 import static src.main.java.model.Tables.*;
 import static src.main.java.model.tables.Series.SERIES;
 
-/**
- * SeasonMiddlewares
- * Project HarmonyAPI
- * Created: 2022-05-07
- *
- * @author juagallop1
- **/
-public class SeasonMiddlewares {
-    public static void seasonExists(Integer seasonId) throws SQLException {
+public class EpisodeMiddlewares {
+
+    public static void episodeExists(Integer episodeId) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
             if (create.select()
-                .from(SEASONS)
-                .where(SEASONS.SEASONID.eq(seasonId))
-                .fetch()
-                .isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Season does not exist");
+                    .from(EPISODES)
+                    .where(EPISODES.EPISODEID.eq(episodeId))
+                    .fetch()
+                    .isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Episode does not exist");
             }
         } catch (ResponseStatusException | SQLException e) {
             if (e instanceof ResponseStatusException) {
@@ -40,17 +34,16 @@ public class SeasonMiddlewares {
         }
     }
 
-    public static void seasonDoesNotExists(Integer mediaid, Integer SeasonNo) throws SQLException {
+    public static void episodeDoesNotExists(Integer seasonId, Integer episodeNo) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
             if (!create.select()
-                    .from(SEASONS)
-                    .naturalJoin(MEDIA)
-                    .where(SEASONS.SEASONNO.eq(SeasonNo)
-                            .and(MEDIA.MEDIAID.eq(mediaid)))
+                    .from(EPISODES)
+                    .where(EPISODES.SEASONID.eq(seasonId)
+                            .and(EPISODES.EPISODENO.eq(episodeNo)))
                     .fetch()
                     .isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "Season already exists");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Episode already exist");
             }
         } catch (ResponseStatusException | SQLException e) {
             if (e instanceof ResponseStatusException) {
@@ -60,21 +53,20 @@ public class SeasonMiddlewares {
         }
     }
 
-    public static void isSeasonOf(Integer mediaId, Integer seasonid) throws SQLException {
-        if(mediaId==null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "MediaId cannot be null");
+    public static void isEpisodeOf(Integer seasonid, Integer episodeid) throws SQLException {
+        if(seasonid==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Seasonid cannot be null");
         }
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
             if (create.select()
-                .from(MEDIA)
-                .naturalJoin(SERIES)
-                .naturalJoin(SEASONS)
-                .where(MEDIA.MEDIAID.eq(mediaId))
-                .and(SEASONS.SEASONID.eq(seasonid))
-                .fetch()
-                .isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Season is not of this media");
+                    .from(SEASONS)
+                    .naturalJoin(EPISODES)
+                    .where(SEASONS.SEASONID.eq(seasonid))
+                    .and(EPISODES.EPISODEID.eq(episodeid))
+                    .fetch()
+                    .isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Episode is not of this season");
             }
         } catch (ResponseStatusException | SQLException e) {
             if (e instanceof ResponseStatusException) {
@@ -83,4 +75,5 @@ public class SeasonMiddlewares {
             e.printStackTrace();
         }
     }
+
 }

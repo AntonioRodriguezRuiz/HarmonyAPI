@@ -415,12 +415,6 @@ public class MediaSpecificService {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            Result<Record> seasonList = existsSeason(id, null, season.getSeasonNo());
-
-            if (!seasonList.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT);
-            }
-
             Routines.newseasonbyid(create.configuration(),
                     id,
                     season.getSeasonNo(),
@@ -446,12 +440,6 @@ public class MediaSpecificService {
     public void putSeason(Integer id, SeasonRequestHelper season) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-
-            Table type = getType(id);
-
-            if (type != SERIES) {
-                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
-            }
 
             Seasons oldSeason = create.select()
                 .from(SEASONS)
@@ -528,11 +516,11 @@ public class MediaSpecificService {
         SeasonResponseHelper seasonResult = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-            Result<Record> seasonList = existsSeason(id, seasonid, null);
 
-            if (seasonList.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
+            Result<Record> seasonList = create.select()
+                    .from(SEASONS)
+                    .where(SEASONS.SEASONID.eq(seasonid))
+                    .fetch();
 
             List<Episodes> episodesList = create.select(EPISODES.fields())
                     .from(EPISODES)
@@ -554,20 +542,6 @@ public class MediaSpecificService {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            Result<Record> seasonList = existsSeason(id, seasonid, null);
-
-            if (seasonList.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
-
-            // checks the episode does not already exists
-            Result<Record> episodesList = existsEpisode(id, seasonid, null, episode.getEpisodeNo());
-
-            if (!episodesList.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT);
-            }
-
-            // creates episode
             Routines.newepisodebyid(create.configuration(),
                     seasonid,
                     episode.getEpisodeName(),
@@ -597,14 +571,14 @@ public class MediaSpecificService {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            // checks the episode does not already exists
-            Result<Record> episodesList = existsEpisode(id, seasonid, episode.getEpisodeid(), null);
-
-            if (episodesList.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
-
-            EpisodeResponseHelper oldEpisode = new EpisodeResponseHelper(episodesList.get(0));
+            EpisodeResponseHelper oldEpisode = new EpisodeResponseHelper(create.select()
+                                                                        .from(EPISODES)
+                                                                        .naturalJoin(SEASONS)
+                                                                        .naturalJoin(SERIES)
+                                                                        .naturalJoin(MEDIA)
+                                                                        .where(EPISODES.EPISODEID.eq(episode.getEpisodeid()))
+                                                                        .fetch()
+                                                                        .get(0));
             EpisodeRequestHelper newEpisode = new EpisodeRequestHelper(null, null, null, null);
 
             newEpisode.setEpisodeNo(episode.getEpisodeNo() == null ? oldEpisode.getEpisodeNo() : episode.getEpisodeNo());

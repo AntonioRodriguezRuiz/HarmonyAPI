@@ -53,6 +53,14 @@ public class EpisodeRequestHelper {
     public void validate() {
         if (userid == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Userid is required");
+        } else if (episodeid == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "EpisodeId is required");
+        }
+    }
+
+    public void postValidate() {
+        if (userid == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Userid is required");
         } else if (episodeNo == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "EpisodeNo is required");
         } else if (episodeName == null) {

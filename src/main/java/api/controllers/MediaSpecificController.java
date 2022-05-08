@@ -60,6 +60,7 @@ public class MediaSpecificController {
         UserMiddlewares.isAdmin(season.getUserid());
         season.postValidate();
         SeriesMiddlewares.isSeries(id);
+        SeasonMiddlewares.seasonDoesNotExists(id, season.getSeasonNo());
         return new ResponseEntity<>(mediaService.postSeason(id, season), HttpStatus.CREATED);
     }
 
@@ -144,7 +145,8 @@ public class MediaSpecificController {
         SeriesMiddlewares.isSeries(id);
         SeasonMiddlewares.seasonExists(seasonid);
         SeasonMiddlewares.isSeasonOf(id, seasonid);
-        episode.validate();
+        episode.postValidate();
+        EpisodeMiddlewares.episodeDoesNotExists(seasonid, episode.getEpisodeNo());
         return new ResponseEntity<>(mediaService.postEpisode(id, seasonid, episode), HttpStatus.CREATED);
     }
 
@@ -158,9 +160,13 @@ public class MediaSpecificController {
     @PutMapping("/{seasonid}")
     public ResponseEntity putEpisode(@PathVariable Integer id, @PathVariable Integer seasonid, @RequestBody EpisodeRequestHelper episode) throws SQLException {
         UserMiddlewares.isAdmin(episode.getUserid());
-        if(episode.getEpisodeid()==null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        MediaMiddlewares.mediaExists(id);
+        SeriesMiddlewares.isSeries(id);
+        SeasonMiddlewares.seasonExists(seasonid);
+        SeasonMiddlewares.isSeasonOf(id, seasonid);
+        episode.validate();
+        EpisodeMiddlewares.episodeExists(episode.getEpisodeid());
+        EpisodeMiddlewares.isEpisodeOf(seasonid, episode.getEpisodeid());
         mediaService.putEpisode(id, seasonid, episode);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

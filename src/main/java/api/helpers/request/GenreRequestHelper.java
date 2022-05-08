@@ -42,6 +42,9 @@ public class GenreRequestHelper {
         if(this.name==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "'name' parameter cannot be null");
         }
+        if (!name.toLowerCase().equals(name)){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "'name' parameter must be in lowercase");
+        }
     }
 
 }

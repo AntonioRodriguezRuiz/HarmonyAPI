@@ -12,7 +12,16 @@ public class MediaResponseHelper {
     private String coverimage;
     private String backgroundimage;
     private String synopsis;
+    private Double avgRating;
     private List<Genres> genresList;
+
+    public Double getAvgRating() {
+        return avgRating;
+    }
+
+    public void setAvgRating(Double avgRating) {
+        this.avgRating = avgRating;
+    }
 
     public Integer getMediaid() {
         return mediaid;
@@ -70,13 +79,14 @@ public class MediaResponseHelper {
         this.genresList=genresList;
     }
 
-    public MediaResponseHelper(Integer mediaid, String title, LocalDate releasedate, String coverimage, String backgroundimage, String synopsis, List<Genres> genresList) {
+    public MediaResponseHelper(Integer mediaid, String title, LocalDate releasedate, String coverimage, String backgroundimage, String synopsis, Double avgRating, List<Genres> genresList) {
         this.mediaid=mediaid;
         this.title=title;
         this.releasedate=releasedate;
         this.coverimage=coverimage;
         this.backgroundimage=backgroundimage;
         this.synopsis=synopsis;
+        this.avgRating = avgRating;
         this.genresList = genresList;
     }
 }

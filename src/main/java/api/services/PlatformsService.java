@@ -25,32 +25,6 @@ import src.main.java.model.Routines;
 
 @Service
 public class PlatformsService {
-
-    public Result<Record> existsPlatform(String name, Integer platformid) throws SQLException {
-        Result<Record> platformList = null;
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-
-            if(platformid==null){
-                platformList = create.select()
-                        .from(PLATFORMS)
-                        .where(PLATFORMS.PLATFORMNAME.eq(name))
-                        .fetch();
-            } else {
-                platformList = create.select()
-                        .from(PLATFORMS)
-                        .where(PLATFORMS.PLATFORMID.eq(platformid))
-                        .fetch();
-            }
-
-        } catch (ResponseStatusException | SQLException e) {
-            if (e instanceof ResponseStatusException) {
-                throw e;
-            }
-            e.printStackTrace();
-        }
-        return platformList;
-    }
     
     public List<Platforms> getAllPlatforms() {
         List<Platforms> platformsList = null;
@@ -73,12 +47,6 @@ public class PlatformsService {
 
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-
-            Result<Record> platformList = existsPlatform(platform.getName(), null);
-
-            if(!platformList.isEmpty()){
-                throw new ResponseStatusException(HttpStatus.CONFLICT);
-            }
 
             Routines.newplatform(create.configuration(),
                                 platform.getName());

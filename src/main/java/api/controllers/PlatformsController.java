@@ -2,6 +2,7 @@ package api.controllers;
 
 import api.helpers.request.PlatformRequestHelper;
 import api.helpers.response.PlatformResponseHelper;
+import api.middlewares.PlatformsMiddlewares;
 import api.middlewares.UserMiddlewares;
 import api.services.PlatformsService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,6 +42,7 @@ public class PlatformsController {
     @PostMapping
     public ResponseEntity<PlatformResponseHelper> postPlatform(@RequestBody PlatformRequestHelper platform) throws SQLException {
         UserMiddlewares.isAdmin(platform.getUserid());
+        PlatformsMiddlewares.doesNotexistsPlatform(platform.getName(), null);
         return new ResponseEntity<>(platformsService.postPlatform(platform), HttpStatus.CREATED);
     }
 }

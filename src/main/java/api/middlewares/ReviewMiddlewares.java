@@ -27,7 +27,7 @@ public class ReviewMiddlewares{
                     .fetch();
 
             if(reviewUser.isEmpty()){
-                throw  new ResponseStatusException(HttpStatus.FORBIDDEN);
+                throw  new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the owner of the review can perform operations over it");
             }
 
         } catch (ResponseStatusException | SQLException e){
@@ -49,7 +49,7 @@ public class ReviewMiddlewares{
                     .fetch();
 
             if(reviewUser.isEmpty()){
-                throw  new ResponseStatusException(HttpStatus.FORBIDDEN);
+                throw  new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the owner of the like can delete it");
             }
         } catch (ResponseStatusException | SQLException e){
             if(e instanceof ResponseStatusException){
@@ -69,29 +69,7 @@ public class ReviewMiddlewares{
                     .fetch();
 
             if(reviewList.isEmpty()){
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
-
-
-        } catch (ResponseStatusException | SQLException e) {
-            if (e instanceof ResponseStatusException) {
-                throw e;
-            }
-            e.printStackTrace();
-        }
-    }
-
-    public static void doesNotExistReview(Integer id) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-
-            Result<Record> reviewList = create.select()
-                    .from(REVIEWS)
-                    .where(REVIEWS.REVIEWID.eq(id))
-                    .fetch();
-
-            if(!reviewList.isEmpty()){
-                throw new ResponseStatusException(HttpStatus.CONFLICT);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Review does not exist");
             }
 
 

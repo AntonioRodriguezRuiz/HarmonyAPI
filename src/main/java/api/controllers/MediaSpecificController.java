@@ -371,6 +371,7 @@ public class MediaSpecificController {
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
     @GetMapping("/reviews")
     public List<ReviewResponseHelper> getReviews(@PathVariable Integer id) throws SQLException {
+        MediaMiddlewares.mediaExists(id);
         return mediaService.getReviews(id);
     }
 
@@ -382,13 +383,10 @@ public class MediaSpecificController {
             @ApiResponse(responseCode = "409", description = "This person already has a review in this media. You can only perform put operations over it", content = @Content)})
     @PostMapping("/reviews")
     public ResponseEntity<ReviewResponseHelper> addReview(@PathVariable Integer id, @RequestBody ReviewRequestHelper review) throws SQLException {
-        if(review.userid()==null){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-        }
+        review.validateUserid();
         UserMiddlewares.userExists(review.userid());
-        if(review.rating()==null || 0.0 > review.rating() || 5.0 < review.rating()){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        review.validateRating();
+        MediaMiddlewares.doesNotHaveReview(id, review.userid());
         return new ResponseEntity<>(mediaService.addReview(id, review), HttpStatus.CREATED);
     }
 
@@ -400,16 +398,15 @@ public class MediaSpecificController {
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
     @PutMapping("/reviews")
     public ResponseEntity putReview(@PathVariable Integer id, @RequestBody ReviewRequestHelper review) throws SQLException {
-        if(review.userid()==null){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-        } else if(review.reviewid()==null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        review.validateUserid();
+        review.validateReviewid();
+        UserMiddlewares.userExists(review.userid());
+        review.validateRating();
+        ReviewMiddlewares.existsReview(review.reviewid());
+        MediaMiddlewares.hasReview(id, review.reviewid());
         ReviewMiddlewares.isOwnerOfReview(review.userid(), review.reviewid());
-        if(review.rating()==null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-        mediaService.putReview(id, review);
+
+        mediaService.putReview(review);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

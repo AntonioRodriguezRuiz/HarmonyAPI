@@ -889,12 +889,6 @@ public class MediaSpecificService {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            Result<Record> mediaList = existsMedia(id);
-
-            if (mediaList.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
-
             Result<Record> result = create.select()
                     .from(REVIEWS)
                     .where(REVIEWS.MEDIAID.eq(id))
@@ -919,12 +913,6 @@ public class MediaSpecificService {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            Result<Record> reviewList = existsReview(id, review.userid());
-
-            if (!reviewList.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT);
-            }
-
             Routines.newreview(create.configuration(),
                     review.userid(),
                     id,
@@ -945,16 +933,12 @@ public class MediaSpecificService {
         return ReviewResponseHelper.of(record);
     }
 
-    public void putReview(Integer id, ReviewRequestHelper review) throws SQLException {
+    public void putReview(ReviewRequestHelper review) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            Record record = create.select()
-                    .from(REVIEWS)
-                    .orderBy(REVIEWS.REVIEWID.desc())
-                    .fetch().get(0);
-
-            ReviewResponseHelper oldReview = ReviewResponseHelper.of(record);
+            ReviewSpecificService reviewSpecificService = new ReviewSpecificService();
+            ReviewResponseHelper oldReview = reviewSpecificService.getReview(review.reviewid());
 
             create.update(REVIEWS)
                     .set(REVIEWS.RATING, review.rating() == null ? oldReview.rating() : review.rating())

@@ -145,4 +145,52 @@ public class MediaMiddlewares {
             e.printStackTrace();
         }
     }
+
+    public static void doesNotHaveReview(Integer mediaid, Integer userid) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+
+            Result<Record> reviewList = create.select()
+                    .from(REVIEWS)
+                    .naturalJoin(MEDIA)
+                    .where(MEDIA.MEDIAID.eq(mediaid)
+                            .and(REVIEWS.USERID.eq(userid)))
+                    .fetch();
+
+            if(!reviewList.isEmpty()){
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "This person already has a review in this media");
+            }
+
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
+
+    public static void hasReview(Integer mediaid, Integer reviewid) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+
+            Result<Record> reviewList = create.select()
+                    .from(REVIEWS)
+                    .naturalJoin(MEDIA)
+                    .where(MEDIA.MEDIAID.eq(mediaid)
+                            .and(REVIEWS.REVIEWID.eq(reviewid)))
+                    .fetch();
+
+            if(reviewList.isEmpty()){
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This review does not belong to this media");
+            }
+
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
 }

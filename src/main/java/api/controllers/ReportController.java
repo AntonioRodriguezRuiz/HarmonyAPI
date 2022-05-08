@@ -4,6 +4,7 @@ import api.GlobalValues;
 import api.helpers.request.ReportRequestHelper;
 import api.helpers.request.UseridBodyHelper;
 import api.helpers.response.ReportResponseHelper;
+import api.middlewares.ReportMiddlewares;
 import api.middlewares.ReviewMiddlewares;
 import api.middlewares.UserMiddlewares;
 import api.services.ReportService;
@@ -54,7 +55,8 @@ public class ReportController {
 
         UserMiddlewares.userExists(report.useridreported());
         UserMiddlewares.userExists(report.useridreporter());
-        ReviewMiddlewares.isOwnerOfReview(report.useridreported(), report.reviewid());
+        ReviewMiddlewares.existsReview(report.reviewid());
+        ReportMiddlewares.doesNotExistsReport(report);
 
         return new ResponseEntity<>(reportService.postReport(report), HttpStatus.CREATED);
     }
@@ -69,6 +71,7 @@ public class ReportController {
     @DeleteMapping("/{id}")
     public ResponseEntity deleteReport(@PathVariable Integer id, @RequestBody UseridBodyHelper useridBody) throws SQLException {
         UserMiddlewares.isAdmin(useridBody.userid());
+        ReportMiddlewares.existsReport(id);
         reportService.deleteReport(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

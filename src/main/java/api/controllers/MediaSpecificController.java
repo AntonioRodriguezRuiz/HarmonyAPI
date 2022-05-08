@@ -299,7 +299,7 @@ public class MediaSpecificController {
         person.setPersonid(personid);
         person.mediaValidate(table);
         PeopleMiddlewares.existsPerson(person.getPersonid());
-        MediaMiddlewares.persoInMedia(id, person, table);
+        MediaMiddlewares.personInMedia(id, person, table);
         mediaService.removePerson(id, person, table);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

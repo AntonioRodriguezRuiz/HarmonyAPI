@@ -230,7 +230,6 @@ public class MediaService {
     }
 
     public MediaResponseHelper postMovie(MovieRequestHelper movie) throws SQLException {
-        canBePost(movie);
         return postMedia(movie, MOVIES);
     }
 
@@ -239,7 +238,6 @@ public class MediaService {
     }
 
     public MediaResponseHelper postSeries(SeriesRequestHelper series) throws SQLException {
-        canBePost(series);
         return postMedia(series, SERIES);
     }
 
@@ -248,7 +246,6 @@ public class MediaService {
     }
 
     public MediaResponseHelper postBook(BookRequestHelper book) throws SQLException {
-        canBePost(book);
         return postMedia(book, BOOKS);
     }
 
@@ -257,7 +254,6 @@ public class MediaService {
     }
 
     public MediaResponseHelper postVideogame(VideogameRequestHelper videogame) throws SQLException {
-        canBePost(videogame);
         return postMedia(videogame, VIDEOGAMES);
     }
 
@@ -280,27 +276,6 @@ public class MediaService {
             e.printStackTrace();
         }
         return false;
-    }
-
-    public void canBePost(MediaRequestHelper media) throws SQLException {
-        try(Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)){
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-
-            List<Media> oldMedia = create.select()
-                    .from(MEDIA)
-                    .where(MEDIA.TITLE.eq(media.getTitle())
-                            .and(MEDIA.RELEASEDATE.eq(media.getReleasedate())))
-                    .fetchInto(Media.class);
-
-            if(!oldMedia.isEmpty()){
-                throw new ResponseStatusException(HttpStatus.CONFLICT);
-            }
-        } catch (ResponseStatusException | SQLException e){
-            if(e instanceof ResponseStatusException){
-                throw e;
-            }
-            e.printStackTrace();
-        }
     }
 
 }

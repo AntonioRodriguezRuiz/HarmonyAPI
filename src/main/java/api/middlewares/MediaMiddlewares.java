@@ -74,6 +74,27 @@ public class MediaMiddlewares {
         return oldMedia;
     }
 
+    public static void MediaoesNotExist(MediaRequestHelper media) throws SQLException {
+        try(Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)){
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+
+            List<Media> oldMedia = create.select()
+                    .from(MEDIA)
+                    .where(MEDIA.TITLE.eq(media.getTitle())
+                            .and(MEDIA.RELEASEDATE.eq(media.getReleasedate())))
+                    .fetchInto(Media.class);
+
+            if(!oldMedia.isEmpty()){
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "This media already exists in the database");
+            }
+        } catch (ResponseStatusException | SQLException e){
+            if(e instanceof ResponseStatusException){
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
+
     public static void hasGenre(Integer id, Integer genreid) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);

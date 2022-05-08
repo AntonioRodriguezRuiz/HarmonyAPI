@@ -62,7 +62,7 @@ public class MediaSpecificController {
     @PostMapping("/seasons")
     public ResponseEntity<SeasonResponseHelper> postSeason(@PathVariable Integer id, @RequestBody SeasonRequestHelper season) throws SQLException {
         UserMiddlewares.isAdmin(season.getUserid());
-        season.validate();
+        season.postValidate();
         return new ResponseEntity<>(mediaService.postSeason(id, season), HttpStatus.CREATED);
     }
 
@@ -80,6 +80,7 @@ public class MediaSpecificController {
         SeriesMiddlewares.isSeries(id);
         SeasonMiddlewares.seasonExists(season.getSeasonid());
         SeasonMiddlewares.isSeasonOf(id, season.getSeasonid());
+        season.validate();
         mediaService.putSeason(id, season);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

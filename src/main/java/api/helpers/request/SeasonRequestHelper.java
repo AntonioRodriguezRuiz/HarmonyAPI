@@ -56,4 +56,14 @@ public class SeasonRequestHelper {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Seasonid is required");
         }
     }
+
+    public void postValidate() {
+        if (userid == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Userid is required");
+        } else if(seasonNo==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "SeasonNo is required");
+        } else if(noEpisodes==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "noEpisodes is required");
+        }
+    }
 }

@@ -30,8 +30,11 @@ public class ReviewSpecificService {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            Result<Record> reviewList = ReviewMiddlewares.existsReview(id);
-            Record review = reviewList.get(0);
+            Record review = create.select()
+                    .from(REVIEWS)
+                    .where(REVIEWS.REVIEWID.eq(id))
+                    .fetch()
+                    .get(0);
 
             reviewResult = ReviewResponseHelper.of(review);
         } catch (ResponseStatusException | SQLException e) {
@@ -48,8 +51,6 @@ public class ReviewSpecificService {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            Result<Record> reviewList = ReviewMiddlewares.existsReview(id);
-
             create.deleteFrom(REVIEWS)
                     .where(REVIEWS.REVIEWID.eq(id)).execute();
 
@@ -62,18 +63,6 @@ public class ReviewSpecificService {
         Record record = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-
-            Result<Record> reviewList = ReviewMiddlewares.existsReview(id);
-
-            if(reviewList.isEmpty()){
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
-
-            Result<Record> likeList = ReviewMiddlewares.existsLike(id, user.userid(), null);
-
-            if (!likeList.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT);
-            }
 
             Routines.likereview(create.configuration(),
                     user.userid(),
@@ -97,11 +86,6 @@ public class ReviewSpecificService {
     public void deleteLike(Integer likeid) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-            Result<Record> likeList = ReviewMiddlewares.existsLike(null, null, likeid);
-
-            if (likeList.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
 
             create.deleteFrom(REVIEWLIKES)
                     .where(REVIEWLIKES.REVIEWLIKEID.eq(likeid))

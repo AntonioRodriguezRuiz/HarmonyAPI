@@ -747,26 +747,15 @@ public class MediaSpecificService {
         return peopleList;
     }
 
-    public PeopleMediaResponseHelper addPerson(Integer id, PeopleMediaRequestHelper person) throws SQLException {
+    public PeopleMediaResponseHelper addPerson(Integer id, PeopleMediaRequestHelper person, Table table) throws SQLException {
         PeopleMediaResponseHelper personResult = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            Table table = getType(id);
-
-            if (table.getName().equals("series")) {
-                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
-            } else if (table.getName().equals("book") && person.getRoleTypeByte() != 0) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-            }
-
             MediaResponseHelper mediaData = getMedia(id);
-            People personData = existsPerson(person.getPersonid());
-            Result<Record> peopleList = existsMediaPerson(id, person, getPeopleTable(table), table);
 
-            if (!peopleList.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT);
-            }
+            PeopleSpecificService peopleSpecificService = new PeopleSpecificService();
+            PeopleResponseHelper personData = peopleSpecificService.getPerson(person.getPersonid());
 
             switch (table.getName()) {
                 case "movies":
@@ -806,21 +795,11 @@ public class MediaSpecificService {
         return personResult;
     }
 
-    public void removePerson(Integer id, PeopleMediaRequestHelper person) throws SQLException {
+    public void removePerson(Integer id, PeopleMediaRequestHelper person, Table table) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            Table table = getType(id);
-
-            if (table.getName().equals("series")) {
-                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
-            }
             Table peopleTable = getPeopleTable(table);
-            Result<Record> peopleList = existsMediaPerson(id, person, peopleTable, table);
-
-            if (peopleList.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
 
             create.deleteFrom(peopleTable)
                     .where(peopleTable.field("personid"))

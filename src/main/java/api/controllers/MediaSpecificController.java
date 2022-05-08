@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.jooq.Table;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -263,6 +264,7 @@ public class MediaSpecificController {
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
     @GetMapping("/people")
     public List<PeopleMediaResponseHelper> getPeopleFromMedia(@PathVariable Integer id) throws SQLException {
+        MediaMiddlewares.mediaExists(id);
         return mediaService.getPeopleFromMedia(id);
     }
 
@@ -276,10 +278,11 @@ public class MediaSpecificController {
     @PostMapping("/people")
     public ResponseEntity<PeopleMediaResponseHelper> addPerson(@PathVariable Integer id, @RequestBody PeopleMediaRequestHelper person) throws SQLException {
         UserMiddlewares.isAdmin(person.getUserid());
-        if(person.getPersonid()==null || person.getRole()==null || person.getRoleType()==null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(mediaService.addPerson(id, person), HttpStatus.CREATED);
+        Table table = mediaService.getType(id);
+        person.mediaValidate(table);
+        PeopleMiddlewares.existsPerson(person.getPersonid());
+        MediaMiddlewares.personNotInMedia(id, person, table);
+        return new ResponseEntity<>(mediaService.addPerson(id, person, table), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Removes a person with a role from a media")
@@ -292,12 +295,12 @@ public class MediaSpecificController {
     @DeleteMapping("/people/{personid}")
     public ResponseEntity removePerson(@PathVariable Integer id, @PathVariable Integer personid, @RequestBody PeopleMediaRequestHelper person) throws SQLException {
         UserMiddlewares.isAdmin(person.getUserid());
+        Table table = mediaService.getType(id);
         person.setPersonid(personid);
-        person.setPersonid(personid);
-        if(person.getRole()==null || person.getRoleType()==null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-        mediaService.removePerson(id, person);
+        person.mediaValidate(table);
+        PeopleMiddlewares.existsPerson(person.getPersonid());
+        MediaMiddlewares.persoInMedia(id, person, table);
+        mediaService.removePerson(id, person, table);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

@@ -1,11 +1,11 @@
 package api.helpers.response;
 
 import org.jooq.Record;
-
-import static src.main.java.model.Tables.SEASONS;
 import src.main.java.model.tables.pojos.Episodes;
 
 import java.util.List;
+
+import static src.main.java.model.Tables.SEASONS;
 
 public class SeasonResponseHelper {
     private Integer mediaid;

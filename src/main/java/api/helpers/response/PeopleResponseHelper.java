@@ -4,7 +4,7 @@ import org.jooq.Record;
 
 import java.time.LocalDate;
 
-import static src.main.java.model.Tables.*;
+import static src.main.java.model.Tables.PEOPLE;
 
 public class PeopleResponseHelper {
     private Integer personid;

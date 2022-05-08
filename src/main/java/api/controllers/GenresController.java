@@ -1,6 +1,7 @@
 package api.controllers;
 
 import api.helpers.request.GenreRequestHelper;
+import api.helpers.response.GenreResponseHelper;
 import api.middlewares.GenresMiddlewares;
 import api.middlewares.UserMiddlewares;
 import api.services.GenresService;
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import src.main.java.model.tables.pojos.Genres;
 
 import java.sql.SQLException;
@@ -40,11 +40,11 @@ public class GenresController {
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "409", description = "Item already exists", content = @Content)})
     @PostMapping
-    public ResponseEntity postGenre (@RequestBody GenreRequestHelper genre) throws SQLException {
+    public ResponseEntity<GenreResponseHelper> postGenre (@RequestBody GenreRequestHelper genre) throws SQLException {
         UserMiddlewares.isAdmin(genre.getUserid());
         genre.validateName();
         GenresMiddlewares.doesNotExistsGenre(genre.getName());
-        return new ResponseEntity(genresService.postGenre(genre), HttpStatus.CREATED);
+        return new ResponseEntity<>(genresService.postGenre(genre), HttpStatus.CREATED);
     }
 
 }

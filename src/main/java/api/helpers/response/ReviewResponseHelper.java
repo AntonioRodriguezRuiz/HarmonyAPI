@@ -4,7 +4,7 @@ import org.jooq.Record;
 
 import java.time.LocalDateTime;
 
-import static src.main.java.model.Tables.*;
+import static src.main.java.model.Tables.REVIEWS;
 
 public record ReviewResponseHelper(Integer reviewid, Integer userid,
                                   Integer mediaid, LocalDateTime creationDate, Double rating,

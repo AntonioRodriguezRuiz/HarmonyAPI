@@ -2,6 +2,7 @@ package api.controllers;
 
 import api.GlobalValues;
 import api.helpers.request.PeopleRequestHelper;
+import api.helpers.response.PeopleResponseHelper;
 import api.middlewares.PeopleMiddlewares;
 import api.middlewares.UserMiddlewares;
 import api.services.PeopleService;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import src.main.java.model.tables.pojos.People;
 
 import java.sql.SQLException;
@@ -49,16 +49,16 @@ public class PeopleController {
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "409", description = "Item already exists", content = @Content)})
     @PostMapping
-    public ResponseEntity postPerson (@RequestBody PeopleRequestHelper person) throws SQLException {
+    public ResponseEntity<PeopleResponseHelper> postPerson (@RequestBody PeopleRequestHelper person) throws SQLException {
         UserMiddlewares.isAdmin(person.getUserid());
         person.validateName();
         PeopleMiddlewares.doesNotExistsPerson(person);
-        return new ResponseEntity(peopleService.postPerson(person), HttpStatus.CREATED);
+        return new ResponseEntity<>(peopleService.postPerson(person), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Modifies a person")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Item created"),
+            @ApiResponse(responseCode = "204", description = "Item updated"),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "409", description = "Item already exists", content = @Content)})

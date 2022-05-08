@@ -9,13 +9,14 @@ import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import src.main.java.model.Routines;
+import src.main.java.model.tables.pojos.Media;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
 import static src.main.java.model.Tables.*;
-import src.main.java.model.tables.pojos.Media;
-import src.main.java.model.Routines;
 
 /**
  * ListSpecificService
@@ -71,8 +72,7 @@ public class ListSpecificService {
         return list;
     }
 
-    public ListResponseHelper putList(Integer listId, ListRequestHelper list) throws SQLException {
-        ListResponseHelper response = null;
+    public void putList(Integer listId, ListRequestHelper list) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
             var oldlist = getList(listId);
@@ -83,15 +83,12 @@ public class ListSpecificService {
                 .set(LISTS.ICON, newlist.icon())
                 .where(LISTS.LISTID.eq(listId))
                 .execute();
-
-            response = getList(listId);
         } catch (ResponseStatusException | SQLException e) {
             if (e instanceof ResponseStatusException) {
                 throw e;
             }
             e.printStackTrace();
         }
-        return response;
     }
 
     public void deleteList(Integer listId) throws SQLException {

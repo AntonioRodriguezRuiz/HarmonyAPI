@@ -1,11 +1,11 @@
 package api.helpers.response;
 
+import api.helpers.request.UserRequestHelper;
+import org.jooq.Record;
+
 import java.time.LocalDate;
 
 import static src.main.java.model.Tables.USERS;
-
-import api.helpers.request.UserRequestHelper;
-import org.jooq.Record;
 
 /**
  * UserResponseHelper

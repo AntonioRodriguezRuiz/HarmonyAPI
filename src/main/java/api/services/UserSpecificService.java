@@ -42,8 +42,7 @@ public class UserSpecificService {
         return user;
     }
 
-    public UserResponseHelper putUser(Integer id, UserRequestHelper user) throws SQLException {
-        UserResponseHelper response = null;
+    public void putUser(Integer id, UserRequestHelper user) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
             var oldUser = create.select()
@@ -59,21 +58,12 @@ public class UserSpecificService {
                 .set(USERS.PASSWORD, newUser.password())
                 .where(USERS.USERID.eq(id))
                 .execute();
-
-            response = new UserResponseHelper(
-                create.select()
-                    .from(USERS)
-                    .where(USERS.USERID.eq(id))
-                    .fetch().get(0)
-            );
-
         } catch (ResponseStatusException | SQLException e) {
             if (e instanceof ResponseStatusException) {
                 throw e;
             }
             e.printStackTrace();
         }
-        return response;
     }
 
     public void deleteUser(Integer id) throws SQLException {

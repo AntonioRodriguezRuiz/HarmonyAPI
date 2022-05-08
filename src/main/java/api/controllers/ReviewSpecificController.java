@@ -37,7 +37,7 @@ public class ReviewSpecificController {
 
     @Operation(summary = "Deletes a review.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item destroyed"),
+            @ApiResponse(responseCode = "204", description = "Item destroyed", content = @Content),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
@@ -68,7 +68,7 @@ public class ReviewSpecificController {
 
     @Operation(summary = "Unlikes a review.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Item destroyed"),
+            @ApiResponse(responseCode = "204", description = "Item destroyed", content = @Content),
             @ApiResponse(responseCode = "400", description = "Some parameter does not have a valid value", content = @Content),
             @ApiResponse(responseCode = "403", description = "Not enough permissions", content = @Content),
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})

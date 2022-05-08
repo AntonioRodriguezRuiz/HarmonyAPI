@@ -2360,6 +2360,9 @@ components:
           type: string
         synopsis:
           type: string
+        avgrating:
+          type: number
+          format: double
         genresList:
           type: array
           items:

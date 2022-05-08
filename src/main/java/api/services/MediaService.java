@@ -234,8 +234,8 @@ public class MediaService {
         return postMedia(movie, MOVIES);
     }
 
-    public void putMovie(MovieRequestHelper movie) throws SQLException {
-        putMedia(movie, MOVIES, canBePut(movie, MOVIES));
+    public void putMovie(MovieRequestHelper movie, Media oldMedia) throws SQLException {
+        putMedia(movie, MOVIES, oldMedia);
     }
 
     public MediaResponseHelper postSeries(SeriesRequestHelper series) throws SQLException {
@@ -243,8 +243,8 @@ public class MediaService {
         return postMedia(series, SERIES);
     }
 
-    public void putSeries(SeriesRequestHelper series) throws SQLException {
-        putMedia(series, SERIES, canBePut(series, SERIES));
+    public void putSeries(SeriesRequestHelper series, Media oldMedia) throws SQLException {
+        putMedia(series, SERIES, oldMedia);
     }
 
     public MediaResponseHelper postBook(BookRequestHelper book) throws SQLException {
@@ -252,8 +252,8 @@ public class MediaService {
         return postMedia(book, BOOKS);
     }
 
-    public void putBook(BookRequestHelper book) throws SQLException{
-        putMedia(book, BOOKS, canBePut(book, BOOKS));
+    public void putBook(BookRequestHelper book, Media oldMedia) throws SQLException{
+        putMedia(book, BOOKS, oldMedia);
     }
 
     public MediaResponseHelper postVideogame(VideogameRequestHelper videogame) throws SQLException {
@@ -261,8 +261,8 @@ public class MediaService {
         return postMedia(videogame, VIDEOGAMES);
     }
 
-    public void putVideogame(VideogameRequestHelper videogame) throws SQLException{
-        putMedia(videogame, VIDEOGAMES, canBePut(videogame, VIDEOGAMES));
+    public void putVideogame(VideogameRequestHelper videogame, Media oldmedia) throws SQLException{
+        putMedia(videogame, VIDEOGAMES, oldmedia);
     }
 
     public boolean mediaExists(Integer mediaid) throws SQLException {
@@ -301,32 +301,6 @@ public class MediaService {
             }
             e.printStackTrace();
         }
-    }
-
-    public Media canBePut(MediaRequestHelper media, Table table) throws SQLException {
-        Media oldMedia = null;
-        try(Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)){
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-
-            List<Media> oldMediaList = create.select()
-                    .from(MEDIA)
-                    .naturalJoin(table)
-                    .where(MEDIA.MEDIAID.eq(media.getMediaid()))
-                    .fetchInto(Media.class);
-
-            if (oldMediaList.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
-
-            oldMedia = oldMediaList.get(0);
-
-        } catch (ResponseStatusException | SQLException e){
-            if(e instanceof ResponseStatusException){
-                throw e;
-            }
-            e.printStackTrace();
-        }
-        return oldMedia;
     }
 
 }

@@ -1,6 +1,7 @@
 package api.middlewares;
 
 import api.GlobalValues;
+import api.helpers.request.MediaRequestHelper;
 import api.helpers.request.PeopleMediaRequestHelper;
 import api.services.MediaSpecificService;
 import org.jooq.*;
@@ -9,13 +10,14 @@ import org.jooq.impl.DSL;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.print.attribute.standard.Media;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.List;
 
 import static src.main.java.model.Tables.*;
 import static src.main.java.model.Tables.PEOPLE;
+import src.main.java.model.tables.pojos.Media;
 
 /**
  * MediaMiddlewares
@@ -44,6 +46,32 @@ public class MediaMiddlewares {
             }
             e.printStackTrace();
         }
+    }
+
+    public static Media mediaExists(Integer mediaId, Table table) throws SQLException {
+        Media oldMedia = null;
+        try(Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)){
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+
+            List<Media> oldMediaList = create.select()
+                    .from(MEDIA)
+                    .naturalJoin(table)
+                    .where(MEDIA.MEDIAID.eq(mediaId))
+                    .fetchInto(Media.class);
+
+            if (oldMediaList.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Media does not exists or is not of the type specified");
+            }
+
+            oldMedia = oldMediaList.get(0);
+
+        } catch (ResponseStatusException | SQLException e){
+            if(e instanceof ResponseStatusException){
+                throw e;
+            }
+            e.printStackTrace();
+        }
+        return oldMedia;
     }
 
     public static void hasGenre(Integer id, Integer genreid) throws SQLException {

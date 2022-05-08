@@ -26,6 +26,7 @@ import src.main.java.model.tables.pojos.Media;
 import java.sql.SQLException;
 import java.util.List;
 
+import static src.main.java.model.Tables.*;
 import static src.main.java.model.tables.Media.MEDIA;
 import src.main.java.model.Tables;
 
@@ -57,7 +58,7 @@ public class MediaController {
         TableLike typeTable = null;
         if(typeParam!=null){
             switch (typeParam){
-                case "movie": typeTable = Tables.MOVIES; break;
+                case "movie": typeTable = MOVIES; break;
                 case "series": typeTable = Tables.SERIES; break;
                 case "videogame": typeTable = Tables.VIDEOGAMES; break;
                 case "book": typeTable = Tables.BOOKS; break;
@@ -106,8 +107,8 @@ public class MediaController {
     @PutMapping("/movies")
     public ResponseEntity<MovieRequestHelper> putMovie(@RequestBody MovieRequestHelper movie) throws SQLException {
         UserMiddlewares.isAdmin(movie.getUserid());
-        MediaMiddlewares.mediaExists(movie.getMediaid());
-        mediaService.putMovie(movie);
+        Media oldMedia = MediaMiddlewares.mediaExists(movie.getMediaid(), MOVIES);
+        mediaService.putMovie(movie, oldMedia);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     @Operation(summary = "Post a new series to the database")
@@ -132,8 +133,8 @@ public class MediaController {
     @PutMapping("/series")
     public ResponseEntity<SeriesRequestHelper> putSeries(@RequestBody SeriesRequestHelper series) throws SQLException {
         UserMiddlewares.isAdmin(series.getUserid());
-        MediaMiddlewares.mediaExists(series.getMediaid());
-        mediaService.putSeries(series);
+        Media oldMedia = MediaMiddlewares.mediaExists(series.getMediaid(), SERIES);
+        mediaService.putSeries(series, oldMedia);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -159,8 +160,8 @@ public class MediaController {
     @PutMapping("/books")
     public ResponseEntity<BookRequestHelper> putBook(@RequestBody BookRequestHelper book) throws SQLException {
         UserMiddlewares.isAdmin(book.getUserid());
-        MediaMiddlewares.mediaExists(book.getMediaid());
-        mediaService.putBook(book);
+        Media oldMedia = MediaMiddlewares.mediaExists(book.getMediaid(), BOOKS);
+        mediaService.putBook(book, oldMedia);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -186,8 +187,8 @@ public class MediaController {
     @PutMapping("/videogames")
     public ResponseEntity<VideogameRequestHelper> putVideogame(@RequestBody VideogameRequestHelper videogame) throws SQLException {
         UserMiddlewares.isAdmin(videogame.getUserid());
-        MediaMiddlewares.mediaExists(videogame.getMediaid());
-        mediaService.putVideogame(videogame);
+        Media oldMedia = MediaMiddlewares.mediaExists(videogame.getMediaid(), VIDEOGAMES);
+        mediaService.putVideogame(videogame, oldMedia);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

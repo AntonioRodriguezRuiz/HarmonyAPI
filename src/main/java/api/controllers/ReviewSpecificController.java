@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.jooq.Record;
+import org.jooq.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +31,7 @@ public class ReviewSpecificController {
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
     @GetMapping
     public ReviewResponseHelper getReview(@PathVariable Integer id) throws SQLException{
+        ReviewMiddlewares.existsReview(id);
         return reviewSpecificService.getReview(id);
     }
 
@@ -40,6 +43,8 @@ public class ReviewSpecificController {
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
     @DeleteMapping
     public ResponseEntity deleteReview(@PathVariable Integer id, @RequestBody UseridBodyHelper user) throws SQLException{
+        user.validate();
+        ReviewMiddlewares.existsReview(id);
         ReviewMiddlewares.isOwnerOfReview(user.userid(), id);
         reviewSpecificService.deleteReview(id);
         return new ResponseEntity<>((HttpStatus.NO_CONTENT));
@@ -53,9 +58,11 @@ public class ReviewSpecificController {
             @ApiResponse(responseCode = "409", description = "You have already liked this", content = @Content)})
     @PostMapping("/likes")
     public ResponseEntity<ReviewResponseHelper> postReviewLike(@PathVariable Integer id, @RequestBody UseridBodyHelper user) throws SQLException {
-        if(user.userid() == null){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-        }
+        user.validate();
+        ReviewMiddlewares.existsReview(id);
+        Result<Record> likeList = ReviewMiddlewares.existsLike(id, user.userid(), null);
+        if (!likeList.isEmpty())
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
         return new ResponseEntity<>(reviewSpecificService.postLike(id, user), HttpStatus.CREATED);
     }
 
@@ -67,6 +74,11 @@ public class ReviewSpecificController {
             @ApiResponse(responseCode = "404", description = "Item doesn't exists", content = @Content)})
     @DeleteMapping("/likes/{likeid}")
     public ResponseEntity deleteReviewLike(@PathVariable Integer id, @PathVariable Integer likeid, @RequestBody UseridBodyHelper user) throws SQLException {
+        user.validate();
+        ReviewMiddlewares.existsReview(id);
+        Result<Record> likeList = ReviewMiddlewares.existsLike(id, user.userid(), null);
+        if (likeList.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         ReviewMiddlewares.isOwnerOfLike(user.userid(), id);
         reviewSpecificService.deleteLike(likeid);
         return new ResponseEntity<>((HttpStatus.NO_CONTENT));

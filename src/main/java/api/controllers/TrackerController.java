@@ -4,6 +4,7 @@ import api.helpers.enums.TrackerState;
 import api.helpers.request.TrackerRequestHelper;
 import api.helpers.response.TrackerResponseHelper;
 import api.middlewares.MediaMiddlewares;
+import api.middlewares.TrackerMiddlewares;
 import api.middlewares.UserMiddlewares;
 import api.services.MediaService;
 import api.services.TrackerService;
@@ -64,6 +65,7 @@ public class TrackerController {
     public ResponseEntity<TrackerResponseHelper> postTracker(@PathVariable Integer userId, @RequestBody TrackerRequestHelper tracker) throws SQLException {
         UserMiddlewares.userExists(userId);
         MediaMiddlewares.mediaExists(tracker.mediaId());
+        TrackerMiddlewares.statusUnchanged(tracker.mediaId(), userId, tracker.state());
         return new ResponseEntity<>(trackerService.postTracker(userId, tracker), HttpStatus.OK);
     }
 }

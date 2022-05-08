@@ -602,13 +602,6 @@ public class MediaSpecificService {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            // checks the episode does not already exists
-            Result<Record> seasonList = existsSeason(id, seasonid, null);
-
-            if (seasonList.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
-
             create.deleteFrom(SEASONS)
                     .where(SEASONS.SEASONID.eq(seasonid))
                     .execute();
@@ -621,27 +614,32 @@ public class MediaSpecificService {
         }
     }
 
-    public EpisodeResponseHelper getEpisode(Integer id, Integer seasonid, Integer episodeid) throws SQLException {
-        Result<Record> episodesList = existsEpisode(id, seasonid, episodeid, null);
-
-        if (episodesList.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-
-        EpisodeResponseHelper episodeResult = new EpisodeResponseHelper(episodesList.get(0));
-        return episodeResult;
-    }
-
-    public void deleteEpisode(Integer id, Integer seasonid, Integer episodeid) throws SQLException {
+    public EpisodeResponseHelper getEpisode(Integer episodeid) throws SQLException {
+        EpisodeResponseHelper episodeResult = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            // checks the episode does not already exists
-            Result<Record> episodesList = existsEpisode(id, seasonid, episodeid, null);
+            Result<Record> episodesList = create.select()
+                                            .from(MEDIA)
+                                            .naturalJoin(SERIES)
+                                            .naturalJoin(SEASONS)
+                                            .naturalJoin(EPISODES)
+                                            .where(EPISODES.EPISODEID.eq(episodeid))
+                                            .fetch();
 
-            if (episodesList.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            episodeResult = new EpisodeResponseHelper(episodesList.get(0));
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
             }
+            e.printStackTrace();
+        }
+        return episodeResult;
+    }
+
+    public void deleteEpisode(Integer episodeid) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             create.deleteFrom(EPISODES)
                     .where(EPISODES.EPISODEID.eq(episodeid))

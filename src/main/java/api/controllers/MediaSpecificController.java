@@ -181,6 +181,10 @@ public class MediaSpecificController {
     @DeleteMapping("/{seasonid}")
     public ResponseEntity deleteSeason(@PathVariable Integer id, @PathVariable Integer seasonid, @RequestBody UseridBodyHelper user) throws SQLException {
         UserMiddlewares.isAdmin(user.userid());
+        MediaMiddlewares.mediaExists(id);
+        SeriesMiddlewares.isSeries(id);
+        SeasonMiddlewares.seasonExists(seasonid);
+        SeasonMiddlewares.isSeasonOf(id, seasonid);
         mediaService.deleteSeason(id, seasonid);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -192,7 +196,13 @@ public class MediaSpecificController {
             @ApiResponse(responseCode = "405", description = "The media item is not a episode of a series", content = @Content)})
     @GetMapping("/{seasonid}/{episodeid}")
     public EpisodeResponseHelper getEpisode(@PathVariable Integer id, @PathVariable Integer seasonid, @PathVariable Integer episodeid) throws SQLException {
-        return mediaService.getEpisode(id,seasonid, episodeid);
+        MediaMiddlewares.mediaExists(id);
+        SeriesMiddlewares.isSeries(id);
+        SeasonMiddlewares.seasonExists(seasonid);
+        SeasonMiddlewares.isSeasonOf(id, seasonid);
+        EpisodeMiddlewares.episodeExists(episodeid);
+        EpisodeMiddlewares.isEpisodeOf(seasonid, episodeid);
+        return mediaService.getEpisode(episodeid);
     }
 
     @Operation(summary = "Removes an episode from a season")
@@ -205,7 +215,13 @@ public class MediaSpecificController {
     @DeleteMapping("/{seasonid}/{episodeid}")
     public ResponseEntity deleteEpisode(@PathVariable Integer id, @PathVariable Integer seasonid, @PathVariable Integer episodeid, @RequestBody UseridBodyHelper user) throws SQLException {
         UserMiddlewares.isAdmin(user.userid());
-        mediaService.deleteEpisode(id, seasonid, episodeid);
+        MediaMiddlewares.mediaExists(id);
+        SeriesMiddlewares.isSeries(id);
+        SeasonMiddlewares.seasonExists(seasonid);
+        SeasonMiddlewares.isSeasonOf(id, seasonid);
+        EpisodeMiddlewares.episodeExists(episodeid);
+        EpisodeMiddlewares.isEpisodeOf(seasonid, episodeid);
+        mediaService.deleteEpisode(episodeid);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

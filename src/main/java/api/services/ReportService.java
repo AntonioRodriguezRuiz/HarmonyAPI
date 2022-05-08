@@ -47,12 +47,6 @@ public class ReportService {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            ReportMiddlewares.existsReport(report);
-
-            Result<Record> review =  ReviewMiddlewares.existsReview(report.reviewid());
-            if(review.isEmpty()){
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
             Routines.newreport(create.configuration(),
                     report.useridreporter(),
                     report.useridreported(),
@@ -77,11 +71,6 @@ public class ReportService {
     public void deleteReport(Integer id) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-
-            Result<Record> reportList = ReportMiddlewares.existsReport(id);
-            if(reportList.isEmpty()){
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
 
             create.deleteFrom(REPORTS)
                     .where(REPORTS.REPORTID.eq(id)).execute();

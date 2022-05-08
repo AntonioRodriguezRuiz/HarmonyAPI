@@ -1510,7 +1510,7 @@ paths:
   "/api/v1/user/{userId}/tracking":
     get:
       tags:
-        - User Trackers Operations
+        - User Trackers Operations (Currently unfinished/unusable)
       summary: Get all trackers for a user
       operationId: getTracking
       parameters:
@@ -1538,7 +1538,7 @@ paths:
           description: User not found
     post:
       tags:
-        - User Trackers Operations
+        - User Trackers Operations (Currently unfinished/unusable)
       summary: Creates a new tracker
       operationId: postTracker
       parameters:

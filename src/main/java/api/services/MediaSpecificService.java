@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static src.main.java.model.Tables.*;
+
 import src.main.java.model.Routines;
 import src.main.java.model.tables.pojos.Seasons;
 import src.main.java.model.tables.pojos.Episodes;
@@ -273,8 +274,8 @@ public class MediaSpecificService {
                         .naturalJoin(EPISODES)
                         .where(EPISODES.EPISODEID.eq(id)
                                 .and(PEOPLE.PERSONID.eq(person.getPersonid())
-                                .and(PEOPLEEPISODES.ROLE.eq(person.getRole()))
-                                .and(PEOPLEEPISODES.ROLETYPE.eq(person.getRoleTypeByte()))))
+                                        .and(PEOPLEEPISODES.ROLE.eq(person.getRole()))
+                                        .and(PEOPLEEPISODES.ROLETYPE.eq(person.getRoleTypeByte()))))
                         .fetch();
             } else {
 
@@ -286,7 +287,7 @@ public class MediaSpecificService {
                         .where(MEDIA.MEDIAID.eq(id)
                                 .and(PEOPLE.PERSONID.eq(person.getPersonid()))
                                 .and(peopleTable.field("role", String.class).eq(person.getRole())
-                                .and(peopleTable.field("roletype", Byte.class).eq(person.getRoleTypeByte()))))
+                                        .and(peopleTable.field("roletype", Byte.class).eq(person.getRoleTypeByte()))))
                         .fetch();
             }
 
@@ -355,10 +356,10 @@ public class MediaSpecificService {
                             .where(SERIES.MEDIAID.eq(id))
                             .fetch().size();
                     List<Seasons> seasons = create.select(SEASONS.fields())
-                                                    .from(SEASONS)
-                                                    .naturalJoin(SERIES)
-                                                    .where(SERIES.MEDIAID.eq(id))
-                                                    .fetchInto(Seasons.class);
+                            .from(SEASONS)
+                            .naturalJoin(SERIES)
+                            .where(SERIES.MEDIAID.eq(id))
+                            .fetchInto(Seasons.class);
                     seriesResult = new SeriesResponseHelper(media, genresList, noSeasons, seasons);
                     break;
                 case "books":
@@ -399,8 +400,8 @@ public class MediaSpecificService {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             create.deleteFrom(MEDIA)
-                .where(MEDIA.MEDIAID.eq(id))
-                .execute();
+                    .where(MEDIA.MEDIAID.eq(id))
+                    .execute();
 
         } catch (ResponseStatusException | SQLException e) {
             if (e instanceof ResponseStatusException) {
@@ -442,10 +443,10 @@ public class MediaSpecificService {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             Seasons oldSeason = create.select()
-                .from(SEASONS)
-                .where(SEASONS.SEASONID.eq(season.getSeasonid()))
-                .fetchInto(Seasons.class)
-                .get(0);
+                    .from(SEASONS)
+                    .where(SEASONS.SEASONID.eq(season.getSeasonid()))
+                    .fetchInto(Seasons.class)
+                    .get(0);
 
             season.setSeasonNo(season.getSeasonNo() == null ? oldSeason.getSeasonno() : season.getSeasonNo());
             season.setNoEpisodes(season.getNoEpisodes() == null ? oldSeason.getNoepisodes() : season.getNoEpisodes());
@@ -572,13 +573,13 @@ public class MediaSpecificService {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             EpisodeResponseHelper oldEpisode = new EpisodeResponseHelper(create.select()
-                                                                        .from(EPISODES)
-                                                                        .naturalJoin(SEASONS)
-                                                                        .naturalJoin(SERIES)
-                                                                        .naturalJoin(MEDIA)
-                                                                        .where(EPISODES.EPISODEID.eq(episode.getEpisodeid()))
-                                                                        .fetch()
-                                                                        .get(0));
+                    .from(EPISODES)
+                    .naturalJoin(SEASONS)
+                    .naturalJoin(SERIES)
+                    .naturalJoin(MEDIA)
+                    .where(EPISODES.EPISODEID.eq(episode.getEpisodeid()))
+                    .fetch()
+                    .get(0));
             EpisodeRequestHelper newEpisode = new EpisodeRequestHelper(null, null, null, null);
 
             newEpisode.setEpisodeNo(episode.getEpisodeNo() == null ? oldEpisode.getEpisodeNo() : episode.getEpisodeNo());
@@ -620,12 +621,12 @@ public class MediaSpecificService {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
             Result<Record> episodesList = create.select()
-                                            .from(MEDIA)
-                                            .naturalJoin(SERIES)
-                                            .naturalJoin(SEASONS)
-                                            .naturalJoin(EPISODES)
-                                            .where(EPISODES.EPISODEID.eq(episodeid))
-                                            .fetch();
+                    .from(MEDIA)
+                    .naturalJoin(SERIES)
+                    .naturalJoin(SEASONS)
+                    .naturalJoin(EPISODES)
+                    .where(EPISODES.EPISODEID.eq(episodeid))
+                    .fetch();
 
             episodeResult = new EpisodeResponseHelper(episodesList.get(0));
         } catch (ResponseStatusException | SQLException e) {
@@ -716,10 +717,10 @@ public class MediaSpecificService {
                 for (Record record : result) {
                     Integer seasonid = record.get(SEASONS.SEASONID);
                     Integer episodeid = record.get(EPISODES.EPISODEID);
-                    peopleList.add(new PeopleEpisodeResponseHelper(record, table, seasonid,  episodeid));
+                    peopleList.add(new PeopleEpisodeResponseHelper(record, table, seasonid, episodeid));
                 }
 
-            } else{
+            } else {
                 Table peopleTable = getPeopleTable(table);
                 Result<Record> result = create.select()
                         .from(MEDIA)
@@ -733,9 +734,6 @@ public class MediaSpecificService {
                     peopleList.add(new PeopleMediaResponseHelper(record, table));
                 }
             }
-
-
-
 
 
         } catch (ResponseStatusException | SQLException e) {
@@ -818,16 +816,6 @@ public class MediaSpecificService {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            Table table = getType(id);
-
-            if (!table.getName().equals("series")) {
-                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
-            }
-            Result<Record> episodeExists = existsEpisode(id, seasonid, episodeid, null);
-            if (episodeExists.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
-
             Table peopleTable = PEOPLEEPISODES;
 
             Result<Record> result = create.select()
@@ -841,7 +829,7 @@ public class MediaSpecificService {
                     .fetch();
 
             for (Record record : result) {
-                peopleList.add(new PeopleEpisodeResponseHelper(record, table, seasonid, episodeid));
+                peopleList.add(new PeopleEpisodeResponseHelper(record, SERIES, seasonid, episodeid));
             }
 
         } catch (ResponseStatusException | SQLException e) {
@@ -858,20 +846,8 @@ public class MediaSpecificService {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            existsEpisode(id, seasonid, episodeid, null);
-
-            Table table = getType(id);
-
-            if (!table.getName().equals("series")) {
-                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
-            }
-
-            People personData = existsPerson(person.getPersonid());
-            Result<Record> peopleList = existsMediaPerson(episodeid, person, PEOPLEEPISODES, table);
-
-            if (!peopleList.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT);
-            }
+            PeopleSpecificService peopleSpecificService = new PeopleSpecificService();
+            PeopleResponseHelper personData = peopleSpecificService.getPerson(person.getPersonid());
 
             Routines.newpersonepisodebyid(create.configuration(),
                     person.getPersonid(), episodeid,
@@ -889,30 +865,15 @@ public class MediaSpecificService {
         return personResult;
     }
 
-    public void removePersonEpisode(Integer id, Integer seasonid, Integer episodeid, PeopleMediaRequestHelper person) throws SQLException {
+    public void removePersonEpisode(Integer episodeid, PeopleMediaRequestHelper person) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            existsEpisode(id, seasonid, episodeid, null);
-
-            Table table = getType(id);
-
-
-            if (!table.getName().equals("series")) {
-                throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
-            }
-
-            Result<Record> peopleList = existsMediaPerson(episodeid, person, PEOPLEEPISODES, table);
-
-            if (peopleList.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
-
             create.deleteFrom(PEOPLEEPISODES)
                     .where(PEOPLEEPISODES.PERSONID.eq(person.getPersonid())
-                                .and(PEOPLEEPISODES.EPISODEID.eq(episodeid))
-                                .and(PEOPLEEPISODES.ROLE.eq(person.getRole()))
-                                .and(PEOPLEEPISODES.ROLETYPE.eq(person.getRoleTypeByte())))
+                            .and(PEOPLEEPISODES.EPISODEID.eq(episodeid))
+                            .and(PEOPLEEPISODES.ROLE.eq(person.getRole()))
+                            .and(PEOPLEEPISODES.ROLETYPE.eq(person.getRoleTypeByte())))
                     .execute();
 
         } catch (ResponseStatusException | SQLException e) {
@@ -930,7 +891,7 @@ public class MediaSpecificService {
 
             Result<Record> mediaList = existsMedia(id);
 
-            if(mediaList.isEmpty()){
+            if (mediaList.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
 
@@ -939,7 +900,7 @@ public class MediaSpecificService {
                     .where(REVIEWS.MEDIAID.eq(id))
                     .fetch();
 
-            for (Record record: result) {
+            for (Record record : result) {
                 reviews.add(ReviewResponseHelper.of(record));
             }
 
@@ -996,8 +957,8 @@ public class MediaSpecificService {
             ReviewResponseHelper oldReview = ReviewResponseHelper.of(record);
 
             create.update(REVIEWS)
-                    .set(REVIEWS.RATING, review.rating()==null ? oldReview.rating() : review.rating())
-                    .set(REVIEWS.REVIEW, review.review()==null ? oldReview.review() : review.review())
+                    .set(REVIEWS.RATING, review.rating() == null ? oldReview.rating() : review.rating())
+                    .set(REVIEWS.REVIEW, review.review() == null ? oldReview.review() : review.review())
                     .where(REVIEWS.REVIEWID.eq(review.reviewid()))
                     .execute();
 

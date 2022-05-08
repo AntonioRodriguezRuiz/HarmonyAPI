@@ -1,8 +1,10 @@
 package api.middlewares;
 
 import api.GlobalValues;
-import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
+import api.helpers.request.PeopleMediaRequestHelper;
+import api.services.MediaSpecificService;
+import org.jooq.*;
+import org.jooq.Record;
 import org.jooq.impl.DSL;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -76,4 +78,55 @@ public class EpisodeMiddlewares {
         }
     }
 
+    public static void personNotInEpisode(Integer episodeid, PeopleMediaRequestHelper person) throws SQLException {
+        Result<Record> peopleList = null;
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+
+            peopleList = create.select()
+                    .from(PEOPLE)
+                    .naturalJoin(PEOPLEEPISODES)
+                    .naturalJoin(EPISODES)
+                    .where(PEOPLEEPISODES.EPISODEID.eq(episodeid)
+                            .and(PEOPLE.PERSONID.eq(person.getPersonid()))
+                            .and(PEOPLEEPISODES.ROLE.eq(person.getRole())
+                                    .and(PEOPLEEPISODES.ROLETYPE.eq(person.getRoleTypeByte()))))
+                    .fetch();
+
+            if(!peopleList.isEmpty())
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "This person already has this role and roleType in this media");
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
+
+    public static void persoInEpisode(Integer episodeid, PeopleMediaRequestHelper person) throws SQLException {
+        Result<Record> peopleList = null;
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+
+            peopleList = create.select()
+                    .from(PEOPLE)
+                    .naturalJoin(PEOPLEEPISODES)
+                    .naturalJoin(EPISODES)
+                    .where(PEOPLEEPISODES.EPISODEID.eq(episodeid)
+                            .and(PEOPLE.PERSONID.eq(person.getPersonid()))
+                            .and(PEOPLEEPISODES.ROLE.eq(person.getRole())
+                                    .and(PEOPLEEPISODES.ROLETYPE.eq(person.getRoleTypeByte()))))
+                    .fetch();
+
+            if(peopleList.isEmpty())
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This person does not participate in this media with this role and roleType");
+
+        } catch (ResponseStatusException | SQLException e) {
+            if (e instanceof ResponseStatusException) {
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
 }

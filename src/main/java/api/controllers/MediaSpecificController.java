@@ -312,6 +312,12 @@ public class MediaSpecificController {
             @ApiResponse(responseCode = "409", description = "This person is already in this media with the same role", content = @Content)})
     @GetMapping("/{seasonid}/{episodeid}/people")
     public List<PeopleMediaResponseHelper> getPeopleFromEpisode(@PathVariable Integer id, @PathVariable Integer seasonid, @PathVariable Integer episodeid) throws SQLException {
+        MediaMiddlewares.mediaExists(id);
+        SeriesMiddlewares.isSeries(id);
+        SeasonMiddlewares.seasonExists(seasonid);
+        SeasonMiddlewares.isSeasonOf(id, seasonid);
+        EpisodeMiddlewares.episodeExists(episodeid);
+        EpisodeMiddlewares.isEpisodeOf(seasonid, episodeid);
         return mediaService.getPeopleFromEpisode(id, seasonid, episodeid);
     }
 
@@ -324,9 +330,15 @@ public class MediaSpecificController {
     @PostMapping("/{seasonid}/{episodeid}/people")
     public ResponseEntity<PeopleMediaResponseHelper> addPersonEpisode(@PathVariable Integer id, @PathVariable Integer seasonid, @PathVariable Integer episodeid, @RequestBody PeopleMediaRequestHelper person) throws SQLException {
         UserMiddlewares.isAdmin(person.getUserid());
-        if(person.getPersonid()==null || person.getRole()==null || person.getRoleType()==null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        MediaMiddlewares.mediaExists(id);
+        SeriesMiddlewares.isSeries(id);
+        SeasonMiddlewares.seasonExists(seasonid);
+        SeasonMiddlewares.isSeasonOf(id, seasonid);
+        EpisodeMiddlewares.episodeExists(episodeid);
+        EpisodeMiddlewares.isEpisodeOf(seasonid, episodeid);
+        person.episodeValidate();
+        PeopleMiddlewares.existsPerson(person.getPersonid());
+        EpisodeMiddlewares.personNotInEpisode(episodeid, person);
         return new ResponseEntity<>(mediaService.addPersonEpisode(id, seasonid, episodeid, person), HttpStatus.CREATED);
     }
 
@@ -339,11 +351,17 @@ public class MediaSpecificController {
     @DeleteMapping("/{seasonid}/{episodeid}/people/{personid}")
     public ResponseEntity removePersonEpisode(@PathVariable Integer id, @PathVariable Integer seasonid, @PathVariable Integer episodeid, @PathVariable Integer personid, @RequestBody PeopleMediaRequestHelper person) throws SQLException {
         UserMiddlewares.isAdmin(person.getUserid());
+        MediaMiddlewares.mediaExists(id);
+        SeriesMiddlewares.isSeries(id);
+        SeasonMiddlewares.seasonExists(seasonid);
+        SeasonMiddlewares.isSeasonOf(id, seasonid);
+        EpisodeMiddlewares.episodeExists(episodeid);
+        EpisodeMiddlewares.isEpisodeOf(seasonid, episodeid);
         person.setPersonid(personid);
-        if(person.getRole()==null || person.getRoleType()==null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-        mediaService.removePersonEpisode(id, seasonid, episodeid, person);
+        person.episodeValidate();
+        PeopleMiddlewares.existsPerson(person.getPersonid());
+        EpisodeMiddlewares.persoInEpisode(episodeid, person);
+        mediaService.removePersonEpisode(episodeid, person);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

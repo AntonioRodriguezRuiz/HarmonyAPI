@@ -66,4 +66,9 @@ public class PeopleMediaRequestHelper {
         else if (table.getName().equals("books") && this.getRoleTypeByte() != 0)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Books do not have cast, only crew");
     }
+
+    public void episodeValidate(){
+        if(this.personid==null || this.role==null || this.roleType==null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "personId, role and roleType cannot be null");
+    }
 }

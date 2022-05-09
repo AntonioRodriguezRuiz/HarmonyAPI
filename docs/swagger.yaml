@@ -1439,6 +1439,10 @@ paths:
       responses:
         '201':
           description: User created
+          content:
+            "Response Body":
+              schema:
+                "$ref": "#/components/schemas/UserResponseHelper"
         '400':
           description: Bad request
         '409':
@@ -2373,8 +2377,6 @@ components:
         username:
           type: string
         email:
-          type: string
-        password:
           type: string
         creationDate:
           type: string

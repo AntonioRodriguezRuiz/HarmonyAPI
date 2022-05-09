@@ -1203,10 +1203,6 @@ paths:
       responses:
         '204':
           description: Item destroyed
-          content:
-            "Response Body":
-              schema:
-                type: string
         '400':
           description: Some parameter does not have a valid value
         '403':
@@ -1280,10 +1276,6 @@ paths:
       responses:
         '204':
           description: Item destroyed
-          content:
-            'Response Body':
-              schema:
-                type: string
         '400':
           description: Some parameter does not have a valid value
         '403':
@@ -1414,10 +1406,6 @@ paths:
       responses:
         '204':
           description: Item destroyed
-          content:
-            "Response Body":
-              schema:
-                type: string
         '400':
           description: Some parameter does not have a valid value
         '403':

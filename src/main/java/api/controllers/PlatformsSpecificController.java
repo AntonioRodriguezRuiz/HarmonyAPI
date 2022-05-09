@@ -1,6 +1,7 @@
 package api.controllers;
 
 import api.helpers.request.UseridBodyHelper;
+import api.middlewares.PlatformsMiddlewares;
 import api.middlewares.UserMiddlewares;
 import api.services.PlatformsSpecificService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,6 +31,7 @@ public class PlatformsSpecificController {
     @DeleteMapping
     public ResponseEntity deletePlatform(@PathVariable Integer id, @RequestBody UseridBodyHelper user) throws SQLException {
         UserMiddlewares.isAdmin(user.userid());
+        PlatformsMiddlewares.existsPlatform(null, id);
         platformsService.deletePlatform(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

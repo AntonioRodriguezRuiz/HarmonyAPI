@@ -50,7 +50,7 @@ public class UserSpecificService {
                 .where(USERS.USERID.eq(id))
                 .fetch().get(0);
 
-            var newUser = new UserResponseHelper(oldUser, user);
+            var newUser = new UserRequestHelper(oldUser, user);
 
             create.update(USERS)
                 .set(USERS.USERNAME, newUser.username())

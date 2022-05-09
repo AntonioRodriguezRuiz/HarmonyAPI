@@ -1,6 +1,9 @@
 package api.helpers.request;
 
 import api.helpers.enums.RoleType;
+import org.jooq.Table;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 public class PeopleMediaRequestHelper {
     private Integer userid;
@@ -53,5 +56,19 @@ public class PeopleMediaRequestHelper {
             case CAST: return Byte.valueOf("1");
         }
         return null;
+    }
+
+    public void mediaValidate(Table table) {
+        if(this.personid==null || this.role==null || this.roleType==null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "personId, role and roleType cannot be null");
+        else if(table.getName().equals("series"))
+            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "You cannot add a person to a series, only to its episodes");
+        else if (table.getName().equals("books") && this.getRoleTypeByte() != 0)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Books do not have cast, only crew");
+    }
+
+    public void episodeValidate(){
+        if(this.personid==null || this.role==null || this.roleType==null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "personId, role and roleType cannot be null");
     }
 }

@@ -67,6 +67,7 @@ public class UserSpecificController {
     public ResponseEntity<UserResponseHelper> deleteUser(@PathVariable Integer userId) throws SQLException {
         UserMiddlewares.userExists(userId);
         UserMiddlewares.isAccountOwnerOrAdmin(userId);
+        UserMiddlewares.isNotAdmin(userId);
         userSpecificService.deleteUser(userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

@@ -18,7 +18,7 @@ import static src.main.java.model.Tables.REPORTS;
 
 public class ReportMiddlewares {
 
-    public static void existsReport(ReportRequestHelper report) throws SQLException {
+    public static void doesNotExistsReport(ReportRequestHelper report) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
@@ -40,16 +40,16 @@ public class ReportMiddlewares {
         }
     }
 
-    public static Result<Record> existsReport(Integer id) throws SQLException {
-        Result<Record> reportList = null;
+    public static void existsReport(Integer id) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            reportList = create.select()
+            if(create.select()
                     .from(REPORTS)
                     .where(REPORTS.REPORTID.eq(id))
-                    .fetch();
-
+                    .fetch().isEmpty()){
+                throw new ResponseStatusException((HttpStatus.NOT_FOUND));
+            }
 
         } catch (ResponseStatusException | SQLException e) {
             if (e instanceof ResponseStatusException) {
@@ -57,6 +57,5 @@ public class ReportMiddlewares {
             }
             e.printStackTrace();
         }
-        return reportList;
     }
 }

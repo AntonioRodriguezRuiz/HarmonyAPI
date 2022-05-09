@@ -78,6 +78,24 @@ public class UserMiddlewares {
         }
     }
 
+    public static void isNotAdmin(Integer userid) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            if (!create.select()
+                .from(ADMINS)
+                .where(ADMINS.USERID.eq(userid))
+                .fetchInto(Admins.class)
+                .isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not authorized to delete admin");
+            }
+        } catch (ResponseStatusException | SQLException e){
+            if(e instanceof ResponseStatusException){
+                throw e;
+            }
+            e.printStackTrace();
+        }
+    }
+
     public static void isAccountOwner(Integer userid) throws SQLException {
         // TODO: implement
     }

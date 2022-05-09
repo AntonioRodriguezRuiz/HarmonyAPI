@@ -21,15 +21,6 @@ public class ReviewMiddlewares{
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            Result<Record> review = create.select()
-                    .from(REVIEWS)
-                    .where(REVIEWS.REVIEWID.eq(reviewid))
-                    .fetch();
-
-            if(review.isEmpty()){
-                throw  new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
-
             Result<Record> reviewUser = create.select()
                     .from(REVIEWS)
                     .where(REVIEWS.REVIEWID.eq(reviewid)
@@ -37,7 +28,7 @@ public class ReviewMiddlewares{
                     .fetch();
 
             if(reviewUser.isEmpty()){
-                throw  new ResponseStatusException(HttpStatus.FORBIDDEN);
+                throw  new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the owner of the review can perform operations over it");
             }
 
         } catch (ResponseStatusException | SQLException e){
@@ -52,15 +43,6 @@ public class ReviewMiddlewares{
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            Result<Record> review = create.select()
-                    .from(REVIEWLIKES)
-                    .where(REVIEWLIKES.REVIEWID.eq(reviewid))
-                    .fetch();
-
-            if(review.isEmpty()){
-                throw  new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
-
             Result<Record> reviewUser = create.select()
                     .from(REVIEWLIKES)
                     .where(REVIEWLIKES.REVIEWID.eq(reviewid)
@@ -68,7 +50,7 @@ public class ReviewMiddlewares{
                     .fetch();
 
             if(reviewUser.isEmpty()){
-                throw  new ResponseStatusException(HttpStatus.FORBIDDEN);
+                throw  new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the owner of the like can delete it");
             }
         } catch (ResponseStatusException | SQLException e){
             if(e instanceof ResponseStatusException){
@@ -78,18 +60,17 @@ public class ReviewMiddlewares{
         }
     }
 
-    public static Result<Record> existsReview(Integer id) throws SQLException {
-        Result<Record> reviewList = null;
+    public static void existsReview(Integer id) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            reviewList = create.select()
+            Result<Record> reviewList = create.select()
                     .from(REVIEWS)
                     .where(REVIEWS.REVIEWID.eq(id))
                     .fetch();
 
             if(reviewList.isEmpty()){
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Review does not exist");
             }
 
 
@@ -99,7 +80,6 @@ public class ReviewMiddlewares{
             }
             e.printStackTrace();
         }
-        return reviewList;
     }
 
     public static Result<Record> existsLike(Integer id, Integer userid, Integer likeid) throws SQLException {

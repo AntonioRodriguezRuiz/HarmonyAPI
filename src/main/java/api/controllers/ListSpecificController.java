@@ -68,8 +68,8 @@ public class ListSpecificController {
         ListMiddlewares.listExists(listId);
         MediaMiddlewares.mediaExists(media.mediaId());
         ListMiddlewares.isListOwner(userId, listId);
-        ListMiddlewares.isMediaInList(listId, media.mediaId());
-        return new ResponseEntity<>(listSpecificService.addMedia(listId, media), HttpStatus.CREATED);
+        ListMiddlewares.isMediaNotInList(listId, media.mediaId());
+        return new ResponseEntity<>(listSpecificService.addMedia(listId, media), HttpStatus.OK);
     }
 
     @Operation(summary = "Updates information on the list")
@@ -114,7 +114,7 @@ public class ListSpecificController {
         UserMiddlewares.userExists(userId);
         ListMiddlewares.listExists(listId);
         ListMiddlewares.isListOwner(userId, listId);
-        ListMiddlewares.isMediaNotInList(listId, mediaId);
+        ListMiddlewares.isMediaInList(listId, mediaId);
         listSpecificService.deleteMedia(listId, mediaId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

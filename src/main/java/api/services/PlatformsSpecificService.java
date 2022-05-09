@@ -23,14 +23,6 @@ public class PlatformsSpecificService {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
 
-            PlatformsService service = new PlatformsService();
-
-            Result<Record> platformList = service.existsPlatform(null, id);
-
-            if(platformList.isEmpty()){
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
-
             create.deleteFrom(PLATFORMS)
                     .where(PLATFORMS.PLATFORMID.eq(id))
                     .execute();

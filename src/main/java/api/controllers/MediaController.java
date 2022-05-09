@@ -6,17 +6,16 @@ import api.helpers.request.MovieRequestHelper;
 import api.helpers.request.SeriesRequestHelper;
 import api.helpers.request.VideogameRequestHelper;
 import api.helpers.response.MediaResponseHelper;
+import api.middlewares.GenresMiddlewares;
+import api.middlewares.MediaMiddlewares;
 import api.middlewares.UserMiddlewares;
 import api.services.MediaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
 import org.jooq.SortField;
 import org.jooq.TableLike;
-import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,13 +24,12 @@ import org.springframework.web.server.ResponseStatusException;
 import src.main.java.model.tables.pojos.Genres;
 import src.main.java.model.tables.pojos.Media;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
-import static src.main.java.model.tables.Genres.GENRES;
+import static src.main.java.model.Tables.*;
 import static src.main.java.model.tables.Media.MEDIA;
+import src.main.java.model.Tables;
 
 
 @RestController
@@ -55,16 +53,16 @@ public class MediaController {
         String search = searchParam!=null ? searchParam : "";
 
         if(genreParam!=null){
-            isValidGenre(genreParam);
+            GenresMiddlewares.existsGenre(genreParam);
         }
 
         TableLike typeTable = null;
         if(typeParam!=null){
             switch (typeParam){
-                case "movie": typeTable = src.main.java.model.Tables.MOVIES; break;
-                case "series": typeTable = src.main.java.model.Tables.SERIES; break;
-                case "videogame": typeTable = src.main.java.model.Tables.VIDEOGAMES; break;
-                case "book": typeTable = src.main.java.model.Tables.BOOKS; break;
+                case "movie": typeTable = MOVIES; break;
+                case "series": typeTable = Tables.SERIES; break;
+                case "videogame": typeTable = Tables.VIDEOGAMES; break;
+                case "book": typeTable = Tables.BOOKS; break;
                 default: throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             }
         }
@@ -97,9 +95,8 @@ public class MediaController {
     @PostMapping("/movies")
     public ResponseEntity<MediaResponseHelper> postMovie(@RequestBody MovieRequestHelper movie) throws SQLException {
         UserMiddlewares.isAdmin(movie.getUserid());
-        if(movie.getTitle()== null || movie.getReleasedate()==null || movie.getSynopsis()==null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        movie.validate();
+        MediaMiddlewares.MediaDoesNotExist(movie);
         return new ResponseEntity<>(mediaService.postMovie(movie), HttpStatus.CREATED);
     }
 
@@ -112,10 +109,8 @@ public class MediaController {
     @PutMapping("/movies")
     public ResponseEntity<MovieRequestHelper> putMovie(@RequestBody MovieRequestHelper movie) throws SQLException {
         UserMiddlewares.isAdmin(movie.getUserid());
-        if(movie.getMediaid()==null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-        mediaService.putMovie(movie);
+        Media oldMedia = MediaMiddlewares.mediaExists(movie.getMediaid(), MOVIES);
+        mediaService.putMovie(movie, oldMedia);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     @Operation(summary = "Post a new series to the database")
@@ -127,9 +122,8 @@ public class MediaController {
     @PostMapping("/series")
     public ResponseEntity<MediaResponseHelper> postSeries(@RequestBody SeriesRequestHelper series) throws SQLException {
         UserMiddlewares.isAdmin(series.getUserid());
-        if(series.getTitle()== null || series.getReleasedate()==null || series.getSynopsis()==null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        series.validate();
+        MediaMiddlewares.MediaDoesNotExist(series);
         return new ResponseEntity<>(mediaService.postSeries(series), HttpStatus.CREATED);
     }
 
@@ -142,10 +136,8 @@ public class MediaController {
     @PutMapping("/series")
     public ResponseEntity<SeriesRequestHelper> putSeries(@RequestBody SeriesRequestHelper series) throws SQLException {
         UserMiddlewares.isAdmin(series.getUserid());
-        if(series.getMediaid()==null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-        mediaService.putSeries(series);
+        Media oldMedia = MediaMiddlewares.mediaExists(series.getMediaid(), SERIES);
+        mediaService.putSeries(series, oldMedia);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -158,9 +150,8 @@ public class MediaController {
     @PostMapping("/books")
     public ResponseEntity<MediaResponseHelper> postBook(@RequestBody BookRequestHelper book) throws SQLException {
         UserMiddlewares.isAdmin(book.getUserid());
-        if(book.getTitle()== null || book.getReleasedate()==null || book.getSynopsis()==null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        book.validate();
+        MediaMiddlewares.MediaDoesNotExist(book);
         return new ResponseEntity<>(mediaService.postBook(book), HttpStatus.CREATED);
     }
 
@@ -173,10 +164,8 @@ public class MediaController {
     @PutMapping("/books")
     public ResponseEntity<BookRequestHelper> putBook(@RequestBody BookRequestHelper book) throws SQLException {
         UserMiddlewares.isAdmin(book.getUserid());
-        if(book.getMediaid()==null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-        mediaService.putBook(book);
+        Media oldMedia = MediaMiddlewares.mediaExists(book.getMediaid(), BOOKS);
+        mediaService.putBook(book, oldMedia);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -189,9 +178,8 @@ public class MediaController {
     @PostMapping("/videogames")
     public ResponseEntity<MediaResponseHelper> postVideogame(@RequestBody VideogameRequestHelper videogame) throws SQLException {
         UserMiddlewares.isAdmin(videogame.getUserid());
-        if(videogame.getTitle()== null || videogame.getReleasedate()==null || videogame.getSynopsis()==null || videogame.getCompany()==null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        videogame.validate();
+        MediaMiddlewares.MediaDoesNotExist(videogame);
         return new ResponseEntity<>(mediaService.postVideogame(videogame), HttpStatus.CREATED);
     }
 
@@ -204,30 +192,8 @@ public class MediaController {
     @PutMapping("/videogames")
     public ResponseEntity<VideogameRequestHelper> putVideogame(@RequestBody VideogameRequestHelper videogame) throws SQLException {
         UserMiddlewares.isAdmin(videogame.getUserid());
-        if(videogame.getMediaid()==null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-        mediaService.putVideogame(videogame);
+        Media oldMedia = MediaMiddlewares.mediaExists(videogame.getMediaid(), VIDEOGAMES);
+        mediaService.putVideogame(videogame, oldMedia);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    private void isValidGenre(String genreString) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-            List<Genres> result = create.select()
-                    .from(GENRES)
-                    .where(GENRES.NAME.eq(genreString))
-                    .fetchInto(Genres.class);
-
-            if(result.isEmpty()){
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-            }
-
-        } catch (ResponseStatusException | SQLException e){
-            if(e instanceof ResponseStatusException){
-                throw e;
-            }
-            e.printStackTrace();
-        }
     }
 }

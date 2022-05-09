@@ -4,7 +4,6 @@ import org.jooq.Record;
 import src.main.java.model.tables.pojos.Genres;
 import src.main.java.model.tables.pojos.Platforms;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static src.main.java.model.Tables.VIDEOGAMES;
@@ -30,12 +29,6 @@ public class VideogameResponseHelper extends MediaResponseHelper{
         this.platforms = platforms;
     }
 
-    public VideogameResponseHelper(Integer userid, Integer mediaid, String title, LocalDate releasedate, String coverimage, String backgroundimage, String synopsis, List<Genres> genresList, String company, List<Platforms> platforms) {
-        super(mediaid, title, releasedate, coverimage, backgroundimage, synopsis, genresList);
-        this.company = company;
-        this.platforms=platforms;
-    }
-
     public VideogameResponseHelper(Record record, List<Genres> genresList, List<Platforms> platforms) {
         super(record.getValue(MEDIA.MEDIAID),
                 record.getValue(MEDIA.TITLE),
@@ -43,6 +36,7 @@ public class VideogameResponseHelper extends MediaResponseHelper{
                 record.getValue(MEDIA.COVERIMAGE),
                 record.getValue(MEDIA.BACKGROUNDIMAGE),
                 record.getValue(MEDIA.SYNOPSIS),
+                record.getValue(MEDIA.AVGRATING),
                 genresList);
         this.company = record.getValue(VIDEOGAMES.COMPANY);
         this.platforms = platforms;

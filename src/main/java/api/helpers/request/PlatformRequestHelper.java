@@ -1,5 +1,8 @@
 package api.helpers.request;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 public class PlatformRequestHelper {
     private Integer userid;
     private Integer platformid;
@@ -33,5 +36,13 @@ public class PlatformRequestHelper {
         this.userid = userid;
         this.platformid = platformid;
         this.name = name;
+    }
+
+    public void validate() {
+        if (userid == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Userid is required");
+        } else if (platformid == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Platformid is required");
+        }
     }
 }

@@ -230,39 +230,35 @@ public class MediaService {
     }
 
     public MediaResponseHelper postMovie(MovieRequestHelper movie) throws SQLException {
-        canBePost(movie);
         return postMedia(movie, MOVIES);
     }
 
-    public void putMovie(MovieRequestHelper movie) throws SQLException {
-        putMedia(movie, MOVIES, canBePut(movie, MOVIES));
+    public void putMovie(MovieRequestHelper movie, Media oldMedia) throws SQLException {
+        putMedia(movie, MOVIES, oldMedia);
     }
 
     public MediaResponseHelper postSeries(SeriesRequestHelper series) throws SQLException {
-        canBePost(series);
         return postMedia(series, SERIES);
     }
 
-    public void putSeries(SeriesRequestHelper series) throws SQLException {
-        putMedia(series, SERIES, canBePut(series, SERIES));
+    public void putSeries(SeriesRequestHelper series, Media oldMedia) throws SQLException {
+        putMedia(series, SERIES, oldMedia);
     }
 
     public MediaResponseHelper postBook(BookRequestHelper book) throws SQLException {
-        canBePost(book);
         return postMedia(book, BOOKS);
     }
 
-    public void putBook(BookRequestHelper book) throws SQLException{
-        putMedia(book, BOOKS, canBePut(book, BOOKS));
+    public void putBook(BookRequestHelper book, Media oldMedia) throws SQLException{
+        putMedia(book, BOOKS, oldMedia);
     }
 
     public MediaResponseHelper postVideogame(VideogameRequestHelper videogame) throws SQLException {
-        canBePost(videogame);
         return postMedia(videogame, VIDEOGAMES);
     }
 
-    public void putVideogame(VideogameRequestHelper videogame) throws SQLException{
-        putMedia(videogame, VIDEOGAMES, canBePut(videogame, VIDEOGAMES));
+    public void putVideogame(VideogameRequestHelper videogame, Media oldmedia) throws SQLException{
+        putMedia(videogame, VIDEOGAMES, oldmedia);
     }
 
     public boolean mediaExists(Integer mediaid) throws SQLException {
@@ -280,53 +276,6 @@ public class MediaService {
             e.printStackTrace();
         }
         return false;
-    }
-
-    public void canBePost(MediaRequestHelper media) throws SQLException {
-        try(Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)){
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-
-            List<Media> oldMedia = create.select()
-                    .from(MEDIA)
-                    .where(MEDIA.TITLE.eq(media.getTitle())
-                            .and(MEDIA.RELEASEDATE.eq(media.getReleasedate())))
-                    .fetchInto(Media.class);
-
-            if(!oldMedia.isEmpty()){
-                throw new ResponseStatusException(HttpStatus.CONFLICT);
-            }
-        } catch (ResponseStatusException | SQLException e){
-            if(e instanceof ResponseStatusException){
-                throw e;
-            }
-            e.printStackTrace();
-        }
-    }
-
-    public Media canBePut(MediaRequestHelper media, Table table) throws SQLException {
-        Media oldMedia = null;
-        try(Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)){
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-
-            List<Media> oldMediaList = create.select()
-                    .from(MEDIA)
-                    .naturalJoin(table)
-                    .where(MEDIA.MEDIAID.eq(media.getMediaid()))
-                    .fetchInto(Media.class);
-
-            if (oldMediaList.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
-
-            oldMedia = oldMediaList.get(0);
-
-        } catch (ResponseStatusException | SQLException e){
-            if(e instanceof ResponseStatusException){
-                throw e;
-            }
-            e.printStackTrace();
-        }
-        return oldMedia;
     }
 
 }

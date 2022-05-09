@@ -1,5 +1,8 @@
 package api.helpers.request;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.time.LocalDate;
 
 public class MediaRequestHelper {
@@ -76,5 +79,15 @@ public class MediaRequestHelper {
         this.backgroundimage=backgroundimage;
         this.synopsis=synopsis;
 
+    }
+
+    public void validate() {
+        if (this.getTitle() == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Title is required");
+        } else if (this.getReleasedate() == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Release date is required");
+        } else if (this.getSynopsis() == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Synopsis is required");
+        }
     }
 }

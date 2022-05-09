@@ -4,32 +4,20 @@
 package src.main.java.model.tables;
 
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-
-import org.jooq.Check;
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Index;
-import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row5;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.TableOptions;
-import org.jooq.UniqueKey;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
-
 import src.main.java.model.Harmony;
 import src.main.java.model.Indexes;
 import src.main.java.model.Keys;
 import src.main.java.model.tables.records.TrackersRecord;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -161,7 +149,7 @@ public class Trackers extends TableImpl<TrackersRecord> {
     @Override
     public List<Check<TrackersRecord>> getChecks() {
         return Arrays.<Check<TrackersRecord>>asList(
-              Internal.createCheck(this, DSL.name("invalidState"), "`state` >= 1 and `state` <= 4", true)
+              Internal.createCheck(this, DSL.name("invalidState"), "`state` >= 0 and `state` <= 4", true)
         );
     }
 

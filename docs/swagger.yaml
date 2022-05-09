@@ -1732,6 +1732,44 @@ paths:
           description: User not authorized to access the list
         '404':
           description: User or list not found
+  "/api/v1/user/{userId}/lists/{listId}/{mediaId}":
+    delete:
+      tags:
+        - List Specific Operations
+      summary: Deletes the media from the list
+      operationId: deleteMedia
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: listId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: mediaId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Media deleted successfully
+          content:
+            "Response Body":
+              schema:
+                "$ref": "#/components/schemas/ListResponseHelper"
+        '400':
+          description: Media not found in list
+        '403':
+          description: User not authorized to access the list
+        '404':
+          description: User or list not found
   "/api/v1/reviews/{id}":
     get:
       tags:

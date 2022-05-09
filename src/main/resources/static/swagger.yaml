@@ -1,6 +1,6 @@
 openapi: 3.0.0
 servers:
-  - url: http://localhost:8080
+  - url: https://harmonyapi.rocks
     description: Harmony API
 info:
   description: |

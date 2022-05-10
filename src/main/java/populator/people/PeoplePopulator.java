@@ -3,13 +3,14 @@ package populator.people;
 import api.helpers.enums.RoleType;
 import api.helpers.request.PeopleMediaRequestHelper;
 import api.helpers.request.PeopleRequestHelper;
+import api.helpers.response.EpisodeResponseHelper;
 import api.helpers.response.MediaResponseHelper;
 import api.helpers.response.PeopleResponseHelper;
 import api.services.MediaSpecificService;
 import api.services.PeopleService;
 import database.DatabaseConnection;
 import info.movito.themoviedbapi.TmdbPeople;
-import info.movito.themoviedbapi.model.MovieDb;
+import info.movito.themoviedbapi.model.Credits;
 import info.movito.themoviedbapi.model.people.PersonCast;
 import info.movito.themoviedbapi.model.people.PersonCrew;
 import org.jooq.exception.DataAccessException;
@@ -79,7 +80,7 @@ public class PeoplePopulator {
                         null,
                         tmdbPerson.getName(),
                         tmdbPerson.getBirthday().isEmpty() ? null : LocalDate.parse(tmdbPerson.getBirthday()),
-                        tmdbPerson.getProfilePath() == null ? null : TMDB_IMAGE_URL + tmdbPerson.getProfilePath()
+                        tmdbPerson.getProfilePath().isEmpty() ? null : TMDB_IMAGE_URL + tmdbPerson.getProfilePath()
                     )
                 );
             } catch (SQLException | DataAccessException e) {
@@ -118,6 +119,43 @@ public class PeoplePopulator {
             .forEach(person -> {
                 try {
                     mediaSpecificService.addPerson(dbMovie.getMediaid(), person, MOVIES);
+                }
+                catch (DataAccessException | SQLException e) { }
+            });
+    }
+
+    public static void addEpisodePeople(
+        Integer seasonId,
+        Integer episodeId,
+        Credits tmdbEpisodeCredits,
+        Credits tmdbSeasonCredits,
+        Credits tmdbSeriesCredits,
+        EpisodeResponseHelper dbEpisode
+    ) throws SQLException {
+        allPeople = getAllPeople();
+        Stream.of(
+            tmdbEpisodeCredits.getCast().stream(),
+            tmdbEpisodeCredits.getCrew().stream(),
+            tmdbSeasonCredits.getCast().stream(),
+            tmdbSeasonCredits.getCrew().stream(),
+            tmdbSeriesCredits.getCast().stream(),
+            tmdbSeriesCredits.getCrew().stream()
+        )
+            .reduce(Stream::concat)
+            .orElseGet(Stream::empty)
+            .map(p -> {
+                if (p instanceof PersonCast) {
+                    return addCast((PersonCast) p);
+                } else if (p instanceof PersonCrew) {
+                    return addCrew((PersonCrew) p);
+                } else {
+                    return null;
+                }
+            })
+            .filter(Objects::nonNull)
+            .forEach(person -> {
+                try {
+                    mediaSpecificService.addPersonEpisode(dbEpisode.getMediaid(), seasonId, episodeId, person);
                 }
                 catch (DataAccessException | SQLException e) { }
             });

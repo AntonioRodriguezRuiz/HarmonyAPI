@@ -116,13 +116,13 @@ public class MoviePopulator {
     }
 
     private static void add(List<FetchedMovie> movies) throws SQLException {
-        for (FetchedMovie fetchedMovie : ProgressBar.wrap(movies, pbb)) {
+        for (var fetchedMovie : ProgressBar.wrap(movies, pbb)) {
             var tmdbMovie = moviesApi.getMovie(fetchedMovie.id(), "en", TmdbMovies.MovieMethod.credits);
             var mrh = new MovieRequestHelper(
                 1,
                 null,
                 tmdbMovie.getTitle(),
-                tmdbMovie.getReleaseDate().isEmpty() ? "1970-01-01" : tmdbMovie.getReleaseDate(),
+                tmdbMovie.getReleaseDate().isEmpty() ? "1901-01-01" : tmdbMovie.getReleaseDate(),
                 tmdbMovie.getPosterPath() == null ? null : TMDB_IMAGE_URL + tmdbMovie.getPosterPath(),
                 tmdbMovie.getBackdropPath() == null ? null : TMDB_IMAGE_URL + tmdbMovie.getBackdropPath(),
                 tmdbMovie.getOverview(),

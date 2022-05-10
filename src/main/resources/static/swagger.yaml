@@ -1146,7 +1146,7 @@ paths:
         '200':
           description: Search successful
           content:
-            "Response Body":
+            application/json:
               schema:
                 type: array
                 items:
@@ -1172,7 +1172,7 @@ paths:
         '201':
           description: Item created
           content:
-            "Response Body":
+            application/json:
               schema:
                 "$ref": "#/components/schemas/GenreResponseHelper"
         '400':
@@ -1303,7 +1303,7 @@ paths:
         '200':
           description: Search successful
           content:
-            "Response Body":
+            application/json:
               schema:
                 type: array
                 items:
@@ -1334,7 +1334,7 @@ paths:
         '201':
           description: Item created
           content:
-            "Response Body":
+            application/json:
               schema:
                 "$ref": "#/components/schemas/PeopleResponseHelper"
         '400':
@@ -1380,7 +1380,7 @@ paths:
         '200':
           description: Search successful
           content:
-            "Response Body":
+            application/json:
               schema:
                 "$ref": "#/components/schemas/PeopleResponseHelper"
         '404':
@@ -1428,7 +1428,7 @@ paths:
         '201':
           description: User created
           content:
-            "Response Body":
+            application/json:
               schema:
                 "$ref": "#/components/schemas/UserResponseHelper"
         '400':
@@ -1452,7 +1452,7 @@ paths:
         '200':
           description: User found
           content:
-            "Response Body":
+            application/json:
               schema:
                 "$ref": "#/components/schemas/UserResponseHelper"
         '404':
@@ -1620,7 +1620,7 @@ paths:
         '200':
           description: List fetched successfully
           content:
-            "Response Body":
+            application/json:
               schema:
                 "$ref": "#/components/schemas/ListResponseHelper"
         '403':
@@ -1655,7 +1655,7 @@ paths:
         '201':
           description: Media added successfully
           content:
-            "Response Body":
+            application/json:
               schema:
                 "$ref": "#/components/schemas/ListResponseHelper"
         '400':
@@ -1749,7 +1749,7 @@ paths:
         '200':
           description: Media deleted successfully
           content:
-            "Response Body":
+            application/json:
               schema:
                 "$ref": "#/components/schemas/ListResponseHelper"
         '400':
@@ -1775,7 +1775,7 @@ paths:
         '200':
           description: Search successful
           content:
-            "Response Body":
+            application/json:
               schema:
                 "$ref": "#/components/schemas/ReviewResponseHelper"
         '404':
@@ -1830,7 +1830,7 @@ paths:
         '201':
           description: Item created
           content:
-            "Response Body":
+            application/json:
               schema:
                 "$ref": "#/components/schemas/ReviewResponseHelper"
         '400':
@@ -1896,7 +1896,7 @@ paths:
         '200':
           description: Search successful
           content:
-            "Response Body":
+            application/json:
               schema:
                 type: array
                 items:
@@ -1918,7 +1918,7 @@ paths:
         '201':
           description: Item created
           content:
-            "Response Body":
+            application/json:
               schema:
                 "$ref": "#/components/schemas/ReportResponseHelper"
         '400':

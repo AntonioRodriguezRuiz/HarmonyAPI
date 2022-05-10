@@ -102,7 +102,7 @@ public class MoviePopulator {
         List<Media> result = new ArrayList<>();
         try {
             var create = DatabaseConnection.create();
-            result = create.select(MEDIA.fields())
+            result = create.select()
                 .from(MEDIA)
                 .naturalJoin(MOVIES)
                 .fetchInto(Media.class);

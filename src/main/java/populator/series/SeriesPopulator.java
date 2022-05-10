@@ -1,6 +1,12 @@
 package populator.series;
 
+import api.helpers.request.SeriesRequestHelper;
+import api.services.MediaService;
 import database.DatabaseConnection;
+import info.movito.themoviedbapi.TmdbTV;
+import me.tongfei.progressbar.ProgressBar;
+import me.tongfei.progressbar.ProgressBarBuilder;
+import me.tongfei.progressbar.ProgressBarStyle;
 import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONParser;
 import org.jooq.tools.json.ParseException;
@@ -20,6 +26,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static populator.Global.TMDB;
+import static populator.Global.TMDB_IMAGE_URL;
 import static src.main.java.model.Tables.MEDIA;
 import static src.main.java.model.Tables.SERIES;
 
@@ -31,6 +39,16 @@ import static src.main.java.model.Tables.SERIES;
  * @author juagallop1
  **/
 public class SeriesPopulator {
+
+    private static final MediaService mediaService = new MediaService();
+    private static final TmdbTV seriesApi = TMDB.getTvSeries();
+    public static final ProgressBarBuilder pbb = new ProgressBarBuilder()
+        .setTaskName("Populating series...")
+        .setStyle(ProgressBarStyle.COLORFUL_UNICODE_BLOCK)
+        .setUpdateIntervalMillis(100)
+        .setMaxRenderedLength(100)
+        .setUnit(" series", 1);
+
     private static List<FetchedSeries> fetchIds() throws IOException, ParseException {
         var gzFile = new File("files/tv_series_ids.json.gz");
         var jsonFile = new File(gzFile.getPath().replace(".gz", ""));
@@ -92,6 +110,23 @@ public class SeriesPopulator {
             e.printStackTrace();
         }
         return result;
+    }
+
+    private static void add(List<FetchedSeries> series) throws SQLException {
+        for (var serie : ProgressBar.wrap(series, pbb)) {
+            var tmdbSerie = seriesApi.getSeries(serie.id(), "en");
+            var srh = new SeriesRequestHelper(
+                1,
+                null,
+                tmdbSerie.getName(),
+                tmdbSerie.getFirstAirDate().isEmpty() ? "1901-01-01" : tmdbSerie.getFirstAirDate(),
+                tmdbSerie.getPosterPath() == null ? null : TMDB_IMAGE_URL + tmdbSerie.getPosterPath(),
+                tmdbSerie.getBackdropPath() == null ? null : TMDB_IMAGE_URL + tmdbSerie.getBackdropPath(),
+                tmdbSerie.getOverview(),
+                tmdbSerie.getId()
+            );
+            var dbSerie = mediaService.postSeries(srh);
+        }
     }
 
     public static void populate(Integer limit) throws IOException, ParseException, SQLException {

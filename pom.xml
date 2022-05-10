@@ -10,14 +10,42 @@
     </parent>
     <groupId>com.harmonyapi</groupId>
     <artifactId>harmony-api</artifactId>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
     <name>harmony-api</name>
     <description>harmony-api</description>
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
+        <project.projectId>harmonyapi-424242</project.projectId>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <!-- Import dependency management from Spring Boot -->
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>2.6.6</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>2021.0.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
+        <dependency>
+            <groupId>com.google.cloud.tools</groupId>
+            <artifactId>appengine-maven-plugin</artifactId>
+            <version>2.4.2</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -51,6 +79,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <!-- Exclude the Tomcat dependency -->
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
@@ -62,16 +97,56 @@
             <artifactId>mariadb-java-client</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>io.github.cdimascio</groupId>
+            <artifactId>dotenv-java</artifactId>
+            <version>2.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jetty</artifactId>
+            <version>2.6.6</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0-alpha-2</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>.env</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
-
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.6.6</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.jooq</groupId>
                 <artifactId>jooq-codegen-maven</artifactId>
                 <executions>
@@ -87,9 +162,9 @@
                     <!-- Configure the database connection here -->
                     <jdbc>
                         <driver>org.mariadb.jdbc.Driver</driver>
-                        <url>jdbc:mariadb://db.harmonyapi.rocks:3306/harmony</url>
-                        <user>harmony</user>
-                        <password>k8KAkzsMjJqjFu6w4Va5ni7aaUAqpMa7</password>
+                        <url>${HARMONY_DB_URL}</url>
+                        <user>${HARMONY_DB_USER}</user>
+                        <password>${HARMONY_DB_PASSWORD}</password>
                     </jdbc>
 
                     <generator>
@@ -139,11 +214,12 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>appengine-maven-plugin</artifactId>
+                <version>2.4.2</version>
                 <configuration>
-                    <source>16</source>
-                    <target>16</target>
+                    <projectId>harmonyapi-424242</projectId>
+                    <version>GCLOUD_CONFIG</version>
                 </configuration>
             </plugin>
         </plugins>

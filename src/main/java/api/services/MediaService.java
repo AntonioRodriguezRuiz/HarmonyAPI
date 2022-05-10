@@ -3,9 +3,11 @@ package api.services;
 import api.GlobalValues;
 import api.helpers.request.*;
 import api.helpers.response.MediaResponseHelper;
-import org.jooq.*;
+import org.jooq.DSLContext;
+import org.jooq.SortField;
+import org.jooq.Table;
+import org.jooq.TableLike;
 import org.jooq.impl.DSL;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import src.main.java.model.Routines;
@@ -25,7 +27,7 @@ public class MediaService {
         List<Media> result = null;
 
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
             if (type==null && order==null && genre==null){
                 result = create.select(MEDIA.fields())
                         .from(MEDIA)
@@ -115,7 +117,7 @@ public class MediaService {
     public MediaResponseHelper postMedia(MediaRequestHelper media, Table table) throws SQLException {
         MediaResponseHelper newMedia = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
 
             MovieRequestHelper movie = null;
             SeriesRequestHelper series = null;
@@ -185,7 +187,7 @@ public class MediaService {
 
     public void putMedia(MediaRequestHelper media, Table table, Media oldMedia) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
 
             MediaRequestHelper newMedia = new MediaRequestHelper(null, null, null, null, null, null, null);
             newMedia.setMediaid(media.getMediaid());
@@ -263,7 +265,7 @@ public class MediaService {
 
     public boolean mediaExists(Integer mediaid) throws SQLException {
         try(Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)){
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
             return !create.select()
                 .from(MEDIA)
                 .where(MEDIA.MEDIAID.eq(mediaid))

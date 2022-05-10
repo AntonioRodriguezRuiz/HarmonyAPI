@@ -5,7 +5,6 @@ import api.helpers.request.ReportRequestHelper;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
-import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -20,7 +19,7 @@ public class ReportMiddlewares {
 
     public static void doesNotExistsReport(ReportRequestHelper report) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
 
             Result<Record> reportList = create.select()
                     .from(REPORTS)
@@ -42,7 +41,7 @@ public class ReportMiddlewares {
 
     public static void existsReport(Integer id) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
 
             if(create.select()
                     .from(REPORTS)

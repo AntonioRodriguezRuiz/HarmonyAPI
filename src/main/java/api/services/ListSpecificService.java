@@ -5,7 +5,6 @@ import api.helpers.request.ListMediaRequestHelper;
 import api.helpers.request.ListRequestHelper;
 import api.helpers.response.ListResponseHelper;
 import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -30,7 +29,7 @@ public class ListSpecificService {
     public ListResponseHelper getList(Integer listId) throws SQLException {
         ListResponseHelper list = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
             list = new ListResponseHelper(
                 create.select()
                     .from(LISTS)
@@ -56,7 +55,7 @@ public class ListSpecificService {
     public ListResponseHelper addMedia(Integer listId, ListMediaRequestHelper media) throws SQLException {
         ListResponseHelper list = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
             Routines.newlistmedia(
                 create.configuration(),
                 listId,
@@ -74,7 +73,7 @@ public class ListSpecificService {
 
     public void putList(Integer listId, ListRequestHelper list) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
             var oldlist = getList(listId);
             var newlist = new ListRequestHelper(oldlist, list);
 
@@ -93,7 +92,7 @@ public class ListSpecificService {
 
     public void deleteList(Integer listId) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
             create.delete(LISTS)
                 .where(LISTS.LISTID.eq(listId))
                 .execute();
@@ -107,7 +106,7 @@ public class ListSpecificService {
 
     public void deleteMedia(Integer listId, Integer mediaId) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
             create.delete(LISTMEDIA)
                 .where(LISTMEDIA.LISTID.eq(listId))
                     .and(LISTMEDIA.MEDIAID.eq(mediaId))

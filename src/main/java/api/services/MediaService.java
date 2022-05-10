@@ -144,7 +144,7 @@ public class MediaService {
                             series.getCoverimage(),
                             series.getBackgroundimage(),
                             series.getSynopsis(),
-                            movie.getExternalId());
+                            series.getExternalId());
                     break;
                 case "books":
                     book = (BookRequestHelper) media;
@@ -154,7 +154,7 @@ public class MediaService {
                             book.getCoverimage(),
                             book.getBackgroundimage(),
                             book.getSynopsis(),
-                            movie.getExternalId(),
+                            book.getExternalId(),
                             book.getCollection());
                     break;
                 case "videogames":
@@ -165,7 +165,7 @@ public class MediaService {
                             videogame.getCoverimage(),
                             videogame.getBackgroundimage(),
                             videogame.getSynopsis(),
-                            movie.getExternalId(),
+                            videogame.getExternalId(),
                             videogame.getCompany());
                     break;
             }

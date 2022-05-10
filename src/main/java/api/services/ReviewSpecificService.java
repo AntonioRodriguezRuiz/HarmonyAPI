@@ -3,13 +3,9 @@ package api.services;
 import api.GlobalValues;
 import api.helpers.request.UseridBodyHelper;
 import api.helpers.response.ReviewResponseHelper;
-import api.middlewares.ReviewMiddlewares;
 import org.jooq.DSLContext;
 import org.jooq.Record;
-import org.jooq.Result;
-import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import src.main.java.model.Routines;
@@ -29,7 +25,7 @@ public class ReviewSpecificService {
         ReviewResponseHelper reviewResult = null;
 
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
 
             Record review = create.select()
                     .from(REVIEWS)
@@ -50,7 +46,7 @@ public class ReviewSpecificService {
 
     public void deleteReview(Integer id) {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
 
             create.deleteFrom(REVIEWS)
                     .where(REVIEWS.REVIEWID.eq(id)).execute();
@@ -63,7 +59,7 @@ public class ReviewSpecificService {
     public ReviewResponseHelper postLike(Integer id, UseridBodyHelper user) throws SQLException{
         Record record = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
 
             Routines.likereview(create.configuration(),
                     user.userid(),
@@ -86,7 +82,7 @@ public class ReviewSpecificService {
 
     public void deleteLike(Integer likeid) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
 
             create.deleteFrom(REVIEWLIKES)
                     .where(REVIEWLIKES.REVIEWLIKEID.eq(likeid))

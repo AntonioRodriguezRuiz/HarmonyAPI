@@ -4,7 +4,6 @@ import api.GlobalValues;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
-import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -20,7 +19,7 @@ public class PlatformsMiddlewares {
     public static void existsPlatform(String name, Integer platformid) throws SQLException {
         Result<Record> platformList = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
 
             if(platformid==null){
                 platformList = create.select()
@@ -49,7 +48,7 @@ public class PlatformsMiddlewares {
     public static void doesNotexistsPlatform(String name, Integer platformid) throws SQLException {
         Result<Record> platformList = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
 
             if(platformid==null){
                 platformList = create.select()

@@ -1,11 +1,14 @@
 package populator.genres;
+
 import api.helpers.request.GenreRequestHelper;
 import api.helpers.response.MediaResponseHelper;
 import api.services.GenresService;
 import api.services.MediaSpecificService;
 import info.movito.themoviedbapi.model.MovieDb;
+import src.main.java.model.tables.pojos.Genres;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * GenrePopulator
@@ -17,9 +20,10 @@ import java.sql.SQLException;
 public class GenrePopulator {
     private static GenresService genresService = new GenresService();
     private static MediaSpecificService mediaSpecificService = new MediaSpecificService();
+    private static List<Genres> allGenres;
 
     private static Integer addGenre(String genreName) throws SQLException {
-        var genre = genresService.getAllGenres().stream()
+        var genre = allGenres.stream()
             .filter(g -> g.getName().equals(genreName.toLowerCase()))
             .findFirst();
         if (genre.isPresent()) {
@@ -32,6 +36,7 @@ public class GenrePopulator {
     }
 
     public static void addMovieGenres(MovieDb tmdbMovie, MediaResponseHelper dbMovie) {
+        allGenres = genresService.getAllGenres();
         tmdbMovie.getGenres().stream()
                 .map(genre -> {
                     try {

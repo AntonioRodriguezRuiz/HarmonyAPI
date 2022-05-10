@@ -5,6 +5,7 @@ import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONParser;
 import org.jooq.tools.json.ParseException;
 import org.springframework.web.server.ResponseStatusException;
+import populator.Global;
 import src.main.java.model.tables.pojos.Media;
 
 import java.io.BufferedReader;
@@ -19,7 +20,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static populator.Global.gunzip;
 import static src.main.java.model.Tables.MEDIA;
 import static src.main.java.model.Tables.SERIES;
 
@@ -32,16 +32,26 @@ import static src.main.java.model.Tables.SERIES;
  **/
 public class SeriesPopulator {
     private static List<FetchedSeries> fetchIds() throws IOException, ParseException {
-        var date = LocalDate.now().minusDays(2);
-        var gzFile = new File(String.format("files/tv_series_ids_%02d_%02d_%s.json.gz", date.getDayOfMonth(), date.getMonthValue(), date.getYear()));
+        var gzFile = new File("files/tv_series_ids.json.gz");
         var jsonFile = new File(gzFile.getPath().replace(".gz", ""));
 
         if(!jsonFile.exists()) {
-            var url = new URL("https://files.tmdb.org/p/exports/" + gzFile.getName());
-            try (var in = url.openStream()) {
-                Files.copy(in, gzFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            var i = 0;
+            var date = LocalDate.now();
+            while (!gzFile.exists()) {
+                date = LocalDate.now().minusDays(i);
+                var url = new URL(
+                    "https://files.tmdb.org/p/exports/" +
+                        String.format("tv_series_ids_%02d_%02d_%s.json.gz", date.getDayOfMonth(), date.getMonthValue(), date.getYear())
+                );
+                try (var in = url.openStream()) {
+                    Files.copy(in, gzFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    i++;
+                    System.out.println("Could not download file for date " + date);
+                }
             }
-            gunzip(gzFile.getPath());
+            Global.gunzip(gzFile.getPath());
             Files.delete(gzFile.toPath());
         }
 
@@ -61,7 +71,7 @@ public class SeriesPopulator {
             }
         }
         catch (IOException e) {
-            System.out.println(" -> Error while reading file " + jsonFile.getPath() + ": " + e.getMessage());
+            System.out.println("Error while reading file " + jsonFile.getPath() + ": " + e.getMessage());
         }
 
         return series;

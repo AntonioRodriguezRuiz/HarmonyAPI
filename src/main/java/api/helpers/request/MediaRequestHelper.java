@@ -13,6 +13,7 @@ public class MediaRequestHelper {
     private String coverimage;
     private String backgroundimage;
     private String synopsis;
+    private Integer externalId;
 
     public Integer getUserid() {
         return userid;
@@ -40,6 +41,10 @@ public class MediaRequestHelper {
 
     public String getSynopsis() {
         return synopsis;
+    }
+
+    public Integer getExternalId() {
+        return externalId;
     }
 
     public void setUserid(Integer userid) {
@@ -70,7 +75,11 @@ public class MediaRequestHelper {
         this.synopsis = synopsis;
     }
 
-    public MediaRequestHelper(Integer userid, Integer mediaid, String title, String releasedate, String coverimage, String backgroundimage, String synopsis) {
+    public void setExternalId(Integer externalId) {
+        this.externalId = externalId;
+    }
+
+    public MediaRequestHelper(Integer userid, Integer mediaid, String title, String releasedate, String coverimage, String backgroundimage, String synopsis, Integer externalId) {
         this.userid=userid;
         this.mediaid=mediaid;
         this.title=title;
@@ -78,7 +87,7 @@ public class MediaRequestHelper {
         this.coverimage=coverimage;
         this.backgroundimage=backgroundimage;
         this.synopsis=synopsis;
-
+        this.externalId=externalId;
     }
 
     public void validate() {

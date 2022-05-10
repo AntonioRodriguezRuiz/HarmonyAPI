@@ -13,8 +13,8 @@ public class BookRequestHelper extends MediaRequestHelper{
     }
 
     public BookRequestHelper(Integer userid, Integer mediaid, String title, String releasedate, String coverimage, String backgroundimage,
-                             String synopsis, String collection){
-        super(userid, mediaid, title, releasedate, coverimage, backgroundimage, synopsis);
+                             String synopsis, Integer externalid, String collection){
+        super(userid, mediaid, title, releasedate, coverimage, backgroundimage, synopsis, externalid);
         this.collection=collection;
     }
 

@@ -13,6 +13,7 @@ import org.jooq.tools.json.ParseException;
 import org.springframework.web.server.ResponseStatusException;
 import populator.Global;
 import populator.genres.GenrePopulator;
+import populator.people.PeoplePopulator;
 import src.main.java.model.tables.pojos.Media;
 
 import java.io.BufferedReader;
@@ -116,7 +117,7 @@ public class MoviePopulator {
 
     private static void add(List<FetchedMovie> movies) throws SQLException {
         for (FetchedMovie fetchedMovie : ProgressBar.wrap(movies, pbb)) {
-            var tmdbMovie = moviesApi.getMovie(fetchedMovie.id(), "en");
+            var tmdbMovie = moviesApi.getMovie(fetchedMovie.id(), "en", TmdbMovies.MovieMethod.credits);
             var mrh = new MovieRequestHelper(
                 1,
                 null,
@@ -129,6 +130,7 @@ public class MoviePopulator {
             );
             var dbMovie = mediaService.postMovie(mrh);
             GenrePopulator.addMovieGenres(tmdbMovie, dbMovie);
+            PeoplePopulator.addMoviePeople(tmdbMovie, dbMovie);
         }
     }
 

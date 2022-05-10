@@ -1,6 +1,5 @@
 package api.helpers.request;
 
-import org.jooq.Record;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 public class EpisodeRequestHelper {

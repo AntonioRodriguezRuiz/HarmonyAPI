@@ -1,5 +1,6 @@
 package connection;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
@@ -15,13 +16,15 @@ import java.time.LocalDate;
 import static src.main.java.model.Tables.*;
 
 public class ConnectionTest {
+    public static final Dotenv dotenv = Dotenv.load();
     public static void main(String[] args) {
         Settings settings = new Settings();
         settings.setExecuteLogging(true);
 
-        String USER = "harmony";
-        String PASSWORD = "tN1moow41jd6rGfa";
-        String URL = "jdbc:mysql://34.65.47.107:3306/harmony";
+
+        String USER = dotenv.get("HARMONY_DB_USER");
+        String PASSWORD = dotenv.get("HARMONY_DB_PASSWORD");
+        String URL = dotenv.get("HARMONY_DB_URL");
 
         // Connection is the only JDBC resource that we need
         // PreparedStatement and ResultSet are handled by jOOQ, internally

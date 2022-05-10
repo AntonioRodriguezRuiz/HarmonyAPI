@@ -4,7 +4,6 @@ import api.GlobalValues;
 import api.helpers.request.UserRequestHelper;
 import api.helpers.response.UserResponseHelper;
 import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -27,7 +26,7 @@ public class UserSpecificService {
     public UserResponseHelper getUser(Integer userId) throws SQLException {
         UserResponseHelper user = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
             user = new UserResponseHelper(create.select()
                 .from(USERS)
                 .where(USERS.USERID.eq(userId))
@@ -44,7 +43,7 @@ public class UserSpecificService {
 
     public void putUser(Integer id, UserRequestHelper user) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
             var oldUser = create.select()
                 .from(USERS)
                 .where(USERS.USERID.eq(id))
@@ -68,7 +67,7 @@ public class UserSpecificService {
 
     public void deleteUser(Integer id) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
             create.deleteFrom(USERS)
                 .where(USERS.USERID.eq(id))
                 .execute();

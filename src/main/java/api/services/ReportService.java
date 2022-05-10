@@ -3,14 +3,9 @@ package api.services;
 import api.GlobalValues;
 import api.helpers.request.ReportRequestHelper;
 import api.helpers.response.ReportResponseHelper;
-import api.middlewares.ReportMiddlewares;
-import api.middlewares.ReviewMiddlewares;
 import org.jooq.DSLContext;
 import org.jooq.Record;
-import org.jooq.Result;
-import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import src.main.java.model.Routines;
@@ -28,7 +23,7 @@ public class ReportService {
     public static List<Reports> getAllReports(Integer offset) throws SQLException {
         List<Reports> result = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
             result = create.select(REPORTS.fields())
                     .from(REPORTS)
                     .offset(offset)
@@ -45,7 +40,7 @@ public class ReportService {
     public ReportResponseHelper postReport(ReportRequestHelper report) throws SQLException {
         Record record = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
 
             Routines.newreport(create.configuration(),
                     report.useridreporter(),
@@ -70,7 +65,7 @@ public class ReportService {
 
     public void deleteReport(Integer id) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
 
             create.deleteFrom(REPORTS)
                     .where(REPORTS.REPORTID.eq(id)).execute();

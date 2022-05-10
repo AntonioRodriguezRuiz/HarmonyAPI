@@ -98,6 +98,11 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
+            <groupId>io.github.cdimascio</groupId>
+            <artifactId>dotenv-java</artifactId>
+            <version>2.2.3</version>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jul-to-slf4j</artifactId>
             <scope>provided</scope>
@@ -111,6 +116,24 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0-alpha-2</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>.env</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -139,9 +162,9 @@
                     <!-- Configure the database connection here -->
                     <jdbc>
                         <driver>org.mariadb.jdbc.Driver</driver>
-                        <url>jdbc:mariadb://db.harmonyapi.rocks:3306/harmony</url>
-                        <user>harmony</user>
-                        <password>k8KAkzsMjJqjFu6w4Va5ni7aaUAqpMa7</password>
+                        <url>${HARMONY_DB_URL}</url>
+                        <user>${HARMONY_DB_USER}</user>
+                        <password>${HARMONY_DB_PASSWORD}</password>
                     </jdbc>
 
                     <generator>

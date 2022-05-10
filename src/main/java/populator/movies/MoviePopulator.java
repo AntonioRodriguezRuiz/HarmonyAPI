@@ -130,7 +130,7 @@ public class MoviePopulator {
             );
             var dbMovie = mediaService.postMovie(mrh);
             GenrePopulator.addGenresTMDB(tmdbMovie.getGenres(), dbMovie);
-            PeoplePopulator.addMoviePeople(tmdbMovie, dbMovie);
+            PeoplePopulator.addMoviePeople(tmdbMovie.getCredits(), dbMovie);
         }
     }
 

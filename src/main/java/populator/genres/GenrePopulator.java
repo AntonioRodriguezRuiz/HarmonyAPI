@@ -1,14 +1,11 @@
 package populator.genres;
-
 import api.helpers.request.GenreRequestHelper;
 import api.helpers.response.MediaResponseHelper;
 import api.services.GenresService;
 import api.services.MediaSpecificService;
-import info.movito.themoviedbapi.model.Genre;
-import src.main.java.model.tables.pojos.Genres;
+import info.movito.themoviedbapi.model.MovieDb;
 
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * GenrePopulator
@@ -20,10 +17,9 @@ import java.util.List;
 public class GenrePopulator {
     private static GenresService genresService = new GenresService();
     private static MediaSpecificService mediaSpecificService = new MediaSpecificService();
-    private static List<Genres> allGenres;
 
     private static Integer addGenre(String genreName) throws SQLException {
-        var genre = allGenres.stream()
+        var genre = genresService.getAllGenres().stream()
             .filter(g -> g.getName().equals(genreName.toLowerCase()))
             .findFirst();
         if (genre.isPresent()) {
@@ -35,16 +31,15 @@ public class GenrePopulator {
         }
     }
 
-    public static void addGenresTMDB(List<Genre> genres, MediaResponseHelper dbMovie) {
-         allGenres = genresService.getAllGenres();
-         genres.stream()
-            .map(genre -> {
-                try {
-                    return addGenre(genre.getName());
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            })
+    public static void addMovieGenres(MovieDb tmdbMovie, MediaResponseHelper dbMovie) {
+        tmdbMovie.getGenres().stream()
+                .map(genre -> {
+                    try {
+                        return addGenre(genre.getName());
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
             .forEach(genreId -> {
                 try {
                     mediaSpecificService.addGenre(dbMovie.getMediaid(), new GenreRequestHelper(null, genreId, null));
@@ -53,25 +48,5 @@ public class GenrePopulator {
                 }
             }
         );
-    }
-
-    public static void addGenresVideogames(List<String> genres, MediaResponseHelper dbVideogame) {
-        allGenres = genresService.getAllGenres();
-        genres.stream()
-            .map(genre -> {
-                try {
-                    return addGenre(genre);
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            })
-            .forEach(genreId -> {
-                    try {
-                        mediaSpecificService.addGenre(dbVideogame.getMediaid(), new GenreRequestHelper(null, genreId, null));
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            );
     }
 }

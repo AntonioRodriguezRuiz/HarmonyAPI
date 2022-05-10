@@ -4,16 +4,12 @@ import api.helpers.request.MovieRequestHelper;
 import api.services.MediaService;
 import database.DatabaseConnection;
 import info.movito.themoviedbapi.TmdbMovies;
-import me.tongfei.progressbar.ProgressBar;
-import me.tongfei.progressbar.ProgressBarBuilder;
-import me.tongfei.progressbar.ProgressBarStyle;
 import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONParser;
 import org.jooq.tools.json.ParseException;
 import org.springframework.web.server.ResponseStatusException;
 import populator.Global;
 import populator.genres.GenrePopulator;
-import populator.people.PeoplePopulator;
 import src.main.java.model.tables.pojos.Media;
 
 import java.io.BufferedReader;
@@ -44,12 +40,6 @@ public class MoviePopulator {
 
     private static MediaService mediaService = new MediaService();
     private static TmdbMovies moviesApi = TMDB.getMovies();
-    public static final ProgressBarBuilder pbb = new ProgressBarBuilder()
-        .setTaskName("Populating movies...")
-        .setStyle(ProgressBarStyle.COLORFUL_UNICODE_BLOCK)
-        .setUpdateIntervalMillis(100)
-        .setMaxRenderedLength(100)
-        .setUnit(" movies", 1);
 
     private static List<FetchedMovie> fetchIds() throws IOException, ParseException {
         var gzFile = new File("files/movie_ids.json.gz");
@@ -93,8 +83,9 @@ public class MoviePopulator {
             }
         }
         catch (IOException e) {
-            System.out.println("Error while reading file " + jsonFile.getPath() + ": " + e.getMessage());
+            System.out.println(" -> Error while reading file " + jsonFile.getPath() + ": " + e.getMessage());
         }
+
         return movies;
     }
 
@@ -102,7 +93,7 @@ public class MoviePopulator {
         List<Media> result = new ArrayList<>();
         try {
             var create = DatabaseConnection.create();
-            result = create.select()
+            result = create.select(MEDIA.fields())
                 .from(MEDIA)
                 .naturalJoin(MOVIES)
                 .fetchInto(Media.class);
@@ -116,25 +107,25 @@ public class MoviePopulator {
     }
 
     private static void add(List<FetchedMovie> movies) throws SQLException {
-        for (var fetchedMovie : ProgressBar.wrap(movies, pbb)) {
-            var tmdbMovie = moviesApi.getMovie(fetchedMovie.id(), "en", TmdbMovies.MovieMethod.credits);
+        for (FetchedMovie fetchedMovie : movies) {
+            var tmdbMovie = moviesApi.getMovie(fetchedMovie.id(), "en");
             var mrh = new MovieRequestHelper(
                 1,
                 null,
                 tmdbMovie.getTitle(),
-                tmdbMovie.getReleaseDate().isEmpty() ? "1901-01-01" : tmdbMovie.getReleaseDate(),
+                tmdbMovie.getReleaseDate() == null ? "1970-01-01" : tmdbMovie.getReleaseDate(),
                 tmdbMovie.getPosterPath() == null ? null : TMDB_IMAGE_URL + tmdbMovie.getPosterPath(),
                 tmdbMovie.getBackdropPath() == null ? null : TMDB_IMAGE_URL + tmdbMovie.getBackdropPath(),
                 tmdbMovie.getOverview(),
                 tmdbMovie.getId()
             );
             var dbMovie = mediaService.postMovie(mrh);
-            GenrePopulator.addGenresTMDB(tmdbMovie.getGenres(), dbMovie);
-            PeoplePopulator.addMoviePeople(tmdbMovie.getCredits(), dbMovie);
+            GenrePopulator.addMovieGenres(tmdbMovie, dbMovie);
         }
     }
 
-    public static void populate(Integer limit) throws IOException, ParseException, SQLException {
+    public static void populate() throws IOException, ParseException, SQLException {
+        System.out.println("Populating movies...");
         var ids = getAll()
             .stream()
             .map(Media::getExternalid)
@@ -142,7 +133,6 @@ public class MoviePopulator {
         var movies = fetchIds().stream()
             .filter(movie -> movie.id() != null && !ids.contains(movie.id()))
             .sorted((m1, m2) -> m2.popularity().compareTo(m1.popularity()))
-            .limit(limit)
             .toList();
         add(movies);
     }

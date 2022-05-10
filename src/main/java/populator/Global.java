@@ -7,8 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 
-import static com.harmonyapi.Application.dotenv;
-
 /**
  * GlobalValues
  * Project HarmonyAPI
@@ -17,7 +15,7 @@ import static com.harmonyapi.Application.dotenv;
  * @author juagallop1
  **/
 public class Global {
-    public static final TmdbApi TMDB = new TmdbApi(dotenv.get("HARMONY_TMDB_API_KEY"));
+    public static final TmdbApi TMDB = new TmdbApi("0160e07e4e120fc9eaf19fd157370523");
     public static final String TMDB_IMAGE_URL = "https://www.themoviedb.org/t/p/original";
 
     public static void gunzip(String fp) {

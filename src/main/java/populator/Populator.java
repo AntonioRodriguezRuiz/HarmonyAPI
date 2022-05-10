@@ -2,8 +2,6 @@ package populator;
 
 import org.jooq.tools.json.ParseException;
 import populator.movies.MoviePopulator;
-import populator.series.SeriesPopulator;
-import populator.videogames.VideogamePopulator;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -17,8 +15,6 @@ import java.sql.SQLException;
  **/
 public class Populator {
     public static void main(String[] args) throws IOException, ParseException, SQLException {
-        MoviePopulator.populate(150);
-        SeriesPopulator.populate(150);
-        VideogamePopulator.populate(150);
+        MoviePopulator.populate();
     }
 }

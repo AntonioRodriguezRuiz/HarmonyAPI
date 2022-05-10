@@ -18,6 +18,7 @@ import org.jooq.tools.json.ParseException;
 import org.springframework.web.server.ResponseStatusException;
 import populator.Global;
 import populator.genres.GenrePopulator;
+import populator.people.PeoplePopulator;
 import src.main.java.model.tables.pojos.Media;
 
 import java.io.BufferedReader;
@@ -124,6 +125,7 @@ public class SeriesPopulator {
     private static void add(List<FetchedSeries> series) throws SQLException {
         for (var serie : ProgressBar.wrap(series, pbb)) {
             var tmdbSerie = seriesApi.getSeries(serie.id(), "en", TmdbTV.TvMethod.credits);
+            var tmdbSerieCredits = tmdbSerie.getCredits();
             var srh = new SeriesRequestHelper(
                 1,
                 null,
@@ -143,6 +145,7 @@ public class SeriesPopulator {
                     "en",
                     TmdbTvSeasons.SeasonMethod.credits
                 );
+                var tmdbSeasonCredits = tmdbSeason.getCredits();
                 var ssrh = new SeasonRequestHelper(
                     1,
                     dbSerie.getMediaid(),
@@ -165,7 +168,19 @@ public class SeriesPopulator {
                         tmdbEpisode.getEpisodeNumber(),
                         tmdbEpisode.getName()
                     );
-                    var dbEpisode = mediaSpecificService.postEpisode(dbSerie.getMediaid(), dbSeason.getSeasonid(), erh);
+                    var dbEpisode = mediaSpecificService.postEpisode(
+                        dbSerie.getMediaid(),
+                        dbSeason.getSeasonid(),
+                        erh
+                    );
+                    PeoplePopulator.addEpisodePeople(
+                        dbSeason.getSeasonid(),
+                        dbEpisode.getEpisodeid(),
+                        tmdbEpisode.getCredits(),
+                        tmdbSeasonCredits,
+                        tmdbSerieCredits,
+                        dbEpisode
+                    );
                 }
             }
         }

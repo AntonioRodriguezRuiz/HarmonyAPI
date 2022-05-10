@@ -134,7 +134,7 @@ public class MoviePopulator {
         }
     }
 
-    public static void populate() throws IOException, ParseException, SQLException {
+    public static void populate(Integer limit) throws IOException, ParseException, SQLException {
         System.out.println("Populating movies...");
         var ids = getAll()
             .stream()
@@ -143,6 +143,7 @@ public class MoviePopulator {
         var movies = fetchIds().stream()
             .filter(movie -> movie.id() != null && !ids.contains(movie.id()))
             .sorted((m1, m2) -> m2.popularity().compareTo(m1.popularity()))
+            .limit(limit)
             .toList();
         add(movies);
     }

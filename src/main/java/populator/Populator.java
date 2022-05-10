@@ -15,6 +15,6 @@ import java.sql.SQLException;
  **/
 public class Populator {
     public static void main(String[] args) throws IOException, ParseException, SQLException {
-        MoviePopulator.populate();
+        MoviePopulator.populate(150);
     }
 }

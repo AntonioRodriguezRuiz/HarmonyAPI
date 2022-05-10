@@ -137,7 +137,12 @@ public class SeriesPopulator {
             var dbSerie = mediaService.postSeries(srh);
             GenrePopulator.addGenresTMDB(tmdbSerie.getGenres(), dbSerie);
             for (var season : tmdbSerie.getSeasons()) {
-                var tmdbSeason = seasonApi.getSeason(serie.id(), season.getSeasonNumber(), "en", TmdbTvSeasons.SeasonMethod.credits);
+                var tmdbSeason = seasonApi.getSeason(
+                    serie.id(),
+                    season.getSeasonNumber(),
+                    "en",
+                    TmdbTvSeasons.SeasonMethod.credits
+                );
                 var ssrh = new SeasonRequestHelper(
                     1,
                     dbSerie.getMediaid(),
@@ -147,7 +152,13 @@ public class SeriesPopulator {
                 );
                 var dbSeason = mediaSpecificService.postSeason(dbSerie.getMediaid(), ssrh);
                 for (var episode : tmdbSeason.getEpisodes()) {
-                    var tmdbEpisode = episodeApi.getEpisode(serie.id(), season.getSeasonNumber(), episode.getEpisodeNumber(), "en", TmdbTvEpisodes.EpisodeMethod.credits);
+                    var tmdbEpisode = episodeApi.getEpisode(
+                        serie.id(),
+                        season.getSeasonNumber(),
+                        episode.getEpisodeNumber(),
+                        "en",
+                        TmdbTvEpisodes.EpisodeMethod.credits
+                    );
                     var erh = new EpisodeRequestHelper(
                         1,
                         null,

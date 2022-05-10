@@ -4,27 +4,17 @@
 package src.main.java.model.tables;
 
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row2;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.TableOptions;
-import org.jooq.UniqueKey;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
-
 import src.main.java.model.Harmony;
 import src.main.java.model.Keys;
 import src.main.java.model.tables.records.MoviesRecord;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -57,6 +47,11 @@ public class Movies extends TableImpl<MoviesRecord> {
      * The column <code>harmony.movies.mediaid</code>.
      */
     public final TableField<MoviesRecord, Integer> MEDIAID = createField(DSL.name("mediaid"), SQLDataType.INTEGER.nullable(false), this, "");
+
+    /**
+     * The column <code>harmony.movies.tmdbid</code>.
+     */
+    public final TableField<MoviesRecord, Integer> TMDBID = createField(DSL.name("tmdbid"), SQLDataType.INTEGER.defaultValue(DSL.field("NULL", SQLDataType.INTEGER)), this, "");
 
     private Movies(Name alias, Table<MoviesRecord> aliased) {
         this(alias, aliased, null);
@@ -152,11 +147,11 @@ public class Movies extends TableImpl<MoviesRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row2 type methods
+    // Row3 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row2<Integer, Integer> fieldsRow() {
-        return (Row2) super.fieldsRow();
+    public Row3<Integer, Integer, Integer> fieldsRow() {
+        return (Row3) super.fieldsRow();
     }
 }

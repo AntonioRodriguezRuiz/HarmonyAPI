@@ -17,20 +17,24 @@ public class Movies implements Serializable {
 
     private Integer movieid;
     private Integer mediaid;
+    private Integer tmdbid;
 
     public Movies() {}
 
     public Movies(Movies value) {
         this.movieid = value.movieid;
         this.mediaid = value.mediaid;
+        this.tmdbid = value.tmdbid;
     }
 
     public Movies(
         Integer movieid,
-        Integer mediaid
+        Integer mediaid,
+        Integer tmdbid
     ) {
         this.movieid = movieid;
         this.mediaid = mediaid;
+        this.tmdbid = tmdbid;
     }
 
     /**
@@ -63,6 +67,21 @@ public class Movies implements Serializable {
         return this;
     }
 
+    /**
+     * Getter for <code>harmony.movies.tmdbid</code>.
+     */
+    public Integer getTmdbid() {
+        return this.tmdbid;
+    }
+
+    /**
+     * Setter for <code>harmony.movies.tmdbid</code>.
+     */
+    public Movies setTmdbid(Integer tmdbid) {
+        this.tmdbid = tmdbid;
+        return this;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -84,6 +103,12 @@ public class Movies implements Serializable {
         }
         else if (!mediaid.equals(other.mediaid))
             return false;
+        if (tmdbid == null) {
+            if (other.tmdbid != null)
+                return false;
+        }
+        else if (!tmdbid.equals(other.tmdbid))
+            return false;
         return true;
     }
 
@@ -93,6 +118,7 @@ public class Movies implements Serializable {
         int result = 1;
         result = prime * result + ((this.movieid == null) ? 0 : this.movieid.hashCode());
         result = prime * result + ((this.mediaid == null) ? 0 : this.mediaid.hashCode());
+        result = prime * result + ((this.tmdbid == null) ? 0 : this.tmdbid.hashCode());
         return result;
     }
 
@@ -102,6 +128,7 @@ public class Movies implements Serializable {
 
         sb.append(movieid);
         sb.append(", ").append(mediaid);
+        sb.append(", ").append(tmdbid);
 
         sb.append(")");
         return sb.toString();

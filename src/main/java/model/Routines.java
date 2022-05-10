@@ -4,39 +4,10 @@
 package src.main.java.model;
 
 
-import java.time.LocalDate;
-
 import org.jooq.Configuration;
+import src.main.java.model.routines.*;
 
-import src.main.java.model.routines.Likereview;
-import src.main.java.model.routines.Newbook;
-import src.main.java.model.routines.Newepisode;
-import src.main.java.model.routines.Newepisodebyid;
-import src.main.java.model.routines.Newgenre;
-import src.main.java.model.routines.Newlist;
-import src.main.java.model.routines.Newlistmedia;
-import src.main.java.model.routines.Newmediagenre;
-import src.main.java.model.routines.Newmediagenrebyid;
-import src.main.java.model.routines.Newmovie;
-import src.main.java.model.routines.Newperson;
-import src.main.java.model.routines.Newpersonbook;
-import src.main.java.model.routines.Newpersonepisode;
-import src.main.java.model.routines.Newpersonepisodebyid;
-import src.main.java.model.routines.Newpersonmovie;
-import src.main.java.model.routines.Newpersonvideogame;
-import src.main.java.model.routines.Newplatform;
-import src.main.java.model.routines.Newreport;
-import src.main.java.model.routines.Newreview;
-import src.main.java.model.routines.Newseason;
-import src.main.java.model.routines.Newseasonbyid;
-import src.main.java.model.routines.Newseries;
-import src.main.java.model.routines.Newtracker;
-import src.main.java.model.routines.Newuser;
-import src.main.java.model.routines.Newvideogame;
-import src.main.java.model.routines.Newvideogameplatform;
-import src.main.java.model.routines.Newvideogameplatformbyid;
-import src.main.java.model.routines.Unlikereview;
-import src.main.java.model.routines.Updatereview;
+import java.time.LocalDate;
 
 
 /**
@@ -70,6 +41,7 @@ public class Routines {
         , String coverimage
         , String backgroundimage
         , String synopsis
+        , Integer externalid
         , String collection
     ) {
         Newbook p = new Newbook();
@@ -78,6 +50,7 @@ public class Routines {
         p.setCoverimage(coverimage);
         p.setBackgroundimage(backgroundimage);
         p.setSynopsis(synopsis);
+        p.setExternalid(externalid);
         p.setCollection(collection);
 
         p.execute(configuration);
@@ -208,6 +181,7 @@ public class Routines {
         , String coverimage
         , String backgroundimage
         , String synopsis
+        , Integer externalid
     ) {
         Newmovie p = new Newmovie();
         p.setTitle(title);
@@ -215,6 +189,7 @@ public class Routines {
         p.setCoverimage(coverimage);
         p.setBackgroundimage(backgroundimage);
         p.setSynopsis(synopsis);
+        p.setExternalid(externalid);
 
         p.execute(configuration);
     }
@@ -446,6 +421,7 @@ public class Routines {
         , String coverimage
         , String backgroundimage
         , String synopsis
+        , Integer externalid
     ) {
         Newseries p = new Newseries();
         p.setTitle(title);
@@ -453,6 +429,7 @@ public class Routines {
         p.setCoverimage(coverimage);
         p.setBackgroundimage(backgroundimage);
         p.setSynopsis(synopsis);
+        p.setExternalid(externalid);
 
         p.execute(configuration);
     }
@@ -503,6 +480,7 @@ public class Routines {
         , String coverimage
         , String backgroundimage
         , String synopsis
+        , Integer externalid
         , String company
     ) {
         Newvideogame p = new Newvideogame();
@@ -511,6 +489,7 @@ public class Routines {
         p.setCoverimage(coverimage);
         p.setBackgroundimage(backgroundimage);
         p.setSynopsis(synopsis);
+        p.setExternalid(externalid);
         p.setCompany(company);
 
         p.execute(configuration);

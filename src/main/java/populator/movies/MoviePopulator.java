@@ -45,7 +45,7 @@ public class MoviePopulator {
     private static MediaService mediaService = new MediaService();
     private static TmdbMovies moviesApi = TMDB.getMovies();
     public static final ProgressBarBuilder pbb = new ProgressBarBuilder()
-        .setTaskName("Populating Movies")
+        .setTaskName("Populating movies...")
         .setStyle(ProgressBarStyle.COLORFUL_UNICODE_BLOCK)
         .setUpdateIntervalMillis(100)
         .setMaxRenderedLength(100)
@@ -135,7 +135,6 @@ public class MoviePopulator {
     }
 
     public static void populate(Integer limit) throws IOException, ParseException, SQLException {
-        System.out.println("Populating movies...");
         var ids = getAll()
             .stream()
             .map(Media::getExternalid)

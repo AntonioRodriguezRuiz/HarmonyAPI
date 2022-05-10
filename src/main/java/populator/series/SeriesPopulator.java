@@ -1,9 +1,14 @@
 package populator.series;
 
+import api.helpers.request.EpisodeRequestHelper;
+import api.helpers.request.SeasonRequestHelper;
 import api.helpers.request.SeriesRequestHelper;
 import api.services.MediaService;
+import api.services.MediaSpecificService;
 import database.DatabaseConnection;
 import info.movito.themoviedbapi.TmdbTV;
+import info.movito.themoviedbapi.TmdbTvEpisodes;
+import info.movito.themoviedbapi.TmdbTvSeasons;
 import me.tongfei.progressbar.ProgressBar;
 import me.tongfei.progressbar.ProgressBarBuilder;
 import me.tongfei.progressbar.ProgressBarStyle;
@@ -42,7 +47,10 @@ import static src.main.java.model.Tables.SERIES;
 public class SeriesPopulator {
 
     private static final MediaService mediaService = new MediaService();
+    private static final MediaSpecificService mediaSpecificService = new MediaSpecificService();
     private static final TmdbTV seriesApi = TMDB.getTvSeries();
+    private static final TmdbTvSeasons seasonApi = TMDB.getTvSeasons();
+    private static final TmdbTvEpisodes episodeApi = TMDB.getTvEpisodes();
     public static final ProgressBarBuilder pbb = new ProgressBarBuilder()
         .setTaskName("Populating series...")
         .setStyle(ProgressBarStyle.COLORFUL_UNICODE_BLOCK)
@@ -115,7 +123,7 @@ public class SeriesPopulator {
 
     private static void add(List<FetchedSeries> series) throws SQLException {
         for (var serie : ProgressBar.wrap(series, pbb)) {
-            var tmdbSerie = seriesApi.getSeries(serie.id(), "en");
+            var tmdbSerie = seriesApi.getSeries(serie.id(), "en", TmdbTV.TvMethod.credits);
             var srh = new SeriesRequestHelper(
                 1,
                 null,
@@ -128,6 +136,27 @@ public class SeriesPopulator {
             );
             var dbSerie = mediaService.postSeries(srh);
             GenrePopulator.addGenresTMDB(tmdbSerie.getGenres(), dbSerie);
+            for (var season : tmdbSerie.getSeasons()) {
+                var tmdbSeason = seasonApi.getSeason(serie.id(), season.getSeasonNumber(), "en", TmdbTvSeasons.SeasonMethod.credits);
+                var ssrh = new SeasonRequestHelper(
+                    1,
+                    dbSerie.getMediaid(),
+                    null,
+                    tmdbSeason.getSeasonNumber(),
+                    tmdbSeason.getEpisodes().size()
+                );
+                var dbSeason = mediaSpecificService.postSeason(dbSerie.getMediaid(), ssrh);
+                for (var episode : tmdbSeason.getEpisodes()) {
+                    var tmdbEpisode = episodeApi.getEpisode(serie.id(), season.getSeasonNumber(), episode.getEpisodeNumber(), "en", TmdbTvEpisodes.EpisodeMethod.credits);
+                    var erh = new EpisodeRequestHelper(
+                        1,
+                        null,
+                        tmdbEpisode.getEpisodeNumber(),
+                        tmdbEpisode.getName()
+                    );
+                    var dbEpisode = mediaSpecificService.postEpisode(dbSerie.getMediaid(), dbSeason.getSeasonid(), erh);
+                }
+            }
         }
     }
 

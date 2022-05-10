@@ -4,14 +4,13 @@
 package src.main.java.model.routines;
 
 
-import java.time.LocalDate;
-
 import org.jooq.Parameter;
 import org.jooq.impl.AbstractRoutine;
 import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;
-
 import src.main.java.model.Harmony;
+
+import java.time.LocalDate;
 
 
 /**
@@ -48,6 +47,11 @@ public class Newbook extends AbstractRoutine<java.lang.Void> {
     public static final Parameter<String> SYNOPSIS = Internal.createParameter("synopsis", SQLDataType.VARCHAR(1500), false, false);
 
     /**
+     * The parameter <code>harmony.newBook.externalId</code>.
+     */
+    public static final Parameter<Integer> EXTERNALID = Internal.createParameter("externalId", SQLDataType.INTEGER, false, false);
+
+    /**
      * The parameter <code>harmony.newBook.collection</code>.
      */
     public static final Parameter<String> COLLECTION = Internal.createParameter("collection", SQLDataType.VARCHAR(120), false, false);
@@ -63,6 +67,7 @@ public class Newbook extends AbstractRoutine<java.lang.Void> {
         addInParameter(COVERIMAGE);
         addInParameter(BACKGROUNDIMAGE);
         addInParameter(SYNOPSIS);
+        addInParameter(EXTERNALID);
         addInParameter(COLLECTION);
     }
 
@@ -99,6 +104,13 @@ public class Newbook extends AbstractRoutine<java.lang.Void> {
      */
     public void setSynopsis(String value) {
         setValue(SYNOPSIS, value);
+    }
+
+    /**
+     * Set the <code>externalId</code> parameter IN value to the routine
+     */
+    public void setExternalid(Integer value) {
+        setValue(EXTERNALID, value);
     }
 
     /**

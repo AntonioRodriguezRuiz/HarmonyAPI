@@ -23,6 +23,7 @@ public class Media implements Serializable {
     private String    backgroundimage;
     private String    synopsis;
     private Double    avgrating;
+    private Integer   externalid;
 
     public Media() {}
 
@@ -34,6 +35,7 @@ public class Media implements Serializable {
         this.backgroundimage = value.backgroundimage;
         this.synopsis = value.synopsis;
         this.avgrating = value.avgrating;
+        this.externalid = value.externalid;
     }
 
     public Media(
@@ -43,7 +45,8 @@ public class Media implements Serializable {
         String    coverimage,
         String    backgroundimage,
         String    synopsis,
-        Double    avgrating
+        Double    avgrating,
+        Integer   externalid
     ) {
         this.mediaid = mediaid;
         this.title = title;
@@ -52,6 +55,7 @@ public class Media implements Serializable {
         this.backgroundimage = backgroundimage;
         this.synopsis = synopsis;
         this.avgrating = avgrating;
+        this.externalid = externalid;
     }
 
     /**
@@ -159,6 +163,21 @@ public class Media implements Serializable {
         return this;
     }
 
+    /**
+     * Getter for <code>harmony.media.externalId</code>.
+     */
+    public Integer getExternalid() {
+        return this.externalid;
+    }
+
+    /**
+     * Setter for <code>harmony.media.externalId</code>.
+     */
+    public Media setExternalid(Integer externalid) {
+        this.externalid = externalid;
+        return this;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -210,6 +229,12 @@ public class Media implements Serializable {
         }
         else if (!avgrating.equals(other.avgrating))
             return false;
+        if (externalid == null) {
+            if (other.externalid != null)
+                return false;
+        }
+        else if (!externalid.equals(other.externalid))
+            return false;
         return true;
     }
 
@@ -224,6 +249,7 @@ public class Media implements Serializable {
         result = prime * result + ((this.backgroundimage == null) ? 0 : this.backgroundimage.hashCode());
         result = prime * result + ((this.synopsis == null) ? 0 : this.synopsis.hashCode());
         result = prime * result + ((this.avgrating == null) ? 0 : this.avgrating.hashCode());
+        result = prime * result + ((this.externalid == null) ? 0 : this.externalid.hashCode());
         return result;
     }
 
@@ -238,6 +264,7 @@ public class Media implements Serializable {
         sb.append(", ").append(backgroundimage);
         sb.append(", ").append(synopsis);
         sb.append(", ").append(avgrating);
+        sb.append(", ").append(externalid);
 
         sb.append(")");
         return sb.toString();

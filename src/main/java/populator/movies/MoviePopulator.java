@@ -5,6 +5,8 @@ import api.services.MediaService;
 import database.DatabaseConnection;
 import info.movito.themoviedbapi.TmdbMovies;
 import me.tongfei.progressbar.ProgressBar;
+import me.tongfei.progressbar.ProgressBarBuilder;
+import me.tongfei.progressbar.ProgressBarStyle;
 import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONParser;
 import org.jooq.tools.json.ParseException;
@@ -41,6 +43,12 @@ public class MoviePopulator {
 
     private static MediaService mediaService = new MediaService();
     private static TmdbMovies moviesApi = TMDB.getMovies();
+    public static final ProgressBarBuilder pbb = new ProgressBarBuilder()
+        .setTaskName("Populating Movies")
+        .setStyle(ProgressBarStyle.COLORFUL_UNICODE_BLOCK)
+        .setUpdateIntervalMillis(100)
+        .setMaxRenderedLength(100)
+        .setUnit(" movies", 1);
 
     private static List<FetchedMovie> fetchIds() throws IOException, ParseException {
         var gzFile = new File("files/movie_ids.json.gz");
@@ -107,13 +115,13 @@ public class MoviePopulator {
     }
 
     private static void add(List<FetchedMovie> movies) throws SQLException {
-        for (FetchedMovie fetchedMovie : ProgressBar.wrap(movies, "Adding movies to database...")) {
+        for (FetchedMovie fetchedMovie : ProgressBar.wrap(movies, pbb)) {
             var tmdbMovie = moviesApi.getMovie(fetchedMovie.id(), "en");
             var mrh = new MovieRequestHelper(
                 1,
                 null,
                 tmdbMovie.getTitle(),
-                tmdbMovie.getReleaseDate() == null ? "1970-01-01" : tmdbMovie.getReleaseDate(),
+                tmdbMovie.getReleaseDate().isEmpty() ? "1970-01-01" : tmdbMovie.getReleaseDate(),
                 tmdbMovie.getPosterPath() == null ? null : TMDB_IMAGE_URL + tmdbMovie.getPosterPath(),
                 tmdbMovie.getBackdropPath() == null ? null : TMDB_IMAGE_URL + tmdbMovie.getBackdropPath(),
                 tmdbMovie.getOverview(),

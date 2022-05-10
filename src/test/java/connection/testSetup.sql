@@ -60,11 +60,11 @@ CREATE TABLE admins(
 
 CREATE TABLE media(
                       mediaid INT NOT NULL UNIQUE AUTO_INCREMENT,
-                      title VARCHAR(500) NOT NULL,
+                      title VARCHAR(120) NOT NULL,
                       releaseDate DATE NOT NULL,
                       coverImage VARCHAR(120) NOT NULL,
                       backgroundImage VARCHAR(120) NOT NULL,
-                      synopsis TEXT(50000000) NOT NULL,
+                      synopsis VARCHAR(1500) NOT NULL,
                       avgRating FLOAT(3),
                       externalId INT,
 
@@ -77,7 +77,7 @@ CREATE TABLE media(
 CREATE TABLE videogames(
                            videogameid INT NOT NULL UNIQUE AUTO_INCREMENT,
                            mediaid INT NOT NULL UNIQUE,
-                           company VARCHAR(600) NOT NULL,
+                           company VARCHAR(60) NOT NULL,
 
                            PRIMARY KEY (videogameid),
 
@@ -108,7 +108,6 @@ CREATE TABLE books(
                       bookid INT NOT NULL UNIQUE AUTO_INCREMENT,
                       mediaid INT NOT NULL UNIQUE,
                       collection VARCHAR(120),
-                      number INT,
 
                       PRIMARY KEY (bookid),
                       FOREIGN KEY (mediaid) REFERENCES media(mediaid) ON DELETE CASCADE
@@ -250,7 +249,6 @@ CREATE TABLE trackers(
                          mediaid INT NOT NULL,
                          userid INT NOT NULL,
                          state INT NOT NULL,
-                         active BOOLEAN NOT NULL,
                          creationDate DATETIME NOT NULL,
 
                          PRIMARY KEY (trackerid),
@@ -378,7 +376,7 @@ BEGIN
 END//
 
 DROP PROCEDURE IF EXISTS newSeries;
-CREATE PROCEDURE newSeries(title VARCHAR(500), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis TEXT(50000000), externalId INT)
+CREATE PROCEDURE newSeries(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500), externalId INT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -415,7 +413,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newSeason;
-CREATE PROCEDURE newSeason(title VARCHAR(500), releaseDate DATE, seasonNo INT, noEpisodes INT)
+CREATE PROCEDURE newSeason(title VARCHAR(120), releaseDate DATE, seasonNo INT, noEpisodes INT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -461,7 +459,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newEpisode;
-CREATE PROCEDURE newEpisode(title VARCHAR(500), releaseDate DATE, seasonNo INT, episodeName VARCHAR(60), episodeNo INT)
+CREATE PROCEDURE newEpisode(title VARCHAR(120), releaseDate DATE, seasonNo INT, episodeName VARCHAR(60), episodeNo INT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -508,7 +506,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newVideogame;
-CREATE PROCEDURE newVideogame(title VARCHAR(500), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis TEXT(50000000), externalId INT, company VARCHAR(600))
+CREATE PROCEDURE newVideogame(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500), externalId INT, company VARCHAR(60))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -563,7 +561,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newVideogamePlatform;
-CREATE PROCEDURE newVideogamePlatform(platformName VARCHAR(60), title VARCHAR(500), releaseDate DATE)
+CREATE PROCEDURE newVideogamePlatform(platformName VARCHAR(60), title VARCHAR(120), releaseDate DATE)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -613,7 +611,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newBook;
-CREATE PROCEDURE newBook(title VARCHAR(500), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis TEXT(50000000), externalId INT, collection VARCHAR(120), number INT)
+CREATE PROCEDURE newBook(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500), externalId INT, collection VARCHAR(120))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -643,14 +641,14 @@ BEGIN
 
         SELECT mediaid INTO mediaidForeign FROM media
         WHERE media.title=title AND media.releaseDate=releaseDate;
-        INSERT INTO books(mediaid, collection, number)
-        VALUES(mediaidForeign, collection, number);
+        INSERT INTO books(mediaid, collection)
+        VALUES(mediaidForeign, collection);
         COMMIT;
     END;
 END //
 
 DROP PROCEDURE IF EXISTS newMovie;
-CREATE PROCEDURE newMovie(title VARCHAR(500), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis TEXT(50000000), externalId INT)
+CREATE PROCEDURE newMovie(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500), externalId INT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -706,7 +704,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newMediaGenre;
-CREATE PROCEDURE newMediaGenre(title VARCHAR(500), releaseDate DATE, genre VARCHAR(50))
+CREATE PROCEDURE newMediaGenre(title VARCHAR(120), releaseDate DATE, genre VARCHAR(50))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -755,7 +753,6 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newTracker;
-DELIMITER //
 CREATE PROCEDURE newTracker(media INT, user INT, state INT)
 BEGIN
     START TRANSACTION;
@@ -769,12 +766,8 @@ BEGIN
                 SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @text;
             END;
 
-        UPDATE trackers SET active=false
-        WHERE trackers.mediaid=media
-          AND trackers.userid=user;
-
-        INSERT INTO trackers(mediaid, userid, state, active, creationDate)
-        VALUES(media, user, state, true, CURTIME());
+        INSERT INTO trackers(mediaid, userid, state, creationDate)
+        VALUES(media, user, state, CURDATE());
         COMMIT;
     END;
 END //
@@ -887,7 +880,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newPersonMovie;
-CREATE PROCEDURE newPersonMovie(personname VARCHAR(60), date DATE, title VARCHAR(500), releaseDate DATE, role VARCHAR(120), roletype TINYINT)
+CREATE PROCEDURE newPersonMovie(personname VARCHAR(60), date DATE, title VARCHAR(120), releaseDate DATE, role VARCHAR(120), roletype TINYINT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -919,7 +912,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newPersonBook;
-CREATE PROCEDURE newPersonBook(personname VARCHAR(60), date DATE, title VARCHAR(500), releaseDate DATE, role VARCHAR(120))
+CREATE PROCEDURE newPersonBook(personname VARCHAR(60), date DATE, title VARCHAR(120), releaseDate DATE, role VARCHAR(120))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -951,7 +944,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newPersonVideogame;
-CREATE PROCEDURE newPersonVideogame(personname VARCHAR(60), date DATE, title VARCHAR(500), releaseDate DATE, role VARCHAR(120), roletype TINYINT)
+CREATE PROCEDURE newPersonVideogame(personname VARCHAR(60), date DATE, title VARCHAR(120), releaseDate DATE, role VARCHAR(120), roletype TINYINT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -983,7 +976,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newPersonEpisode;
-CREATE PROCEDURE newPersonEpisode(personname VARCHAR(60), date DATE, title VARCHAR(500), releaseDate DATE, seasonNo INT, episodeNo INT, role VARCHAR(120), roletype TINYINT)
+CREATE PROCEDURE newPersonEpisode(personname VARCHAR(60), date DATE, title VARCHAR(120), releaseDate DATE, seasonNo INT, episodeNo INT, role VARCHAR(120), roletype TINYINT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -1167,4 +1160,5 @@ DELIMITER ;
 /*
  File generated by autopopulate.py
  */
-CALL newUser('admin', 'admin@administrator.admin', 'complicated_admin_password', 1);
+CALL newUser('antonioAdmin', 'e@e.com', 'antoniopassword', 1);
+CALL newUser('antonioUser', 'e@e2.com', 'antoniopassword', 0);

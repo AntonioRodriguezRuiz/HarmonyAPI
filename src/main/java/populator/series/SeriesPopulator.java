@@ -84,18 +84,17 @@ public class SeriesPopulator {
         return result;
     }
 
-
-
-    public static void populate() throws IOException, ParseException, SQLException {
+    public static void populate(Integer limit) throws IOException, ParseException, SQLException {
         System.out.println("Populating series...");
         var ids = getAll()
             .stream()
             .map(Media::getExternalid)
             .toList();
-        var movies = fetchIds().stream()
+        var series = fetchIds().stream()
             .filter(movie -> movie.id() != null && !ids.contains(movie.id()))
             .sorted((m1, m2) -> m2.popularity().compareTo(m1.popularity()))
+            .limit(limit)
             .toList();
-//        add(movies);
+        add(series);
     }
 }

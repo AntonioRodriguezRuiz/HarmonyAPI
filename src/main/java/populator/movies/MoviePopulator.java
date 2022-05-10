@@ -129,7 +129,7 @@ public class MoviePopulator {
                 tmdbMovie.getId()
             );
             var dbMovie = mediaService.postMovie(mrh);
-            GenrePopulator.addMovieGenres(tmdbMovie, dbMovie);
+            GenrePopulator.addGenresTMDB(tmdbMovie.getGenres(), dbMovie);
             PeoplePopulator.addMoviePeople(tmdbMovie, dbMovie);
         }
     }

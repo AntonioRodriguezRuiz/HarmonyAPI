@@ -1,16 +1,11 @@
 package api.middlewares;
 
-import api.GlobalValues;
-import org.jooq.DSLContext;
+import database.DatabaseConnection;
 import org.jooq.Record;
 import org.jooq.Result;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import static src.main.java.model.Tables.REVIEWLIKES;
@@ -18,8 +13,8 @@ import static src.main.java.model.Tables.REVIEWS;
 
 public class ReviewMiddlewares{
     public static void isOwnerOfReview(Integer userid, Integer reviewid) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
 
             Result<Record> reviewUser = create.select()
                     .from(REVIEWS)
@@ -40,8 +35,8 @@ public class ReviewMiddlewares{
     }
 
     public static void isOwnerOfLike(Integer userid, Integer reviewid) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
 
             Result<Record> reviewUser = create.select()
                     .from(REVIEWLIKES)
@@ -61,8 +56,8 @@ public class ReviewMiddlewares{
     }
 
     public static void existsReview(Integer id) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
 
             Result<Record> reviewList = create.select()
                     .from(REVIEWS)
@@ -84,8 +79,8 @@ public class ReviewMiddlewares{
 
     public static Result<Record> existsLike(Integer id, Integer userid, Integer likeid) throws SQLException {
         Result<Record> likeList = null;
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
 
             if(likeid==null){
                 likeList = create.select()

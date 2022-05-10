@@ -4,11 +4,13 @@ import api.GlobalValues;
 import api.helpers.request.MediaRequestHelper;
 import api.helpers.request.PeopleMediaRequestHelper;
 import api.services.MediaSpecificService;
-import org.jooq.*;
+import database.DatabaseConnection;
 import org.jooq.Record;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
+import src.main.java.model.tables.pojos.Media;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,8 +18,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static src.main.java.model.Tables.*;
-import static src.main.java.model.Tables.PEOPLE;
-import src.main.java.model.tables.pojos.Media;
 
 /**
  * MediaMiddlewares
@@ -31,8 +31,8 @@ public class MediaMiddlewares {
         if(mediaId==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "MediaId cannot be null");
         }
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
             if (create.select()
                 .from(MEDIA)
                 .where(MEDIA.MEDIAID.eq(mediaId))
@@ -96,8 +96,8 @@ public class MediaMiddlewares {
     }
 
     public static void hasGenre(Integer id, Integer genreid) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
             if (create.select()
                     .from(MEDIA)
                     .naturalJoin(MEDIAGENRES)
@@ -116,8 +116,8 @@ public class MediaMiddlewares {
     }
 
     public static void doesNotHaveGenre(Integer id, Integer genreid) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
             if (!create.select()
                     .from(MEDIA)
                     .naturalJoin(MEDIAGENRES)
@@ -137,8 +137,8 @@ public class MediaMiddlewares {
 
     public static void personNotInMedia(Integer id, PeopleMediaRequestHelper person, Table table) throws SQLException {
         Result<Record> peopleList = null;
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
 
             MediaSpecificService mediaSpecificService = new MediaSpecificService();
             Table peopleTable = mediaSpecificService.getPeopleTable(table);
@@ -167,8 +167,8 @@ public class MediaMiddlewares {
 
     public static void personInMedia(Integer id, PeopleMediaRequestHelper person, Table table) throws SQLException {
         Result<Record> peopleList = null;
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
 
             MediaSpecificService mediaSpecificService = new MediaSpecificService();
             Table peopleTable = mediaSpecificService.getPeopleTable(table);
@@ -196,8 +196,8 @@ public class MediaMiddlewares {
     }
 
     public static void doesNotHaveReview(Integer mediaid, Integer userid) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
 
             Result<Record> reviewList = create.select()
                     .from(REVIEWS)
@@ -220,8 +220,8 @@ public class MediaMiddlewares {
     }
 
     public static void hasReview(Integer mediaid, Integer reviewid) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
 
             Result<Record> reviewList = create.select()
                     .from(REVIEWS)

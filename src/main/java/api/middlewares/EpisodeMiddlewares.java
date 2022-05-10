@@ -1,26 +1,21 @@
 package api.middlewares;
 
-import api.GlobalValues;
 import api.helpers.request.PeopleMediaRequestHelper;
-import api.services.MediaSpecificService;
-import org.jooq.*;
+import database.DatabaseConnection;
 import org.jooq.Record;
-import org.jooq.impl.DSL;
+import org.jooq.Result;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import static src.main.java.model.Tables.*;
-import static src.main.java.model.tables.Series.SERIES;
 
 public class EpisodeMiddlewares {
 
     public static void episodeExists(Integer episodeId) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
             if (create.select()
                     .from(EPISODES)
                     .where(EPISODES.EPISODEID.eq(episodeId))
@@ -37,8 +32,8 @@ public class EpisodeMiddlewares {
     }
 
     public static void episodeDoesNotExists(Integer seasonId, Integer episodeNo) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
             if (!create.select()
                     .from(EPISODES)
                     .where(EPISODES.SEASONID.eq(seasonId)
@@ -59,8 +54,8 @@ public class EpisodeMiddlewares {
         if(seasonid==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Seasonid cannot be null");
         }
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
             if (create.select()
                     .from(SEASONS)
                     .naturalJoin(EPISODES)
@@ -80,8 +75,8 @@ public class EpisodeMiddlewares {
 
     public static void personNotInEpisode(Integer episodeid, PeopleMediaRequestHelper person) throws SQLException {
         Result<Record> peopleList = null;
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
 
             peopleList = create.select()
                     .from(PEOPLE)
@@ -106,8 +101,8 @@ public class EpisodeMiddlewares {
 
     public static void persoInEpisode(Integer episodeid, PeopleMediaRequestHelper person) throws SQLException {
         Result<Record> peopleList = null;
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
 
             peopleList = create.select()
                     .from(PEOPLE)

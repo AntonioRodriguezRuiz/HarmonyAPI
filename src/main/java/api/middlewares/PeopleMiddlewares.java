@@ -1,15 +1,10 @@
 package api.middlewares;
 
-import api.GlobalValues;
 import api.helpers.request.PeopleRequestHelper;
-import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
+import database.DatabaseConnection;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import static src.main.java.model.Tables.PEOPLE;
@@ -17,8 +12,8 @@ import static src.main.java.model.Tables.PEOPLE;
 public class PeopleMiddlewares {
 
     public static void existsPerson(Integer personid) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
 
             if(create.select()
                     .from(PEOPLE)
@@ -37,8 +32,8 @@ public class PeopleMiddlewares {
     }
 
     public static void doesNotExistsPerson(PeopleRequestHelper person) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
 
             if(person.getBirthdate()!=null && !create.select()
                     .from(PEOPLE)

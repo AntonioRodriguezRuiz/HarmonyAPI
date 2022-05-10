@@ -21,7 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import src.main.java.model.tables.pojos.Genres;
+import src.main.java.model.Tables;
 import src.main.java.model.tables.pojos.Media;
 
 import java.sql.SQLException;
@@ -29,7 +29,6 @@ import java.util.List;
 
 import static src.main.java.model.Tables.*;
 import static src.main.java.model.tables.Media.MEDIA;
-import src.main.java.model.Tables;
 
 
 @RestController

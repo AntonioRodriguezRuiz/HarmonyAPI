@@ -1,18 +1,13 @@
 package api.services;
 
-import api.GlobalValues;
 import api.helpers.enums.TrackerState;
 import api.helpers.request.TrackerRequestHelper;
 import api.helpers.response.TrackerResponseHelper;
-import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
+import database.DatabaseConnection;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import src.main.java.model.tables.pojos.Media;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -31,8 +26,8 @@ public class TrackerService {
 
     public List<TrackerResponseHelper> getTracking(Integer userId, TrackerState state) throws SQLException {
         List<TrackerResponseHelper> trackers = null;
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
             trackers = create.select()
                 .from(TRACKERS)
                 .where(TRACKERS.USERID.eq(userId))
@@ -63,8 +58,8 @@ public class TrackerService {
 
     public TrackerResponseHelper postTracker(Integer userId, TrackerRequestHelper tracker) throws SQLException {
         TrackerResponseHelper response = null;
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
             src.main.java.model.Routines.newtracker(
                 create.configuration(),
                 userId,

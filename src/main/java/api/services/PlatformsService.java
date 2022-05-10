@@ -1,21 +1,13 @@
 package api.services;
 
-import api.GlobalValues;
 import api.helpers.request.PlatformRequestHelper;
 import api.helpers.response.PlatformResponseHelper;
-import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.Result;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
-import org.springframework.http.HttpStatus;
+import database.DatabaseConnection;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import src.main.java.model.Routines;
 import src.main.java.model.tables.pojos.Platforms;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -28,8 +20,8 @@ public class PlatformsService {
     public List<Platforms> getAllPlatforms() {
         List<Platforms> platformsList = null;
 
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
 
             platformsList = create.select(PLATFORMS.fields())
                     .from(PLATFORMS)
@@ -44,8 +36,8 @@ public class PlatformsService {
     public PlatformResponseHelper postPlatform(PlatformRequestHelper platform) throws SQLException {
         PlatformResponseHelper newPlatform = null;
 
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
 
             Routines.newplatform(create.configuration(),
                                 platform.getName());

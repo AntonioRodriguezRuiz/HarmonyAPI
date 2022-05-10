@@ -3,9 +3,9 @@ package api.services;
 import api.GlobalValues;
 import api.helpers.request.*;
 import api.helpers.response.MediaResponseHelper;
+import database.DatabaseConnection;
 import org.jooq.*;
 import org.jooq.impl.DSL;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import src.main.java.model.Routines;
@@ -24,8 +24,8 @@ public class MediaService {
     public List<Media> getAllMedia(String search, TableLike type, SortField order, String genre, Integer offset) {
         List<Media> result = null;
 
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
             if (type==null && order==null && genre==null){
                 result = create.select(MEDIA.fields())
                         .from(MEDIA)
@@ -114,8 +114,8 @@ public class MediaService {
 
     public MediaResponseHelper postMedia(MediaRequestHelper media, Table table) throws SQLException {
         MediaResponseHelper newMedia = null;
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
 
             MovieRequestHelper movie = null;
             SeriesRequestHelper series = null;
@@ -184,8 +184,8 @@ public class MediaService {
     }
 
     public void putMedia(MediaRequestHelper media, Table table, Media oldMedia) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
 
             MediaRequestHelper newMedia = new MediaRequestHelper(null, null, null, null, null, null, null);
             newMedia.setMediaid(media.getMediaid());

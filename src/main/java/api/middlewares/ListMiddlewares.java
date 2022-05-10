@@ -1,14 +1,9 @@
 package api.middlewares;
 
-import api.GlobalValues;
-import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
+import database.DatabaseConnection;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import static src.main.java.model.Tables.LISTMEDIA;
@@ -23,8 +18,8 @@ import static src.main.java.model.Tables.LISTS;
  **/
 public class ListMiddlewares {
     public static void listExists(Integer listId) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
             if (create.select()
                 .from(LISTS)
                 .where(LISTS.LISTID.eq(listId))
@@ -41,8 +36,8 @@ public class ListMiddlewares {
     }
 
     public static void isMediaInList(Integer listId, Integer mediaId) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
             if (create.select()
                 .from(LISTS)
                 .join(LISTMEDIA)
@@ -61,8 +56,8 @@ public class ListMiddlewares {
     }
 
     public static void isMediaNotInList(Integer listId, Integer mediaId) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
             if (create.select()
                 .from(LISTS)
                 .join(LISTMEDIA)
@@ -81,8 +76,8 @@ public class ListMiddlewares {
     }
 
     public static boolean isListOwner(Integer userid, Integer listId) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
             if (!create.select()
                 .from(LISTS)
                 .where(LISTS.LISTID.eq(listId))

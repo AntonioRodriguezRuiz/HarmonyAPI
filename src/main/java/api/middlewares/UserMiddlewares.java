@@ -1,16 +1,11 @@
 package api.middlewares;
 
-import api.GlobalValues;
 import api.helpers.request.UserRequestHelper;
-import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
+import database.DatabaseConnection;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import src.main.java.model.tables.pojos.Admins;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import static src.main.java.model.Tables.ADMINS;
@@ -19,8 +14,8 @@ import static src.main.java.model.Tables.USERS;
 public class UserMiddlewares {
 
     public static void userExists(Integer userid) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
             if (create.select()
                 .from(USERS)
                 .where(USERS.USERID.eq(userid))
@@ -37,8 +32,8 @@ public class UserMiddlewares {
     }
 
     public static void userExists(UserRequestHelper user) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
             if (create.select()
                 .from(USERS)
                 .where(USERS.USERNAME.eq(user.username()))
@@ -61,8 +56,8 @@ public class UserMiddlewares {
     }
 
     public static void isAdmin(Integer userid) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
             if (create.select()
                 .from(ADMINS)
                 .where(ADMINS.USERID.eq(userid))
@@ -79,8 +74,8 @@ public class UserMiddlewares {
     }
 
     public static void isNotAdmin(Integer userid) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+        try {
+            var create = DatabaseConnection.create();
             if (!create.select()
                 .from(ADMINS)
                 .where(ADMINS.USERID.eq(userid))

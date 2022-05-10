@@ -4,7 +4,7 @@ import api.helpers.request.GenreRequestHelper;
 import api.helpers.response.MediaResponseHelper;
 import api.services.GenresService;
 import api.services.MediaSpecificService;
-import info.movito.themoviedbapi.model.MovieDb;
+import info.movito.themoviedbapi.model.Genre;
 import src.main.java.model.tables.pojos.Genres;
 
 import java.sql.SQLException;
@@ -35,16 +35,16 @@ public class GenrePopulator {
         }
     }
 
-    public static void addMovieGenres(MovieDb tmdbMovie, MediaResponseHelper dbMovie) {
+    public static void addGenresTMDB(List<Genre> genres, MediaResponseHelper dbMovie) {
         allGenres = genresService.getAllGenres();
-        tmdbMovie.getGenres().stream()
-                .map(genre -> {
-                    try {
-                        return addGenre(genre.getName());
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
+         genres.stream()
+            .map(genre -> {
+                try {
+                    return addGenre(genre.getName());
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            })
             .forEach(genreId -> {
                 try {
                     mediaSpecificService.addGenre(dbMovie.getMediaid(), new GenreRequestHelper(null, genreId, null));

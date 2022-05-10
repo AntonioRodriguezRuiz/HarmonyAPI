@@ -12,6 +12,7 @@ import org.jooq.tools.json.JSONParser;
 import org.jooq.tools.json.ParseException;
 import org.springframework.web.server.ResponseStatusException;
 import populator.Global;
+import populator.genres.GenrePopulator;
 import src.main.java.model.tables.pojos.Media;
 
 import java.io.BufferedReader;
@@ -126,6 +127,7 @@ public class SeriesPopulator {
                 tmdbSerie.getId()
             );
             var dbSerie = mediaService.postSeries(srh);
+            GenrePopulator.addGenresTMDB(tmdbSerie.getGenres(), dbSerie);
         }
     }
 

@@ -4,6 +4,7 @@ import api.helpers.request.MovieRequestHelper;
 import api.services.MediaService;
 import database.DatabaseConnection;
 import info.movito.themoviedbapi.TmdbMovies;
+import me.tongfei.progressbar.ProgressBar;
 import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONParser;
 import org.jooq.tools.json.ParseException;
@@ -83,9 +84,8 @@ public class MoviePopulator {
             }
         }
         catch (IOException e) {
-            System.out.println(" -> Error while reading file " + jsonFile.getPath() + ": " + e.getMessage());
+            System.out.println("Error while reading file " + jsonFile.getPath() + ": " + e.getMessage());
         }
-
         return movies;
     }
 
@@ -107,7 +107,7 @@ public class MoviePopulator {
     }
 
     private static void add(List<FetchedMovie> movies) throws SQLException {
-        for (FetchedMovie fetchedMovie : movies) {
+        for (FetchedMovie fetchedMovie : ProgressBar.wrap(movies, "Adding movies to database...")) {
             var tmdbMovie = moviesApi.getMovie(fetchedMovie.id(), "en");
             var mrh = new MovieRequestHelper(
                 1,

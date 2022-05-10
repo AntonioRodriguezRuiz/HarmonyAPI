@@ -102,10 +102,9 @@ public class PeoplePopulator {
         return addPerson(crew.getId(), crew.getName(), crew.getJob());
     }
 
-    public static void addMoviePeople(MovieDb tmdbMovie, MediaResponseHelper dbMovie) throws SQLException {
+    public static void addMoviePeople(Credits tmdbMovieCredits, MediaResponseHelper dbMovie) throws SQLException {
         allPeople = getAllPeople();
-        var credits = tmdbMovie.getCredits();
-        Stream.concat(credits.getCast().stream(), credits.getCrew().stream())
+        Stream.concat(tmdbMovieCredits.getCast().stream(), tmdbMovieCredits.getCrew().stream())
             .map(p -> {
                 if (p instanceof PersonCast) {
                     return addCast((PersonCast) p);

@@ -1,9 +1,9 @@
-<p style="text-align: center; width: initial">
+<p align="center" width = 100%>
     <img width="66%" src="./assets/harmony.gif" alt="Animated Harmony logo"> 
 </p>
 
-<h1 style="text-align: center">Harmony</h1>
-<p style="text-align: center">Harmony API Java server</p>
+<h1 align="center">Harmony</h1>
+<p align="center">Harmony API Java server</p>
 
 # Index
 * [Introduction](#Introduction)

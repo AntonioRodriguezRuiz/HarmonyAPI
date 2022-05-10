@@ -3,6 +3,7 @@ package populator.people;
 import api.helpers.enums.RoleType;
 import api.helpers.request.PeopleMediaRequestHelper;
 import api.helpers.request.PeopleRequestHelper;
+import api.helpers.response.MediaResponseHelper;
 import api.helpers.response.PeopleResponseHelper;
 import api.services.MediaSpecificService;
 import api.services.PeopleService;
@@ -101,7 +102,7 @@ public class PeoplePopulator {
         return addPerson(crew.getId(), crew.getName(), crew.getJob());
     }
 
-    public static void addMoviePeople(MovieDb tmdbMovie) throws SQLException {
+    public static void addMoviePeople(MovieDb tmdbMovie, MediaResponseHelper dbMovie) throws SQLException {
         allPeople = getAllPeople();
         var credits = tmdbMovie.getCredits();
         Stream.concat(credits.getCast().stream(), credits.getCrew().stream())
@@ -117,7 +118,7 @@ public class PeoplePopulator {
             .filter(Objects::nonNull)
             .forEach(person -> {
                 try {
-                    mediaSpecificService.addPerson(1, person, MOVIES);
+                    mediaSpecificService.addPerson(dbMovie.getMediaid(), person, MOVIES);
                 }
                 catch (DataAccessException | SQLException e) { }
             });

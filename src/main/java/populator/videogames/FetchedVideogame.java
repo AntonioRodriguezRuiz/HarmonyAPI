@@ -32,7 +32,7 @@ public record FetchedVideogame(VideogameRequestHelper videogame, List<String> ge
             ),
             (List<String>) js.get("genres"),
             (List<String>) js.get("platforms"),
-            ((JSONArray) js.get("developers")) == null ? null : ((JSONArray) js.get("developers")).stream()
+            ((JSONArray) js.get("developers")).stream()
                 .map(developer -> {
                     JSONObject developerObject = (JSONObject) developer;
                     return Pair.of(

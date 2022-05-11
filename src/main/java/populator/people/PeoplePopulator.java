@@ -13,6 +13,7 @@ import info.movito.themoviedbapi.TmdbPeople;
 import info.movito.themoviedbapi.model.Credits;
 import info.movito.themoviedbapi.model.people.PersonCast;
 import info.movito.themoviedbapi.model.people.PersonCrew;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.exception.DataAccessException;
 import org.springframework.web.server.ResponseStatusException;
 import src.main.java.model.tables.pojos.People;
@@ -26,8 +27,7 @@ import java.util.stream.Stream;
 
 import static populator.Global.TMDB;
 import static populator.Global.TMDB_IMAGE_URL;
-import static src.main.java.model.Tables.MOVIES;
-import static src.main.java.model.Tables.PEOPLE;
+import static src.main.java.model.Tables.*;
 
 /**
  * PeoplePopulator
@@ -59,7 +59,7 @@ public class PeoplePopulator {
         return result;
     }
 
-    private static PeopleMediaRequestHelper addPerson(Integer id, String name, String role) {
+    private static PeopleMediaRequestHelper addPerson(Integer id, String name, String role, RoleType roleType) {
         var person = allPeople.stream()
             .filter(p -> p.getName().equals(name))
             .findFirst();
@@ -91,16 +91,50 @@ public class PeoplePopulator {
             1,
             dbPerson.getPersonid(),
             role,
-            RoleType.CAST
+            roleType
         );
     }
 
+    private static List<PeopleMediaRequestHelper> addPerson(PeopleRequestHelper fetchedPerson, List<String> roles, RoleType roleType) {
+        var person = allPeople.stream()
+            .filter(p -> p.getName().equals(fetchedPerson.getName()))
+            .findFirst();
+        PeopleResponseHelper dbPerson = null;
+        if (person.isPresent()) {
+            dbPerson = new PeopleResponseHelper(
+                person.get().getPersonid(),
+                person.get().getName(),
+                person.get().getBirthdate(),
+                person.get().getPicture()
+            );
+        } else {
+            try {
+                dbPerson = peopleService.postPerson(fetchedPerson);
+            } catch (SQLException | DataAccessException e) {
+                return null;
+            }
+        }
+        List<PeopleMediaRequestHelper> result = new ArrayList<>();
+        if (dbPerson != null) {
+            PeopleResponseHelper finalDbPerson = dbPerson;
+            roles.forEach(
+                role -> result.add(new PeopleMediaRequestHelper(
+                    1,
+                    finalDbPerson.getPersonid(),
+                    role,
+                    roleType
+                ))
+            );
+        }
+        return result;
+    }
+
     private static PeopleMediaRequestHelper addCast(PersonCast cast) {
-        return addPerson(cast.getId(), cast.getName(), cast.getCharacter());
+        return addPerson(cast.getId(), cast.getName(), cast.getCharacter(), RoleType.CAST);
     }
 
     private static PeopleMediaRequestHelper addCrew(PersonCrew crew) {
-        return addPerson(crew.getId(), crew.getName(), crew.getJob());
+        return addPerson(crew.getId(), crew.getName(), crew.getJob(), RoleType.CREW);
     }
 
     public static void addMoviePeople(Credits tmdbMovieCredits, MediaResponseHelper dbMovie) throws SQLException {
@@ -156,6 +190,19 @@ public class PeoplePopulator {
             .forEach(person -> {
                 try {
                     mediaSpecificService.addPersonEpisode(dbEpisode.getMediaid(), seasonId, episodeId, person);
+                }
+                catch (DataAccessException | SQLException e) { }
+            });
+    }
+
+    public static void addVideogamePeople(Integer videogameId, List<Pair<PeopleRequestHelper, List<String>>> people) throws SQLException {
+        allPeople = getAllPeople();
+        people.stream()
+            .flatMap(pair -> addPerson(pair.getKey(), pair.getValue(), RoleType.CREW).stream())
+            .filter(Objects::nonNull)
+            .forEach(person -> {
+                try {
+                    mediaSpecificService.addPerson(videogameId, person, VIDEOGAMES);
                 }
                 catch (DataAccessException | SQLException e) { }
             });

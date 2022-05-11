@@ -617,6 +617,9 @@ paths:
             schema:
               type: object
               properties:
+                userid:
+                  type: integer
+                  format: int32
                 episodeid:
                   type: integer
                   format: int32
@@ -665,6 +668,9 @@ paths:
             schema:
               type: object
               properties:
+                userid:
+                  type: integer
+                  format: int32
                 episodeid:
                   type: integer
                   format: int32

@@ -67,8 +67,8 @@ public class TrackerService {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
             src.main.java.model.Routines.newtracker(
                 create.configuration(),
-                userId,
                 tracker.mediaId(),
+                userId,
                 tracker.state().ordinal()
             );
             response = new TrackerResponseHelper(

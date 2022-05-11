@@ -37,30 +37,19 @@ public class TrackerMiddlewares {
     public static void statusUnchanged(Integer mediaId,Integer userId, TrackerState state) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+
             List<Integer> stateList = create.select()
                     .from(TRACKERS)
                     .where(TRACKERS.USERID.eq(userId))
                     .and(TRACKERS.MEDIAID.eq(mediaId))
+                    .and(TRACKERS.ACTIVE.eq((byte) 1))
+                    .and(TRACKERS.STATE.eq(state.ordinal()))
                     .fetch(TRACKERS.STATE);
-            Integer lastState = stateList.get(stateList.size()-1);
-            switch(lastState){
-                case 0:
-                    if(state.equals(TrackerState.PLANNING))
-                        throw new ResponseStatusException(HttpStatus.CONFLICT);
-                case 1:
-                    if(state.equals(TrackerState.IN_PROGRESS))
-                        throw new ResponseStatusException(HttpStatus.CONFLICT);
 
-                case 2:
-                    if(state.equals(TrackerState.COMPLETED))
-                        throw new ResponseStatusException(HttpStatus.CONFLICT);
-                case 3:
-                    if(state.equals(TrackerState.DID_NOT_FINISH))
-                        throw new ResponseStatusException(HttpStatus.CONFLICT);
-                case 4:
-                    if(state.equals(TrackerState.ABANDONED))
-                        throw new ResponseStatusException(HttpStatus.CONFLICT);
+            if(!stateList.isEmpty()){
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "User already has an active tracker with this state for this media");
             }
+
         } catch (ResponseStatusException | SQLException e){
             if(e instanceof ResponseStatusException){
                 throw e;

@@ -34,10 +34,6 @@ import java.util.List;
 public class TrackerController {
 
     @Autowired
-    private MediaService mediaService;
-    @Autowired
-    private UserService userService;
-    @Autowired
     private TrackerService trackerService;
 
     @Operation(summary = "Get all trackers for a user")
@@ -45,13 +41,13 @@ public class TrackerController {
         @ApiResponse(responseCode = "200", description = "Trackers found"),
         @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
-    @GetMapping
-    public ResponseEntity<List<TrackerResponseHelper>> getTracking(
-        @PathVariable Integer userId,
-        @RequestParam(name = "state", required = false) TrackerState state
-    ) throws SQLException {
+    @GetMapping("{history}")
+    public ResponseEntity<List<TrackerResponseHelper>> getTracking( @PathVariable Integer userId,
+                                                                    @RequestParam Boolean history,
+                                                                    @RequestParam(name = "state", required = false) TrackerState state
+                                                                    ) throws SQLException {
         UserMiddlewares.userExists(userId);
-        return new ResponseEntity<>(trackerService.getTracking(userId, state), HttpStatus.OK);
+        return new ResponseEntity<>(trackerService.getTracking(userId, state, history), HttpStatus.OK);
     }
 
     @Operation(summary = "Creates a new tracker")

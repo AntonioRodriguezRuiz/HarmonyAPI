@@ -41,7 +41,7 @@ public class TrackerController {
         @ApiResponse(responseCode = "200", description = "Trackers found"),
         @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
-    @GetMapping("{history}")
+    @GetMapping
     public ResponseEntity<List<TrackerResponseHelper>> getTracking( @PathVariable Integer userId,
                                                                     @RequestParam Boolean history,
                                                                     @RequestParam(name = "state", required = false) TrackerState state

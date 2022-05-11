@@ -10,6 +10,7 @@ import org.jooq.tools.json.JSONParser;
 import org.jooq.tools.json.ParseException;
 import org.springframework.web.server.ResponseStatusException;
 import populator.genres.GenrePopulator;
+import populator.platforms.PlatformPopulator;
 import src.main.java.model.tables.pojos.Media;
 
 import java.io.BufferedReader;
@@ -77,6 +78,7 @@ public class VideogamePopulator {
         for (var videogame : ProgressBar.wrap(videogames, pbb)) {
             var dbVideogame = mediaService.postVideogame(videogame.videogame());
             GenrePopulator.addGenresVideogames(videogame.genres(), dbVideogame);
+            PlatformPopulator.addPlatformsVideogames(videogame.platforms(), dbVideogame);
         }
     }
 

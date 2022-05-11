@@ -1,12 +1,13 @@
-<p align="center" width = 100%>
-    <img width="66%" src="./assets/harmony.gif" alt="Animated Harmony logo"> 
+<p align="center" width="100%">
+    <img width="66%" src="./assets/harmony.gif"> 
 </p>
 
-<h1 align="center">Harmony</h1>
+<h1 align=center>Harmony</h1>
 <p align="center">Harmony API Java server</p>
 
 # Index
 * [Introduction](#Introduction)
+* [Resources](#resources)
 * [Operations](#operations)
 * [Usage suggestions](#usage-suggestions)
 * [Local deployment](#local-deployment)
@@ -16,6 +17,144 @@
 To check out URIs and request bodies, refer to our [SwaggerHub Page](https://harmonyapi.rocks).
 Using the interactive documentation you will be able to check out URIs, response and request bodies...etc.
 
+# Resources
+Here is an overview of the resources Harmony offers in the form
+of their response bodies and a short description of the relationship between them.
+
+## Media
+```json
+{
+  "mediaid": 0,
+  "title": "string",
+  "releasedate": "2022-05-11",
+  "coverimage": "string",
+  "backgroundimage": "string",
+  "synopsis": "string",
+  "avgrating": 0,
+  "genresList": [
+    {
+      "genreid": 0,
+      "name": "string"
+    }
+  ]
+}
+```
+When getting a list of media, instead of the details for a single one, genresList will be omitted.
+
+Every piece of media has to belong to one of four types: video games, books, movies, series. Specific attributes
+of these types will be described further down.
+
+### Videogames
+````json
+{
+  "mediaid":5,
+  "title":"string",
+  "releasedate":"2012-06-23",
+  "coverimage":"img/bkg/default",
+  "backgroundimage":"img/bkg/default",
+  "synopsis":"string",
+  "avgrating":0,
+  "genresList":[],
+  "company":"string",
+  "platforms":[
+    {
+      "platformid": 0,
+      "platformname": "string"
+    }
+  ]
+}
+````
+### Books
+````json
+{
+  "mediaid":4,
+  "title":"string",
+  "releasedate":"2012-06-23",
+  "coverimage":"img/bkg/default",
+  "backgroundimage":"img/bkg/default",
+  "synopsis":"string",
+  "avgRating":0,
+  "genresList":[],
+  "collection":"string"
+}
+````
+### Series
+    
+
+### Movies
+```json
+{"mediaid":6,
+  "title":"movieTest",
+  "releasedate":"1999-05-01",
+  "coverimage":"img/bkg/default",
+  "backgroundimage":"img/bkg/default",
+  "synopsis":"test for oder",
+  "avgRating":3.0,
+  "genresList":[
+    
+  ]}
+```
+
+## People
+```json
+  {
+    "personid": 0,
+    "name": "string",
+    "birthdate": "2022-05-11",
+    "picture": "string"
+  }
+```
+People are those who work in the creation of media. Expect the response structure above when searching for them by themselves.
+However, when querying them while in association with a piece of media, the response will be:
+
+````json
+{
+  "mediaid": 0,
+  "personid": 0,
+  "role": "string",
+  "roleType": "CAST"
+}
+````
+The roleType attribute will be either CAST(they appear in the piece of media) or CREW(worked in making it behind the scenes). 
+
+Note that in series, people are associated with individual episodes, not the whole show.
+
+## User
+## Lists
+
+## Trackers
+## Review
+```json
+{
+    "reviewid": 0,
+    "userid": 0,
+    "mediaid": 0,
+    "creationDate": "2022-05-11T11:14:34.508Z",
+    "rating": 0,
+    "review": "string",
+    "likes": 0
+  }
+```
+
+Reviews can be queried by their review id (getting only one), or in the form of a list
+of all reviews associated with a media id.
+
+Ratings accept numerical values from 0 to 5 (floating point, too). The average of all reviews
+associated with a piece of media make the avgRating attribute.
+
+## Reports
+```json
+  {
+    "reportid": 0,
+    "useridreporter": 0,
+    "useridreported": 0,
+    "reviewid": 0,
+    "reason": "string"
+  }
+```
+
+If you encounter a review with questionable content, you can report it so Harmony's administrators
+can have a look at it and decide if it has to be forcefully deleted.
 # Operations
 Operations marked with 🛡 are either administrator only( use `userid=1` for those), or can only be requested by the same
 user who posted the item in the first place.

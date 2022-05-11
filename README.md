@@ -27,7 +27,7 @@ user who posted the item in the first place.
 | **videogames** | 🛡POST, 🛡PUT            | /api/v1/videogames |
 | **series**     | 🛡POST, 🛡PUT            | /api/v1/series     |
 | **movies**     | 🛡POST, 🛡PUT            | /api/v1/movies     |
-| **books**      | 🛡POST, 🛡PUT            | /api/v1/           |
+| **books**      | 🛡POST, 🛡PUT            | /api/v1/book       |
 
 ## Media Specific Operations
 | **Resource**  | **Available operations**     | **URI**                                          |

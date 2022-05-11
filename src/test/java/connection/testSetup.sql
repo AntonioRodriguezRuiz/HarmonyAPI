@@ -64,7 +64,7 @@ CREATE TABLE media(
                       releaseDate DATE NOT NULL,
                       coverImage VARCHAR(120) NOT NULL,
                       backgroundImage VARCHAR(120) NOT NULL,
-                      synopsis VARCHAR(1500) NOT NULL,
+                      synopsis TEXT(50000000) NOT NULL,
                       avgRating FLOAT(3),
                       externalId INT,
 
@@ -77,7 +77,7 @@ CREATE TABLE media(
 CREATE TABLE videogames(
                            videogameid INT NOT NULL UNIQUE AUTO_INCREMENT,
                            mediaid INT NOT NULL UNIQUE,
-                           company VARCHAR(60) NOT NULL,
+                           company VARCHAR(600) NOT NULL,
 
                            PRIMARY KEY (videogameid),
 
@@ -376,7 +376,7 @@ BEGIN
 END//
 
 DROP PROCEDURE IF EXISTS newSeries;
-CREATE PROCEDURE newSeries(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500), externalId INT)
+CREATE PROCEDURE newSeries(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis TEXT(50000000), externalId INT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -506,7 +506,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newVideogame;
-CREATE PROCEDURE newVideogame(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500), externalId INT, company VARCHAR(60))
+CREATE PROCEDURE newVideogame(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis TEXT(50000000), externalId INT, company VARCHAR(600))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -611,7 +611,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newBook;
-CREATE PROCEDURE newBook(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500), externalId INT, collection VARCHAR(120))
+CREATE PROCEDURE newBook(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis TEXT(50000000), externalId INT, collection VARCHAR(120))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -648,7 +648,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newMovie;
-CREATE PROCEDURE newMovie(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500), externalId INT)
+CREATE PROCEDURE newMovie(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis TEXT(50000000), externalId INT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN

@@ -29,29 +29,52 @@ import static src.main.java.model.Tables.TRACKERS;
 @Service
 public class TrackerService {
 
-    public List<TrackerResponseHelper> getTracking(Integer userId, TrackerState state) throws SQLException {
+    public List<TrackerResponseHelper> getTracking(Integer userId, TrackerState state, Boolean history) throws SQLException {
         List<TrackerResponseHelper> trackers = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-            trackers = create.select()
-                .from(TRACKERS)
-                .where(TRACKERS.USERID.eq(userId))
-                .fetch()
-                .stream()
-                .map(t -> new TrackerResponseHelper(
-                    t,
-                    create.select()
-                        .from(MEDIA)
-                        .where(MEDIA.MEDIAID.eq(t.get(TRACKERS.MEDIAID)))
-                        .fetch().get(0)
-                        .into(Media.class)
-                ))
-                .toList();
+
+            if(history){
+                trackers = create.select()
+                        .from(TRACKERS)
+                        .where(TRACKERS.USERID.eq(userId))
+                        .orderBy(TRACKERS.CREATIONDATE.desc())
+                        .fetch()
+                        .stream()
+                        .map(t -> new TrackerResponseHelper(
+                                t,
+                                create.select()
+                                        .from(MEDIA)
+                                        .where(MEDIA.MEDIAID.eq(t.get(TRACKERS.MEDIAID)))
+                                        .fetch().get(0)
+                                        .into(Media.class)
+                        ))
+                        .toList();
+            } else {
+                trackers = create.select()
+                        .from(TRACKERS)
+                        .where(TRACKERS.USERID.eq(userId))
+                        .and(TRACKERS.ACTIVE.eq((byte) 1))
+                        .orderBy(TRACKERS.CREATIONDATE.desc())
+                        .fetch()
+                        .stream()
+                        .map(t -> new TrackerResponseHelper(
+                                t,
+                                create.select()
+                                        .from(MEDIA)
+                                        .where(MEDIA.MEDIAID.eq(t.get(TRACKERS.MEDIAID)))
+                                        .fetch().get(0)
+                                        .into(Media.class)
+                        ))
+                        .toList();
+            }
+
             if (state != null) {
                 trackers = trackers.stream()
                     .filter(t -> t.state() == state)
                     .toList();
             }
+
         } catch (ResponseStatusException | SQLException e) {
             if (e instanceof ResponseStatusException) {
                 throw e;

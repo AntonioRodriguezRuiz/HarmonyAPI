@@ -35,74 +35,54 @@ user who posted the item in the first place.
 | **media**     | GET, 🛡DELETE                | /api/v1/media/{id}                               |
 | **genres**    | 🛡POST                       | /api/v1/media/{id}/genres                        |
 | **genres**    | 🛡DELETE                     | /api/v1/media/{id}/genres/{genreid}              |
-| **platforms** | 🛡POST                       | /api/v1/media/{id}/platforms                     |
-| **platforms** | 🛡DELETE                     | /api/v1/media/{id}/platforms/{platformid}        |
+| **videogame platforms** | 🛡POST                       | /api/v1/media/{id}/platforms                     |
+| **videogame platforms** | 🛡DELETE                     | /api/v1/media/{id}/platforms/{platformid}        |
 | **season**    | 🛡POST, 🛡PUT                | /api/v1/media/{id}/seasons                       |
 | **season**    | GET, 🛡POST, 🛡PUT, 🛡DELETE | /api/v1/media/{id}/{seasonid}                    |
 | **episode**   | GET, 🛡DELETE                | /api/v1/media/{id}/{seasonid}/{episodeid}        |
 | **reviews**   | GET, POST, 🛡PUT             | /api/v1/media/{id}/reviews                       |
-| **people**    | GET, 🛡POST                  | /api/v1/media/{id}/people                        |
-| **people**    | 🛡DELETE                     | /api/v1/media/{id}/people/{id}                   |
-| **people**    | GET, 🛡POST                  | /api/v1/media/{id}/{seasonid}/{episodeid}/people |
-| **people**    | 🛡DELETE                     | /api/v1/media/{id}/{seasonid}/{episodeid}/people |
+| **people in media**    | GET, 🛡POST                  | /api/v1/media/{id}/people                        |
+| **people in media**    | 🛡DELETE                     | /api/v1/media/{id}/people/{id}                   |
+| **people in episodes**    | GET, 🛡POST                  | /api/v1/media/{id}/{seasonid}/{episodeid}/people |
+| **people in episodes**    | 🛡DELETE                     | /api/v1/media/{id}/{seasonid}/{episodeid}/people/{id} |
 
-## Genres General Operations
+## Genres Operations
 
 | **Resource** | **Available operations** | **URI**        |
 |--------------|--------------------------|----------------|
 | **genres**   | GET, 🛡POST              | /api/v1/genres |
+| **genres**   | 🛡DELETE                 | /api/v1/genres/{id} |
 
-## Genres Specific Operations
-| **Resource** | **Available operations** | **URI**                                          |
-|--------------|--------------------------|--------------------------------------------------|
-| **genres**   | 🛡DELETE                 | /api/v1/genres/{id}                              |
-
-## Platforms General Operations
+## Platforms Operations
 | **Resource**  | **Available operations** | **URI**           |
 |---------------|--------------------------|-------------------|
 | **platforms** | GET, 🛡POST              | /api/v1/platforms |
-
-## Platforms Specific Operations
-| **Resource**  | **Available operations** | **URI**                |
-|---------------|--------------------------|------------------------|
 | **platforms** | 🛡DELETE                 | /api/v1/platforms/{id} |
 
-## People General Operations
+## People Operations
 | **Resource** | **Available operations** | **URI**        |
 |--------------|--------------------------|----------------|
 | **people**   | GET, 🛡POST, 🛡PUT       | /api/v1/people |
-
-## People Specific Operations
-| **Resource** | **Available operations** | **URI**             |
-|--------------|--------------------------|---------------------|
 | **people**   | GET, 🛡DELETE            | /api/v1/people/{id} |
 
-## User General Operations
+## User Operations
 | **Resource** | **Available operations** | **URI**      |
 |--------------|--------------------------|--------------|
 | **user**     | POST                     | /api/v1/user |
-
-## User Specific Operations
-| **Resource** | **Available operations** | **URI**           |
-|--------------|--------------------------|-------------------|
 | **user**     | 🛡GET, 🛡PUT, 🛡DELETE   | /api/v1/user/{id} |
 
 
 ## User Tracker Operations (Unusable as of now)
 | **Resource** | **Available operations** | **URI**                        |
 |--------------|--------------------------|--------------------------------|
-| **tracking** | GET, POST                | /api/v1/user/{userid}/tracking |
+| **trackers** | GET, POST                | /api/v1/user/{userid}/tracking |
 
-## User Lists General Operations
+## User Lists Operations
 | **Resource** | **Available operations** | **URI**                     |
 |--------------|--------------------------|-----------------------------|
 | **lists**    | GET, POST                | /api/v1/user/{userid}/lists |
-
-## User Lists Specific Operations
-| **Resource** | **Available operations**      | **URI**                                          |
-|--------------|-------------------------------|--------------------------------------------------|
 | **lists**    | GET,  🛡POST, 🛡PUT, 🛡DELETE | /api/v1/user/{userId}/lists/{listId}             |
-| **media**    | 🛡DELETE                      | /api/v1/user/{userId}/lists/{listId}/{mediaId}   |
+| **media in lists**    | 🛡DELETE                      | /api/v1/user/{userId}/lists/{listId}/{mediaId}   |
 
 ## Review Specific Operations
 | **Resource** | **Available operations** | **URI**                             |
@@ -111,14 +91,10 @@ user who posted the item in the first place.
 | **likes**    | POST                     | /api/v1/reviews/{id}/likes          |
 | **likes**    | 🛡DELETE                 | /api/v1/reviews/{id}/likes/{likeid} |
 
-## Reports General Operations
+## Reports Operations
 | **Resource** | **Available operations** | **URI**         |
 |--------------|--------------------------|-----------------|
 | **reports**  | 🛡GET, POST              | /api/v1/reports |
-
-## Reports Specific Operations
-| **Resource** | **Available operations** | **URI**              |
-|--------------|--------------------------|----------------------|
 | **reports**  | 🛡DELETE                 | /api/v1/reports/{id} |
 
 # Usage suggestions

@@ -4,7 +4,6 @@ import api.GlobalValues;
 import api.helpers.request.PeopleRequestHelper;
 import api.helpers.response.PeopleResponseHelper;
 import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,7 +24,7 @@ public class PeopleService {
         List<People> peopleList=null;
 
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
             peopleList = create.select()
                                 .from(PEOPLE)
                                 .where(PEOPLE.NAME.contains(search))
@@ -41,7 +40,7 @@ public class PeopleService {
     public PeopleResponseHelper postPerson(PeopleRequestHelper person) throws SQLException {
         PeopleResponseHelper newPerson=null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
 
             Routines.newperson(create.configuration(), person.getName(), person.getBirthdate(), person.getPicture());
 
@@ -62,7 +61,7 @@ public class PeopleService {
 
     public void putPerson(PeopleRequestHelper person) throws SQLException{
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
 
             People oldPerson = create.select()
                                     .from(PEOPLE)

@@ -4,7 +4,6 @@ import api.GlobalValues;
 import api.helpers.request.UserRequestHelper;
 import api.helpers.response.UserResponseHelper;
 import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,7 +27,7 @@ public class UserService {
     public UserResponseHelper postUser(UserRequestHelper user) throws SQLException {
         UserResponseHelper newUser = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
 
             Routines.newuser(
                 create.configuration(),

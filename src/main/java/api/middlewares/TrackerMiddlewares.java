@@ -3,7 +3,6 @@ package api.middlewares;
 import api.GlobalValues;
 import api.helpers.enums.TrackerState;
 import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,7 +17,7 @@ import static src.main.java.model.Tables.TRACKERS;
 public class TrackerMiddlewares {
     public static void trackerExists(Integer trackerId) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
             if (create.select()
                     .from(TRACKERS)
                     .where(TRACKERS.TRACKERID.eq(trackerId))
@@ -36,8 +35,7 @@ public class TrackerMiddlewares {
 
     public static void statusUnchanged(Integer mediaId,Integer userId, TrackerState state) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
-
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
             List<Integer> stateList = create.select()
                     .from(TRACKERS)
                     .where(TRACKERS.USERID.eq(userId))

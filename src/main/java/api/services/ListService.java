@@ -4,7 +4,6 @@ import api.GlobalValues;
 import api.helpers.request.ListRequestHelper;
 import api.helpers.response.ListResponseHelper;
 import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -31,7 +30,7 @@ public class ListService {
     public List<ListResponseHelper> getLists(Integer userId) throws SQLException {
         List<ListResponseHelper> lists = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
             lists = create.select()
                 .from(LISTS)
                 .where(LISTS.USERID.eq(userId))
@@ -57,7 +56,7 @@ public class ListService {
 
     public ListResponseHelper postList(Integer userId, ListRequestHelper list) throws SQLException {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
             Routines.newlist(
                 create.configuration(),
                 userId,

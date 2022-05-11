@@ -5,7 +5,6 @@ import api.helpers.enums.TrackerState;
 import api.helpers.request.TrackerRequestHelper;
 import api.helpers.response.TrackerResponseHelper;
 import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -32,7 +31,7 @@ public class TrackerService {
     public List<TrackerResponseHelper> getTracking(Integer userId, TrackerState state, Boolean history) throws SQLException {
         List<TrackerResponseHelper> trackers = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
 
             if(history){
                 trackers = create.select()
@@ -87,7 +86,7 @@ public class TrackerService {
     public TrackerResponseHelper postTracker(Integer userId, TrackerRequestHelper tracker) throws SQLException {
         TrackerResponseHelper response = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
-            DSLContext create = DSL.using(conn, SQLDialect.MARIADB);
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
             src.main.java.model.Routines.newtracker(
                 create.configuration(),
                 tracker.mediaId(),

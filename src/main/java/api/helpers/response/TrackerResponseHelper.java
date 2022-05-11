@@ -15,14 +15,15 @@ import static src.main.java.model.Tables.TRACKERS;
  *
  * @author juagallop1
  **/
-public record TrackerResponseHelper(Integer id, Media media, Integer userId, TrackerState state, LocalDateTime creationDate) {
+public record TrackerResponseHelper(Integer id, Integer userId, TrackerState state, Boolean active, LocalDateTime creationDate, Media media) {
     public TrackerResponseHelper(Record tracker, Media media) {
         this(
             tracker.get(TRACKERS.TRACKERID),
-            media,
             tracker.get(TRACKERS.USERID),
             TrackerState.of(tracker.get(TRACKERS.STATE)),
-            tracker.get(TRACKERS.CREATIONDATE)
+            tracker.get(TRACKERS.ACTIVE).intValue()!=0,
+            tracker.get(TRACKERS.CREATIONDATE),
+            media
         );
     }
 }

@@ -247,6 +247,7 @@ CREATE TABLE trackers(
                          mediaid INT NOT NULL,
                          userid INT NOT NULL,
                          state INT NOT NULL,
+                         active BOOLEAN NOT NULL,
                          creationDate DATETIME NOT NULL,
 
                          PRIMARY KEY (trackerid),
@@ -751,6 +752,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newTracker;
+DELIMITER //
 CREATE PROCEDURE newTracker(media INT, user INT, state INT)
 BEGIN
     START TRANSACTION;
@@ -764,8 +766,12 @@ BEGIN
                 SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @text;
             END;
 
-        INSERT INTO trackers(mediaid, userid, state, creationDate)
-        VALUES(media, user, state, CURDATE());
+        UPDATE trackers SET active=false
+        WHERE trackers.mediaid=media
+          AND trackers.userid=user;
+
+        INSERT INTO trackers(mediaid, userid, state, active, creationDate)
+        VALUES(media, user, state, true, CURTIME());
         COMMIT;
     END;
 END //

@@ -20,6 +20,7 @@ public class Trackers implements Serializable {
     private Integer       mediaid;
     private Integer       userid;
     private Integer       state;
+    private Byte          active;
     private LocalDateTime creationdate;
 
     public Trackers() {}
@@ -29,6 +30,7 @@ public class Trackers implements Serializable {
         this.mediaid = value.mediaid;
         this.userid = value.userid;
         this.state = value.state;
+        this.active = value.active;
         this.creationdate = value.creationdate;
     }
 
@@ -37,12 +39,14 @@ public class Trackers implements Serializable {
         Integer       mediaid,
         Integer       userid,
         Integer       state,
+        Byte          active,
         LocalDateTime creationdate
     ) {
         this.trackerid = trackerid;
         this.mediaid = mediaid;
         this.userid = userid;
         this.state = state;
+        this.active = active;
         this.creationdate = creationdate;
     }
 
@@ -107,6 +111,21 @@ public class Trackers implements Serializable {
     }
 
     /**
+     * Getter for <code>harmony.trackers.active</code>.
+     */
+    public Byte getActive() {
+        return this.active;
+    }
+
+    /**
+     * Setter for <code>harmony.trackers.active</code>.
+     */
+    public Trackers setActive(Byte active) {
+        this.active = active;
+        return this;
+    }
+
+    /**
      * Getter for <code>harmony.trackers.creationDate</code>.
      */
     public LocalDateTime getCreationdate() {
@@ -154,6 +173,12 @@ public class Trackers implements Serializable {
         }
         else if (!state.equals(other.state))
             return false;
+        if (active == null) {
+            if (other.active != null)
+                return false;
+        }
+        else if (!active.equals(other.active))
+            return false;
         if (creationdate == null) {
             if (other.creationdate != null)
                 return false;
@@ -171,6 +196,7 @@ public class Trackers implements Serializable {
         result = prime * result + ((this.mediaid == null) ? 0 : this.mediaid.hashCode());
         result = prime * result + ((this.userid == null) ? 0 : this.userid.hashCode());
         result = prime * result + ((this.state == null) ? 0 : this.state.hashCode());
+        result = prime * result + ((this.active == null) ? 0 : this.active.hashCode());
         result = prime * result + ((this.creationdate == null) ? 0 : this.creationdate.hashCode());
         return result;
     }
@@ -183,6 +209,7 @@ public class Trackers implements Serializable {
         sb.append(", ").append(mediaid);
         sb.append(", ").append(userid);
         sb.append(", ").append(state);
+        sb.append(", ").append(active);
         sb.append(", ").append(creationdate);
 
         sb.append(")");

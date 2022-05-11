@@ -5,7 +5,12 @@ package src.main.java.model.tables;
 
 
 import org.jooq.Record;
-import org.jooq.*;
+import org.jooq.Row6;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.TableOptions;
+import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;
@@ -60,6 +65,11 @@ public class Trackers extends TableImpl<TrackersRecord> {
      * The column <code>harmony.trackers.state</code>.
      */
     public final TableField<TrackersRecord, Integer> STATE = createField(DSL.name("state"), SQLDataType.INTEGER.nullable(false), this, "");
+
+    /**
+     * The column <code>harmony.trackers.active</code>.
+     */
+    public final TableField<TrackersRecord, Byte> ACTIVE = createField(DSL.name("active"), SQLDataType.TINYINT.nullable(false), this, "");
 
     /**
      * The column <code>harmony.trackers.creationDate</code>.
@@ -180,11 +190,11 @@ public class Trackers extends TableImpl<TrackersRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row5 type methods
+    // Row6 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row5<Integer, Integer, Integer, Integer, LocalDateTime> fieldsRow() {
-        return (Row5) super.fieldsRow();
+    public Row6<Integer, Integer, Integer, Integer, Byte, LocalDateTime> fieldsRow() {
+        return (Row6) super.fieldsRow();
     }
 }

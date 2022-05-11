@@ -5,6 +5,8 @@ import api.helpers.enums.TrackerState;
 import api.helpers.request.TrackerRequestHelper;
 import api.helpers.response.TrackerResponseHelper;
 import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.Result;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,29 +30,44 @@ import static src.main.java.model.Tables.TRACKERS;
 @Service
 public class TrackerService {
 
-    public List<TrackerResponseHelper> getTracking(Integer userId, TrackerState state) throws SQLException {
+    public List<TrackerResponseHelper> getTracking(Integer userId, TrackerState state, Boolean history) throws SQLException {
         List<TrackerResponseHelper> trackers = null;
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
-            trackers = create.select()
-                .from(TRACKERS)
-                .where(TRACKERS.USERID.eq(userId))
-                .fetch()
-                .stream()
-                .map(t -> new TrackerResponseHelper(
-                    t,
-                    create.select()
-                        .from(MEDIA)
-                        .where(MEDIA.MEDIAID.eq(t.get(TRACKERS.MEDIAID)))
-                        .fetch().get(0)
-                        .into(Media.class)
-                ))
-                .toList();
+
+            Result<Record> queryResult = null;
+            if(history){
+                queryResult = create.select()
+                        .from(TRACKERS)
+                        .where(TRACKERS.USERID.eq(userId))
+                        .orderBy(TRACKERS.CREATIONDATE.desc())
+                        .fetch();
+            } else {
+                queryResult = create.select()
+                        .from(TRACKERS)
+                        .where(TRACKERS.USERID.eq(userId))
+                        .and(TRACKERS.ACTIVE.eq((byte) 1))
+                        .orderBy(TRACKERS.CREATIONDATE.desc())
+                        .fetch();
+            }
+
+            trackers = queryResult.stream()
+                    .map(t -> new TrackerResponseHelper(
+                            t,
+                            create.select()
+                                    .from(MEDIA)
+                                    .where(MEDIA.MEDIAID.eq(t.get(TRACKERS.MEDIAID)))
+                                    .fetch().get(0)
+                                    .into(Media.class)
+                    ))
+                    .toList();
+
             if (state != null) {
                 trackers = trackers.stream()
                     .filter(t -> t.state() == state)
                     .toList();
             }
+
         } catch (ResponseStatusException | SQLException e) {
             if (e instanceof ResponseStatusException) {
                 throw e;
@@ -66,8 +83,8 @@ public class TrackerService {
             DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
             src.main.java.model.Routines.newtracker(
                 create.configuration(),
-                userId,
                 tracker.mediaId(),
+                userId,
                 tracker.state().ordinal()
             );
             response = new TrackerResponseHelper(

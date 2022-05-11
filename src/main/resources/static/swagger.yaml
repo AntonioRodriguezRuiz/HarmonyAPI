@@ -1502,7 +1502,7 @@ paths:
   "/api/v1/user/{userId}/tracking":
     get:
       tags:
-        - User Trackers Operations (Currently unfinished/unusable)
+        - User Trackers Operations
       summary: Get all trackers for a user
       operationId: getTracking
       parameters:
@@ -1512,6 +1512,11 @@ paths:
           schema:
             type: integer
             format: int32
+        - name: history
+          in: query
+          required: true
+          schema:
+            type: boolean
         - name: state
           in: query
           required: false
@@ -1526,11 +1531,17 @@ paths:
       responses:
         '200':
           description: Trackers found
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/TrackerResponseHelper"
         '404':
           description: User not found
     post:
       tags:
-        - User Trackers Operations (Currently unfinished/unusable)
+        - User Trackers Operations
       summary: Creates a new tracker
       operationId: postTracker
       parameters:
@@ -1549,10 +1560,14 @@ paths:
       responses:
         '201':
           description: Tracker created
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/TrackerResponseHelper"
         '400':
           description: Invalid request
         '404':
-          description: User not found
+          description: User or media not found
         '409':
           description: Tracker already exists
   "/api/v1/user/{userId}/lists":
@@ -2455,3 +2470,27 @@ components:
           format: date
         picture:
           type: string
+    TrackerResponseHelper:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        userId:
+          type: integer
+          format: int32
+        state:
+          type: string
+          enum:
+            - PLANNING
+            - IN_PROGRESS
+            - COMPLETED
+            - DID_NOT_FINISH
+            - ABANDONED
+        active:
+          type: boolean
+        creationDate:
+          type: string
+          format: date-time
+        media:
+          "$ref": "#/components/schemas/Media"

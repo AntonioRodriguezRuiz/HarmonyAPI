@@ -36,7 +36,7 @@ public class GenrePopulator {
     }
 
     public static void addGenresTMDB(List<Genre> genres, MediaResponseHelper dbMovie) {
-        allGenres = genresService.getAllGenres();
+         allGenres = genresService.getAllGenres();
          genres.stream()
             .map(genre -> {
                 try {
@@ -53,5 +53,25 @@ public class GenrePopulator {
                 }
             }
         );
+    }
+
+    public static void addGenresVideogames(List<String> genres, MediaResponseHelper dbVideogame) {
+        allGenres = genresService.getAllGenres();
+        genres.stream()
+            .map(genre -> {
+                try {
+                    return addGenre(genre);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            })
+            .forEach(genreId -> {
+                    try {
+                        mediaSpecificService.addGenre(dbVideogame.getMediaid(), new GenreRequestHelper(null, genreId, null));
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            );
     }
 }

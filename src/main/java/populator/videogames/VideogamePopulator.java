@@ -1,10 +1,15 @@
 package populator.videogames;
 
+import api.services.MediaService;
 import database.DatabaseConnection;
+import me.tongfei.progressbar.ProgressBar;
+import me.tongfei.progressbar.ProgressBarBuilder;
+import me.tongfei.progressbar.ProgressBarStyle;
 import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONParser;
 import org.jooq.tools.json.ParseException;
 import org.springframework.web.server.ResponseStatusException;
+import populator.genres.GenrePopulator;
 import src.main.java.model.tables.pojos.Media;
 
 import java.io.BufferedReader;
@@ -25,6 +30,15 @@ import static src.main.java.model.Tables.VIDEOGAMES;
  * @author juagallop1
  **/
 public class VideogamePopulator {
+
+    private static MediaService mediaService = new MediaService();
+    public static final ProgressBarBuilder pbb = new ProgressBarBuilder()
+        .setTaskName("Populating videogames...")
+        .setStyle(ProgressBarStyle.COLORFUL_UNICODE_BLOCK)
+        .setUpdateIntervalMillis(100)
+        .setMaxRenderedLength(100)
+        .setUnit(" videogames", 1);
+
     private static List<Media> getAll() throws SQLException {
         List<Media> result = new ArrayList<>();
         try {
@@ -59,6 +73,13 @@ public class VideogamePopulator {
         return videogames;
     }
 
+    private static void add(List<FetchedVideogame> videogames) throws SQLException {
+        for (var videogame : ProgressBar.wrap(videogames, pbb)) {
+            var dbVideogame = mediaService.postVideogame(videogame.videogame());
+            GenrePopulator.addGenresVideogames(videogame.genres(), dbVideogame);
+        }
+    }
+
     public static void populate(Integer limit) throws SQLException {
         var ids = getAll().stream()
             .map(Media::getExternalid)
@@ -67,7 +88,6 @@ public class VideogamePopulator {
             .filter(v -> !ids.contains(v.videogame().getExternalId()))
             .limit(limit)
             .toList();
-//        add(videogames);
-        System.out.println(videogames.size());
+        add(videogames);
     }
 }

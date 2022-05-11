@@ -10,6 +10,7 @@ import org.jooq.tools.json.JSONParser;
 import org.jooq.tools.json.ParseException;
 import org.springframework.web.server.ResponseStatusException;
 import populator.genres.GenrePopulator;
+import populator.people.PeoplePopulator;
 import populator.platforms.PlatformPopulator;
 import src.main.java.model.tables.pojos.Media;
 
@@ -59,7 +60,7 @@ public class VideogamePopulator {
 
     private static List<FetchedVideogame> fetchVideogames() {
         List<FetchedVideogame> videogames = new ArrayList<>();
-        try (var br = new BufferedReader(new FileReader("/home/kinami/Code/rawg/games.json"))) {
+        try (var br = new BufferedReader(new FileReader("files/games.json"))) {
             String str;
             JSONParser parser = new JSONParser();
             while ((str = br.readLine()) != null) {
@@ -79,6 +80,7 @@ public class VideogamePopulator {
             var dbVideogame = mediaService.postVideogame(videogame.videogame());
             GenrePopulator.addGenresVideogames(videogame.genres(), dbVideogame);
             PlatformPopulator.addPlatformsVideogames(videogame.platforms(), dbVideogame);
+            PeoplePopulator.addVideogamePeople(dbVideogame.getMediaid(), videogame.people());
         }
     }
 

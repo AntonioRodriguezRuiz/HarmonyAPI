@@ -4,13 +4,8 @@
 package src.main.java.model.tables;
 
 
+import org.jooq.*;
 import org.jooq.Record;
-import org.jooq.Row6;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.TableOptions;
-import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;

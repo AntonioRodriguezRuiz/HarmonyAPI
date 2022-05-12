@@ -776,6 +776,7 @@ BEGIN
     END;
 END //
 
+DELIMITER //
 DROP PROCEDURE IF EXISTS newList;
 CREATE PROCEDURE newList(user INT, listName VARCHAR(60), icon NVARCHAR(1))
 BEGIN
@@ -791,7 +792,7 @@ BEGIN
             END;
 
         INSERT INTO lists(userid, listName, icon, creationDate)
-        VALUES(user, listName, icon, CURDATE());
+        VALUES(user, listName, icon, CURTIME());
         COMMIT;
     END;
 END //
@@ -811,7 +812,7 @@ BEGIN
             END;
 
         INSERT INTO listmedia(listid, mediaid, addedDate)
-        VALUES(list, media, CURDATE());
+        VALUES(list, media, CURTIME());
         COMMIT;
     END;
 END //
@@ -831,7 +832,7 @@ BEGIN
             END;
 
         INSERT INTO reviews(userid, mediaid, creationDate, rating, review, likes)
-        VALUES(user, media, CURDATE(), rating, review, likes);
+        VALUES(user, media, CURTIME(), rating, review, likes);
 
         COMMIT;
     END;

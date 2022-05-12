@@ -1,10 +1,12 @@
 package populator.videogames;
 
+import api.GlobalValues;
 import api.services.MediaService;
-import database.DatabaseConnection;
 import me.tongfei.progressbar.ProgressBar;
 import me.tongfei.progressbar.ProgressBarBuilder;
 import me.tongfei.progressbar.ProgressBarStyle;
+import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONParser;
 import org.jooq.tools.json.ParseException;
@@ -17,6 +19,8 @@ import src.main.java.model.tables.pojos.Media;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +47,8 @@ public class VideogamePopulator {
 
     private static List<Media> getAll() throws SQLException {
         List<Media> result = new ArrayList<>();
-        try {
-            var create = DatabaseConnection.create();
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
             result = create.select()
                 .from(MEDIA)
                 .naturalJoin(VIDEOGAMES)

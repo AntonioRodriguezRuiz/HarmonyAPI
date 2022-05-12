@@ -1,5 +1,6 @@
 package populator.people;
 
+import api.GlobalValues;
 import api.helpers.enums.RoleType;
 import api.helpers.request.PeopleMediaRequestHelper;
 import api.helpers.request.PeopleRequestHelper;
@@ -8,16 +9,19 @@ import api.helpers.response.MediaResponseHelper;
 import api.helpers.response.PeopleResponseHelper;
 import api.services.MediaSpecificService;
 import api.services.PeopleService;
-import database.DatabaseConnection;
 import info.movito.themoviedbapi.TmdbPeople;
 import info.movito.themoviedbapi.model.Credits;
 import info.movito.themoviedbapi.model.people.PersonCast;
 import info.movito.themoviedbapi.model.people.PersonCrew;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jooq.DSLContext;
 import org.jooq.exception.DataAccessException;
+import org.jooq.impl.DSL;
 import org.springframework.web.server.ResponseStatusException;
 import src.main.java.model.tables.pojos.People;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -45,8 +49,8 @@ public class PeoplePopulator {
 
     private static List<People> getAllPeople() throws SQLException {
         List<People> result = new ArrayList<>();
-        try {
-            var create = DatabaseConnection.create();
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
             result = create.select()
                 .from(PEOPLE)
                 .fetchInto(People.class);

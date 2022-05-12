@@ -1,12 +1,14 @@
 package populator.movies;
 
+import api.GlobalValues;
 import api.helpers.request.MovieRequestHelper;
 import api.services.MediaService;
-import database.DatabaseConnection;
 import info.movito.themoviedbapi.TmdbMovies;
 import me.tongfei.progressbar.ProgressBar;
 import me.tongfei.progressbar.ProgressBarBuilder;
 import me.tongfei.progressbar.ProgressBarStyle;
+import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONParser;
 import org.jooq.tools.json.ParseException;
@@ -23,6 +25,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -100,8 +104,8 @@ public class MoviePopulator {
 
     private static List<Media> getAll() throws SQLException {
         List<Media> result = new ArrayList<>();
-        try {
-            var create = DatabaseConnection.create();
+        try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
+            DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
             result = create.select()
                 .from(MEDIA)
                 .naturalJoin(MOVIES)

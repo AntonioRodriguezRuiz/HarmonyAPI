@@ -52,11 +52,6 @@ public class Newvideogame extends AbstractRoutine<java.lang.Void> {
     public static final Parameter<Integer> EXTERNALID = Internal.createParameter("externalId", SQLDataType.INTEGER, false, false);
 
     /**
-     * The parameter <code>harmony.newVideogame.externalId</code>.
-     */
-    public static final Parameter<Integer> EXTERNALID = Internal.createParameter("externalId", SQLDataType.INTEGER, false, false);
-
-    /**
      * The parameter <code>harmony.newVideogame.company</code>.
      */
     public static final Parameter<String> COMPANY = Internal.createParameter("company", SQLDataType.VARCHAR(600), false, false);

@@ -52,11 +52,6 @@ public class Newbook extends AbstractRoutine<java.lang.Void> {
     public static final Parameter<Integer> EXTERNALID = Internal.createParameter("externalId", SQLDataType.INTEGER, false, false);
 
     /**
-     * The parameter <code>harmony.newBook.externalId</code>.
-     */
-    public static final Parameter<Integer> EXTERNALID = Internal.createParameter("externalId", SQLDataType.INTEGER, false, false);
-
-    /**
      * The parameter <code>harmony.newBook.collection</code>.
      */
     public static final Parameter<String> COLLECTION = Internal.createParameter("collection", SQLDataType.VARCHAR(120), false, false);

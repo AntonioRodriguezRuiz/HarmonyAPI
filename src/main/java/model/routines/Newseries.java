@@ -52,11 +52,6 @@ public class Newseries extends AbstractRoutine<java.lang.Void> {
     public static final Parameter<Integer> EXTERNALID = Internal.createParameter("externalId", SQLDataType.INTEGER, false, false);
 
     /**
-     * The parameter <code>harmony.newSeries.externalId</code>.
-     */
-    public static final Parameter<Integer> EXTERNALID = Internal.createParameter("externalId", SQLDataType.INTEGER, false, false);
-
-    /**
      * Create a new routine call instance
      */
     public Newseries() {

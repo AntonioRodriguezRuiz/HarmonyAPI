@@ -2,7 +2,6 @@ package populator.books;
 
 import database.DatabaseConnection;
 import org.jooq.tools.json.JSONArray;
-import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONParser;
 import org.jooq.tools.json.ParseException;
 import org.springframework.web.server.ResponseStatusException;
@@ -43,10 +42,11 @@ public class BookPopulator {
         return result;
     }
 
-    private static List<JSONObject> fetchBooks() throws IOException, ParseException {
+    private static List<FetchedBook> fetchBooks() throws IOException, ParseException {
         var parser = new JSONParser();
         var array = (JSONArray) parser.parse(new FileReader("files/books.json"));
         return array.stream()
+            .map(FetchedBook::of)
             .toList();
     }
 
@@ -54,6 +54,6 @@ public class BookPopulator {
         var ids = getAll().stream()
             .map(Media::getExternalid)
             .toList();
-        var books = fetchBooks()
+        var books = fetchBooks();
     }
 }

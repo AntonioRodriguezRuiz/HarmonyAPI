@@ -13,9 +13,10 @@ import static src.main.java.model.Tables.USERS;
  *
  * @author juagallop1
  **/
-public record UserResponseHelper(String username, String email, LocalDate creationDate) {
+public record UserResponseHelper(Integer userid, String username, String email, LocalDate creationDate) {
     public UserResponseHelper(Record user) {
         this(
+            user.get(USERS.USERID),
             user.get(USERS.USERNAME),
             user.get(USERS.EMAIL),
             user.get(USERS.CREATIONDATE)

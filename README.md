@@ -117,7 +117,7 @@ another GET operation. Use the series' mediaId and the season's seasonId.
 
 ```json
 {
-  "mediaid": 1,
+  "mediaid": 7,
   "seasonid": 1,
   "seasonNo": 1,
   "noEpisodes": 3,
@@ -231,6 +231,79 @@ Only the latter can be created using the API at the moment.
 Icons can only be a single character. Emojis are accepted, too! But only those with an Unicode representation consisting of a 
 single character. [These](https://emojipedia.org/unicode-1.1/) are a great place to start, but not all of them work.
 ## Trackers
+```json
+[
+  {
+    "id": 4,
+    "userId": 3,
+    "state": "COMPLETED",
+    "active": true,
+    "creationDate": "2022-05-12T10:45:12",
+    "media": {
+      "mediaid": 6,
+      "title": "Gattaca",
+      "releasedate": "1997-10-24",
+      "coverimage": "img/bkg/default",
+      "backgroundimage": "img/bkg/default",
+      "synopsis": "A cult movie about a near future transhumanist dystopia.",
+      "avgrating": 4.7
+    }
+  },
+  {
+    "id": 3,
+    "userId": 3,
+    "state": "DID_NOT_FINISH",
+    "active": true,
+    "creationDate": "2022-05-12T10:43:31",
+    "media": {
+      "mediaid": 7,
+      "title": "Dracula",
+      "releasedate": "2020-01-04",
+      "coverimage": "string",
+      "backgroundimage": "string",
+      "synopsis": "BBC Dracula miniseries",
+      "avgrating": null
+    }
+  },
+  {
+    "id": 2,
+    "userId": 3,
+    "state": "IN_PROGRESS",
+    "active": false,
+    "creationDate": "2022-05-12T10:43:03",
+    "media": {
+      "mediaid": 7,
+      "title": "Dracula",
+      "releasedate": "2020-01-04",
+      "coverimage": "string",
+      "backgroundimage": "string",
+      "synopsis": "BBC Dracula miniseries",
+      "avgrating": null
+    }
+  },
+  {
+    "id": 1,
+    "userId": 3,
+    "state": "PLANNING",
+    "active": false,
+    "creationDate": "2022-05-12T10:42:41",
+    "media": {
+      "mediaid": 7,
+      "title": "Dracula",
+      "releasedate": "2020-01-04",
+      "coverimage": "string",
+      "backgroundimage": "string",
+      "synopsis": "BBC Dracula miniseries",
+      "avgrating": null
+    }
+  }
+]
+```
+You can get either the last tracker state for each piece of media 
+(DID_NOT_FINISH for mediaid 7 and COMPLETED for mediaid 6 in this case),
+or a full history of the user's interaction with all pieces of media (shown above).
+
+Accepted states are PLANNING, IN_PROGRESS, COMPLETED, DID_NOT_FINISH, ABANDONED.
 ## Review
 ```json
 {

@@ -81,12 +81,13 @@ public class BookPopulator {
         }
     }
 
-    public static void populate() throws SQLException, IOException, ParseException {
+    public static void populate(Integer limit) throws SQLException, IOException, ParseException {
         var ids = getAll().stream()
             .map(Media::getExternalid)
             .toList();
         var books = fetchBooks().stream()
             .filter(book -> !ids.contains(book.id()))
+            .limit(limit)
             .toList();
         add(books);
     }

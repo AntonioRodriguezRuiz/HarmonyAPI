@@ -1,6 +1,7 @@
 package populator;
 
 import org.jooq.tools.json.ParseException;
+import populator.books.BookPopulator;
 import populator.movies.MoviePopulator;
 import populator.series.SeriesPopulator;
 import populator.videogames.VideogamePopulator;
@@ -20,5 +21,6 @@ public class Populator {
         MoviePopulator.populate(150);
         SeriesPopulator.populate(150);
         VideogamePopulator.populate(150);
+        BookPopulator.populate(150);
     }
 }

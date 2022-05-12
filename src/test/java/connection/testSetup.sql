@@ -60,7 +60,7 @@ CREATE TABLE admins(
 
 CREATE TABLE media(
                       mediaid INT NOT NULL UNIQUE AUTO_INCREMENT,
-                      title VARCHAR(120) NOT NULL,
+                      title VARCHAR(500) NOT NULL,
                       releaseDate DATE NOT NULL,
                       coverImage VARCHAR(120) NOT NULL,
                       backgroundImage VARCHAR(120) NOT NULL,
@@ -377,7 +377,7 @@ BEGIN
 END//
 
 DROP PROCEDURE IF EXISTS newSeries;
-CREATE PROCEDURE newSeries(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis TEXT(50000000), externalId INT)
+CREATE PROCEDURE newSeries(title VARCHAR(500), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis TEXT(50000000), externalId INT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -414,7 +414,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newSeason;
-CREATE PROCEDURE newSeason(title VARCHAR(120), releaseDate DATE, seasonNo INT, noEpisodes INT)
+CREATE PROCEDURE newSeason(title VARCHAR(500), releaseDate DATE, seasonNo INT, noEpisodes INT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -460,7 +460,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newEpisode;
-CREATE PROCEDURE newEpisode(title VARCHAR(120), releaseDate DATE, seasonNo INT, episodeName VARCHAR(60), episodeNo INT)
+CREATE PROCEDURE newEpisode(title VARCHAR(500), releaseDate DATE, seasonNo INT, episodeName VARCHAR(60), episodeNo INT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -507,7 +507,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newVideogame;
-CREATE PROCEDURE newVideogame(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis TEXT(50000000), externalId INT, company VARCHAR(600))
+CREATE PROCEDURE newVideogame(title VARCHAR(500), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis TEXT(50000000), externalId INT, company VARCHAR(600))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -562,7 +562,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newVideogamePlatform;
-CREATE PROCEDURE newVideogamePlatform(platformName VARCHAR(60), title VARCHAR(120), releaseDate DATE)
+CREATE PROCEDURE newVideogamePlatform(platformName VARCHAR(60), title VARCHAR(500), releaseDate DATE)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -612,7 +612,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newBook;
-CREATE PROCEDURE newBook(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis TEXT(50000000), externalId INT, collection VARCHAR(120))
+CREATE PROCEDURE newBook(title VARCHAR(500), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis TEXT(50000000), externalId INT, collection VARCHAR(120))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -649,7 +649,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newMovie;
-CREATE PROCEDURE newMovie(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis TEXT(50000000), externalId INT)
+CREATE PROCEDURE newMovie(title VARCHAR(500), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis TEXT(50000000), externalId INT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -705,7 +705,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newMediaGenre;
-CREATE PROCEDURE newMediaGenre(title VARCHAR(120), releaseDate DATE, genre VARCHAR(50))
+CREATE PROCEDURE newMediaGenre(title VARCHAR(500), releaseDate DATE, genre VARCHAR(50))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -886,7 +886,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newPersonMovie;
-CREATE PROCEDURE newPersonMovie(personname VARCHAR(60), date DATE, title VARCHAR(120), releaseDate DATE, role VARCHAR(120), roletype TINYINT)
+CREATE PROCEDURE newPersonMovie(personname VARCHAR(60), date DATE, title VARCHAR(500), releaseDate DATE, role VARCHAR(120), roletype TINYINT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -918,7 +918,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newPersonBook;
-CREATE PROCEDURE newPersonBook(personname VARCHAR(60), date DATE, title VARCHAR(120), releaseDate DATE, role VARCHAR(120))
+CREATE PROCEDURE newPersonBook(personname VARCHAR(60), date DATE, title VARCHAR(500), releaseDate DATE, role VARCHAR(120))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -950,7 +950,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newPersonVideogame;
-CREATE PROCEDURE newPersonVideogame(personname VARCHAR(60), date DATE, title VARCHAR(120), releaseDate DATE, role VARCHAR(120), roletype TINYINT)
+CREATE PROCEDURE newPersonVideogame(personname VARCHAR(60), date DATE, title VARCHAR(500), releaseDate DATE, role VARCHAR(120), roletype TINYINT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -982,7 +982,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newPersonEpisode;
-CREATE PROCEDURE newPersonEpisode(personname VARCHAR(60), date DATE, title VARCHAR(120), releaseDate DATE, seasonNo INT, episodeNo INT, role VARCHAR(120), roletype TINYINT)
+CREATE PROCEDURE newPersonEpisode(personname VARCHAR(60), date DATE, title VARCHAR(500), releaseDate DATE, seasonNo INT, episodeNo INT, role VARCHAR(120), roletype TINYINT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN

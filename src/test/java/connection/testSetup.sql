@@ -773,6 +773,7 @@ BEGIN
     END;
 END //
 
+DELIMITER //
 DROP PROCEDURE IF EXISTS newList;
 CREATE PROCEDURE newList(user INT, listName VARCHAR(60), icon NVARCHAR(1))
 BEGIN
@@ -788,7 +789,7 @@ BEGIN
             END;
 
         INSERT INTO lists(userid, listName, icon, creationDate)
-        VALUES(user, listName, icon, CURDATE());
+        VALUES(user, listName, icon, CURTIME());
         COMMIT;
     END;
 END //
@@ -808,11 +809,12 @@ BEGIN
             END;
 
         INSERT INTO listmedia(listid, mediaid, addedDate)
-        VALUES(list, media, CURDATE());
+        VALUES(list, media, CURTIME());
         COMMIT;
     END;
 END //
 
+DELIMITER //
 DROP PROCEDURE IF EXISTS newReview;
 CREATE PROCEDURE newReview(user INT, media INT, rating FLOAT, review NVARCHAR(2800))
 BEGIN
@@ -828,7 +830,7 @@ BEGIN
             END;
 
         INSERT INTO reviews(userid, mediaid, creationDate, rating, review, likes)
-        VALUES(user, media, CURDATE(), rating, review, likes);
+        VALUES(user, media, CURTIME(), rating, review, likes);
 
         COMMIT;
     END;
@@ -1042,7 +1044,7 @@ BEGIN
                 SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @text;
             END;
 
-        UPDATE reviews SET review=newreview, rating=newrating, creationDate=CURDATE()
+        UPDATE reviews SET review=newreview, rating=newrating, creationDate=CURTIME()
         WHERE reviewid=id;
 
         COMMIT;
@@ -1141,20 +1143,22 @@ BEGIN
     WHERE reviews.reviewid=old.reviewid;
 END //
 
-CREATE TRIGGER updateList_oninsert
+DELIMITER //
+CREATE OR REPLACE TRIGGER updateList_oninsert
     AFTER INSERT ON listmedia FOR EACH ROW
 BEGIN
 
-    UPDATE lists SET modificationDate=CURDATE()
-    WHERE lists.listid=new.listid;
+
+UPDATE lists SET modificationDate=CURTIME()
+WHERE lists.listid=new.listid;
 END //
 
-CREATE TRIGGER updateList_ondelete
+CREATE OR REPLACE TRIGGER updateList_ondelete
     AFTER DELETE ON listmedia FOR EACH ROW
 BEGIN
 
-    UPDATE lists SET modificationDate=CURDATE()
-    WHERE lists.listid=old.listid;
+UPDATE lists SET modificationDate=CURTIME()
+WHERE lists.listid=old.listid;
 END //
 DELIMITER ;
 

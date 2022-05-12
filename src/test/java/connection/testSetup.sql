@@ -817,6 +817,7 @@ BEGIN
     END;
 END //
 
+DELIMITER //
 DROP PROCEDURE IF EXISTS newReview;
 CREATE PROCEDURE newReview(user INT, media INT, rating FLOAT, review NVARCHAR(2800))
 BEGIN
@@ -1046,7 +1047,7 @@ BEGIN
                 SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @text;
             END;
 
-        UPDATE reviews SET review=newreview, rating=newrating, creationDate=CURDATE()
+        UPDATE reviews SET review=newreview, rating=newrating, creationDate=CURTIME()
         WHERE reviewid=id;
 
         COMMIT;
@@ -1145,19 +1146,20 @@ UPDATE reviews SET likes=newLikes
 WHERE reviews.reviewid=old.reviewid;
 END //
 
-CREATE TRIGGER updateList_oninsert
+DELIMITER //
+CREATE OR REPLACE TRIGGER updateList_oninsert
     AFTER INSERT ON listmedia FOR EACH ROW
 BEGIN
 
-UPDATE lists SET modificationDate=CURDATE()
+UPDATE lists SET modificationDate=CURTIME()
 WHERE lists.listid=new.listid;
 END //
 
-CREATE TRIGGER updateList_ondelete
+CREATE OR REPLACE TRIGGER updateList_ondelete
     AFTER DELETE ON listmedia FOR EACH ROW
 BEGIN
 
-UPDATE lists SET modificationDate=CURDATE()
+UPDATE lists SET modificationDate=CURTIME()
 WHERE lists.listid=old.listid;
 END //
 DELIMITER ;

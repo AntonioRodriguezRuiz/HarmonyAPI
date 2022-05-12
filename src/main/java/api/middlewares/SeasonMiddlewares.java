@@ -45,6 +45,7 @@ public class SeasonMiddlewares {
             DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
             if (!create.select()
                     .from(SEASONS)
+                    .naturalJoin(SERIES)
                     .naturalJoin(MEDIA)
                     .where(SEASONS.SEASONNO.eq(SeasonNo)
                             .and(MEDIA.MEDIAID.eq(mediaid)))

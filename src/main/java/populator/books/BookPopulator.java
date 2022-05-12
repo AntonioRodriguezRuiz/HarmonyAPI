@@ -13,6 +13,7 @@ import org.jooq.tools.json.JSONParser;
 import org.jooq.tools.json.ParseException;
 import org.springframework.web.server.ResponseStatusException;
 import populator.genres.GenrePopulator;
+import populator.people.PeoplePopulator;
 import src.main.java.model.tables.pojos.Media;
 
 import java.io.FileReader;
@@ -94,6 +95,7 @@ public class BookPopulator {
             if (book.genres() != null) {
                 GenrePopulator.addGenres(book.genres(), dbBook);
             }
+            PeoplePopulator.addBookPeople(dbBook.getMediaid(), book.authors());
         }
     }
 

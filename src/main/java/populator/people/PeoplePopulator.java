@@ -133,6 +133,33 @@ public class PeoplePopulator {
         return result;
     }
 
+    private static PeopleMediaRequestHelper addPerson(PeopleRequestHelper fetchedPerson, String role, RoleType roleType) {
+        var person = allPeople.stream()
+            .filter(p -> p.getName().equals(fetchedPerson.getName()))
+            .findFirst();
+        PeopleResponseHelper dbPerson = null;
+        if (person.isPresent()) {
+            dbPerson = new PeopleResponseHelper(
+                person.get().getPersonid(),
+                person.get().getName(),
+                person.get().getBirthdate(),
+                person.get().getPicture()
+            );
+        } else {
+            try {
+                dbPerson = peopleService.postPerson(fetchedPerson);
+            } catch (SQLException | DataAccessException e) {
+                return null;
+            }
+        }
+        return new PeopleMediaRequestHelper(
+            1,
+            dbPerson.getPersonid(),
+            role,
+            roleType
+        );
+    }
+
     private static PeopleMediaRequestHelper addCast(PersonCast cast) {
         return addPerson(cast.getId(), cast.getName(), cast.getCharacter(), RoleType.CAST);
     }
@@ -207,6 +234,29 @@ public class PeoplePopulator {
             .forEach(person -> {
                 try {
                     mediaSpecificService.addPerson(videogameId, person, VIDEOGAMES);
+                }
+                catch (DataAccessException | SQLException e) { }
+            });
+    }
+
+    public static void addBookPeople(Integer bookId, List<String> people) throws SQLException {
+        allPeople = getAllPeople();
+        people.stream()
+            .map(p -> addPerson(
+                new PeopleRequestHelper(
+                    1,
+                    null,
+                    p,
+                    null,
+                    null
+                ),
+                "Author",
+                RoleType.CREW
+            ))
+            .filter(Objects::nonNull)
+            .forEach(person -> {
+                try {
+                    mediaSpecificService.addPerson(bookId, person, BOOKS);
                 }
                 catch (DataAccessException | SQLException e) { }
             });

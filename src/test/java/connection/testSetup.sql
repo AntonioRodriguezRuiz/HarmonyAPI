@@ -150,7 +150,6 @@ CREATE TABLE episodes(
 CREATE TABLE movies(
                        movieid INT NOT NULL AUTO_INCREMENT,
                        mediaid INT NOT NULL UNIQUE,
-                       tmdbid INT,
 
                        PRIMARY KEY (movieid),
                        FOREIGN KEY (mediaid) REFERENCES media(mediaid) ON DELETE CASCADE
@@ -250,6 +249,7 @@ CREATE TABLE trackers(
                          mediaid INT NOT NULL,
                          userid INT NOT NULL,
                          state INT NOT NULL,
+                         active BOOLEAN NOT NULL,
                          creationDate DATETIME NOT NULL,
 
                          PRIMARY KEY (trackerid),
@@ -754,6 +754,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newTracker;
+DELIMITER //
 CREATE PROCEDURE newTracker(media INT, user INT, state INT)
 BEGIN
     START TRANSACTION;
@@ -767,8 +768,12 @@ BEGIN
                 SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @text;
             END;
 
-        INSERT INTO trackers(mediaid, userid, state, creationDate)
-        VALUES(media, user, state, CURDATE());
+        UPDATE trackers SET active=false
+        WHERE trackers.mediaid=media
+          AND trackers.userid=user;
+
+        INSERT INTO trackers(mediaid, userid, state, active, creationDate)
+        VALUES(media, user, state, true, CURTIME());
         COMMIT;
     END;
 END //
@@ -1143,22 +1148,20 @@ BEGIN
     WHERE reviews.reviewid=old.reviewid;
 END //
 
-DELIMITER //
-CREATE OR REPLACE TRIGGER updateList_oninsert
+CREATE TRIGGER updateList_oninsert
     AFTER INSERT ON listmedia FOR EACH ROW
 BEGIN
 
-
-UPDATE lists SET modificationDate=CURTIME()
-WHERE lists.listid=new.listid;
+    UPDATE lists SET modificationDate=CURTIME()
+    WHERE lists.listid=new.listid;
 END //
 
-CREATE OR REPLACE TRIGGER updateList_ondelete
+CREATE TRIGGER updateList_ondelete
     AFTER DELETE ON listmedia FOR EACH ROW
 BEGIN
 
-UPDATE lists SET modificationDate=CURTIME()
-WHERE lists.listid=old.listid;
+    UPDATE lists SET modificationDate=CURTIME()
+    WHERE lists.listid=old.listid;
 END //
 DELIMITER ;
 

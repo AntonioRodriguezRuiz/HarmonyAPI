@@ -35,27 +35,7 @@ public class GenrePopulator {
         }
     }
 
-    public static void addGenresTMDB(List<Genre> genres, MediaResponseHelper dbMovie) {
-         allGenres = genresService.getAllGenres();
-         genres.stream()
-            .map(genre -> {
-                try {
-                    return addGenre(genre.getName());
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            })
-            .forEach(genreId -> {
-                try {
-                    mediaSpecificService.addGenre(dbMovie.getMediaid(), new GenreRequestHelper(null, genreId, null));
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        );
-    }
-
-    public static void addGenresVideogames(List<String> genres, MediaResponseHelper dbVideogame) {
+    public static void addGenres(List<String> genres, MediaResponseHelper media) {
         allGenres = genresService.getAllGenres();
         genres.stream()
             .map(genre -> {
@@ -67,11 +47,15 @@ public class GenrePopulator {
             })
             .forEach(genreId -> {
                     try {
-                        mediaSpecificService.addGenre(dbVideogame.getMediaid(), new GenreRequestHelper(null, genreId, null));
+                        mediaSpecificService.addGenre(media.getMediaid(), new GenreRequestHelper(null, genreId, null));
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
                 }
             );
+    }
+
+    public static void addGenresTMDB(List<Genre> genres, MediaResponseHelper dbMovie) {
+        addGenres(genres.stream().map(Genre::getName).toList(), dbMovie);
     }
 }

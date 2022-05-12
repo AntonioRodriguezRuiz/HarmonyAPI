@@ -82,7 +82,7 @@ public class VideogamePopulator {
     private static void add(List<FetchedVideogame> videogames) throws SQLException {
         for (var videogame : ProgressBar.wrap(videogames, pbb)) {
             var dbVideogame = mediaService.postVideogame(videogame.videogame());
-            GenrePopulator.addGenresVideogames(videogame.genres(), dbVideogame);
+            GenrePopulator.addGenres(videogame.genres(), dbVideogame);
             PlatformPopulator.addPlatformsVideogames(videogame.platforms(), dbVideogame);
             PeoplePopulator.addVideogamePeople(dbVideogame.getMediaid(), videogame.people());
         }

@@ -12,6 +12,7 @@ import org.jooq.tools.json.JSONArray;
 import org.jooq.tools.json.JSONParser;
 import org.jooq.tools.json.ParseException;
 import org.springframework.web.server.ResponseStatusException;
+import populator.genres.GenrePopulator;
 import src.main.java.model.tables.pojos.Media;
 
 import java.io.FileReader;
@@ -90,6 +91,9 @@ public class BookPopulator {
                 )
             );
             var dbBook = mediaService.postBook(brh);
+            if (book.genres() != null) {
+                GenrePopulator.addGenres(book.genres(), dbBook);
+            }
         }
     }
 

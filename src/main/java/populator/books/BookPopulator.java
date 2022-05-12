@@ -79,8 +79,15 @@ public class BookPopulator {
                 null,
                 book.description(),
                 book.id(),
-                book.series().replace("(", "").replace(")", "").split(" # ")[0],
-                Integer.parseInt(book.series().replace("(", "").replace(")", "").split(" # ")[1])
+                book.series().isEmpty() ? null : book.series().replace("(", "").replace(")", "").split(" # ")[0],
+                book.series().isEmpty() || !book.series().contains("#") ? null : Integer.parseInt(
+                    book.series()
+                        .replace("(", "")
+                        .replace(")", "")
+                        .split(" #")[1]
+                        .split("-")[0]
+                        .split("\\.")[0]
+                )
             );
             var dbBook = mediaService.postBook(brh);
         }

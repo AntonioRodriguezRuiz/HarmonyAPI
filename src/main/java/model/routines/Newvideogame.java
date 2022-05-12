@@ -24,7 +24,7 @@ public class Newvideogame extends AbstractRoutine<java.lang.Void> {
     /**
      * The parameter <code>harmony.newVideogame.title</code>.
      */
-    public static final Parameter<String> TITLE = Internal.createParameter("title", SQLDataType.VARCHAR(120), false, false);
+    public static final Parameter<String> TITLE = Internal.createParameter("title", SQLDataType.VARCHAR(500), false, false);
 
     /**
      * The parameter <code>harmony.newVideogame.releaseDate</code>.
@@ -44,7 +44,7 @@ public class Newvideogame extends AbstractRoutine<java.lang.Void> {
     /**
      * The parameter <code>harmony.newVideogame.synopsis</code>.
      */
-    public static final Parameter<String> SYNOPSIS = Internal.createParameter("synopsis", SQLDataType.VARCHAR(1500), false, false);
+    public static final Parameter<String> SYNOPSIS = Internal.createParameter("synopsis", SQLDataType.CLOB, false, false);
 
     /**
      * The parameter <code>harmony.newVideogame.externalId</code>.
@@ -54,7 +54,7 @@ public class Newvideogame extends AbstractRoutine<java.lang.Void> {
     /**
      * The parameter <code>harmony.newVideogame.company</code>.
      */
-    public static final Parameter<String> COMPANY = Internal.createParameter("company", SQLDataType.VARCHAR(60), false, false);
+    public static final Parameter<String> COMPANY = Internal.createParameter("company", SQLDataType.VARCHAR(600), false, false);
 
     /**
      * Create a new routine call instance

@@ -48,7 +48,7 @@ public class Media extends TableImpl<MediaRecord> {
     /**
      * The column <code>harmony.media.title</code>.
      */
-    public final TableField<MediaRecord, String> TITLE = createField(DSL.name("title"), SQLDataType.VARCHAR(120).nullable(false), this, "");
+    public final TableField<MediaRecord, String> TITLE = createField(DSL.name("title"), SQLDataType.VARCHAR(500).nullable(false), this, "");
 
     /**
      * The column <code>harmony.media.releaseDate</code>.
@@ -68,7 +68,7 @@ public class Media extends TableImpl<MediaRecord> {
     /**
      * The column <code>harmony.media.synopsis</code>.
      */
-    public final TableField<MediaRecord, String> SYNOPSIS = createField(DSL.name("synopsis"), SQLDataType.VARCHAR(1500).nullable(false), this, "");
+    public final TableField<MediaRecord, String> SYNOPSIS = createField(DSL.name("synopsis"), SQLDataType.CLOB.nullable(false), this, "");
 
     /**
      * The column <code>harmony.media.avgRating</code>.

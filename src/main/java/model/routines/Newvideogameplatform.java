@@ -4,14 +4,13 @@
 package src.main.java.model.routines;
 
 
-import java.time.LocalDate;
-
 import org.jooq.Parameter;
 import org.jooq.impl.AbstractRoutine;
 import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;
-
 import src.main.java.model.Harmony;
+
+import java.time.LocalDate;
 
 
 /**
@@ -30,7 +29,7 @@ public class Newvideogameplatform extends AbstractRoutine<java.lang.Void> {
     /**
      * The parameter <code>harmony.newVideogamePlatform.title</code>.
      */
-    public static final Parameter<String> TITLE = Internal.createParameter("title", SQLDataType.VARCHAR(120), false, false);
+    public static final Parameter<String> TITLE = Internal.createParameter("title", SQLDataType.VARCHAR(500), false, false);
 
     /**
      * The parameter <code>harmony.newVideogamePlatform.releaseDate</code>.

@@ -24,7 +24,7 @@ public class Newbook extends AbstractRoutine<java.lang.Void> {
     /**
      * The parameter <code>harmony.newBook.title</code>.
      */
-    public static final Parameter<String> TITLE = Internal.createParameter("title", SQLDataType.VARCHAR(120), false, false);
+    public static final Parameter<String> TITLE = Internal.createParameter("title", SQLDataType.VARCHAR(500), false, false);
 
     /**
      * The parameter <code>harmony.newBook.releaseDate</code>.
@@ -44,7 +44,7 @@ public class Newbook extends AbstractRoutine<java.lang.Void> {
     /**
      * The parameter <code>harmony.newBook.synopsis</code>.
      */
-    public static final Parameter<String> SYNOPSIS = Internal.createParameter("synopsis", SQLDataType.VARCHAR(1500), false, false);
+    public static final Parameter<String> SYNOPSIS = Internal.createParameter("synopsis", SQLDataType.CLOB, false, false);
 
     /**
      * The parameter <code>harmony.newBook.externalId</code>.

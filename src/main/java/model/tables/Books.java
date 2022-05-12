@@ -4,27 +4,17 @@
 package src.main.java.model.tables;
 
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row3;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.TableOptions;
-import org.jooq.UniqueKey;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
-
 import src.main.java.model.Harmony;
 import src.main.java.model.Keys;
 import src.main.java.model.tables.records.BooksRecord;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -62,6 +52,11 @@ public class Books extends TableImpl<BooksRecord> {
      * The column <code>harmony.books.collection</code>.
      */
     public final TableField<BooksRecord, String> COLLECTION = createField(DSL.name("collection"), SQLDataType.VARCHAR(120).defaultValue(DSL.field("NULL", SQLDataType.VARCHAR)), this, "");
+
+    /**
+     * The column <code>harmony.books.number</code>.
+     */
+    public final TableField<BooksRecord, Integer> NUMBER = createField(DSL.name("number"), SQLDataType.INTEGER.defaultValue(DSL.field("NULL", SQLDataType.INTEGER)), this, "");
 
     private Books(Name alias, Table<BooksRecord> aliased) {
         this(alias, aliased, null);
@@ -157,11 +152,11 @@ public class Books extends TableImpl<BooksRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row3 type methods
+    // Row4 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row3<Integer, Integer, String> fieldsRow() {
-        return (Row3) super.fieldsRow();
+    public Row4<Integer, Integer, String, Integer> fieldsRow() {
+        return (Row4) super.fieldsRow();
     }
 }

@@ -57,6 +57,11 @@ public class Newbook extends AbstractRoutine<java.lang.Void> {
     public static final Parameter<String> COLLECTION = Internal.createParameter("collection", SQLDataType.VARCHAR(120), false, false);
 
     /**
+     * The parameter <code>harmony.newBook.number</code>.
+     */
+    public static final Parameter<Integer> NUMBER = Internal.createParameter("number", SQLDataType.INTEGER, false, false);
+
+    /**
      * Create a new routine call instance
      */
     public Newbook() {
@@ -69,6 +74,7 @@ public class Newbook extends AbstractRoutine<java.lang.Void> {
         addInParameter(SYNOPSIS);
         addInParameter(EXTERNALID);
         addInParameter(COLLECTION);
+        addInParameter(NUMBER);
     }
 
     /**
@@ -118,5 +124,12 @@ public class Newbook extends AbstractRoutine<java.lang.Void> {
      */
     public void setCollection(String value) {
         setValue(COLLECTION, value);
+    }
+
+    /**
+     * Set the <code>number</code> parameter IN value to the routine
+     */
+    public void setNumber(Integer value) {
+        setValue(NUMBER, value);
     }
 }

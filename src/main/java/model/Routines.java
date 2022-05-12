@@ -43,6 +43,7 @@ public class Routines {
         , String synopsis
         , Integer externalid
         , String collection
+        , Integer number
     ) {
         Newbook p = new Newbook();
         p.setTitle(title);
@@ -52,6 +53,7 @@ public class Routines {
         p.setSynopsis(synopsis);
         p.setExternalid(externalid);
         p.setCollection(collection);
+        p.setNumber(number);
 
         p.execute(configuration);
     }

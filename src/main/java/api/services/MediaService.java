@@ -155,7 +155,8 @@ public class MediaService {
                             book.getBackgroundimage(),
                             book.getSynopsis(),
                             book.getExternalId(),
-                            book.getCollection());
+                            book.getCollection(),
+                            book.getNumber());
                     break;
                 case "videogames":
                     videogame = (VideogameRequestHelper) media;

@@ -79,7 +79,8 @@ public class BookPopulator {
                 null,
                 book.description(),
                 book.id(),
-                book.series().replace("(", "").replace(")", "")
+                book.series().replace("(", "").replace(")", "").split(" # ")[0],
+                Integer.parseInt(book.series().replace("(", "").replace(")", "").split(" # ")[1])
             );
             var dbBook = mediaService.postBook(brh);
         }

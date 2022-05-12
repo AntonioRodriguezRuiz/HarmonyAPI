@@ -197,6 +197,7 @@ In books, the roleType is locked into CREW.
 ```
 Users are divided in two categories: administrators, and regular users. 
 Only the latter can be created using the API at the moment.
+
 ## Lists
 ```json
 {
@@ -419,14 +420,24 @@ user who posted the item in the first place.
 | **reports**  | 🛡DELETE                 | /api/v1/reports/{id} |
 
 # Usage suggestions
+We recommend you create one or two users in order to make finding lists, reviews, reports and trackers you create handy.
+
+Some workflows we recommend:
+
+>* POST a list.
+>* GET a couple of works' IDs.
+>* PUT them into your list.
+>* DELETE one of them. Or the whole list.
+
+>* POST a report for a review you found.
+>* Have the administrator GET a list of open reports.
+>* Have the reported user PUT (modify) their review so it doesn't get deleted.
+>* DELETE the report.
+
+
+All POJO classes inside the src.main.java.model package are generated from the Harmony database.
+These are provided from the repository and updated if the model changes. Use them as needed.
 
 # Local deployment
 If for some reason you'd rather do operations on a locally hosted version of the API, follow these steps. 
 We strongly suggest the use of IntelliJ IDEA. It is free for us as part of the GitHub Student package. Use [this form](https://www.jetbrains.com/shop/eform/students).
-
-All POJO classes inside the src.main.java.model package are generated from the Harmony database. 
-These are provided from the repository and updated if the model changes.
-
-In any case, you can regenerate them if you want to. To do so, first delete the src/main/java/model directory. After that, in the Maven sidebar of IntelliJ, run `harmony-api` > `Lifecyle` > `install`.
-
-

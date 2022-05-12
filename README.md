@@ -420,14 +420,17 @@ user who posted the item in the first place.
 | **reports**  | 🛡DELETE                 | /api/v1/reports/{id} |
 
 # Usage suggestions
-We recommend you create one or two users in order to make finding lists, reviews, reports and trackers you create handy.
+We recommend you create one or two users in order to make lists, reviews, reports and trackers you create handy.
 
 Some workflows we recommend:
 
 >* POST a list.
->* GET a couple of works' IDs.
->* PUT them into your list.
+>* GET a couple of medias' IDs.
+>* POST them into your list.
+>* PUT (modify) the list's name.
 >* DELETE one of them. Or the whole list.
+
+If you want to go above and beyond:
 
 >* POST a report for a review you found.
 >* Have the administrator GET a list of open reports.

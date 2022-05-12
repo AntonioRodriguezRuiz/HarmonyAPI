@@ -67,8 +67,10 @@ public record FetchedBook(
             (String) js.get("datePublished"),
             (String) js.get("publisher"),
             (String) js.get("originalTitle"),
-            js.get("genres") == null ? null : Arrays.stream(((String) js.get("genres")).split(", "))
+            js.get("genre_and_votes") == null ? null : Arrays.stream(((String) js.get("genre_and_votes")).split(", "))
                 .map(g -> g.split(" ")[0])
+                .distinct()
+                .filter(g -> !g.isEmpty())
                 .toList(),
             (String) js.get("isbn"),
             (String) js.get("isbn13"),

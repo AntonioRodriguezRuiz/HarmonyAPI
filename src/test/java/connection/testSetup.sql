@@ -108,6 +108,7 @@ CREATE TABLE books(
                       bookid INT NOT NULL UNIQUE AUTO_INCREMENT,
                       mediaid INT NOT NULL UNIQUE,
                       collection VARCHAR(120),
+                      number INT,
 
                       PRIMARY KEY (bookid),
                       FOREIGN KEY (mediaid) REFERENCES media(mediaid) ON DELETE CASCADE
@@ -612,7 +613,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newBook;
-CREATE PROCEDURE newBook(title VARCHAR(500), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis TEXT(50000000), externalId INT, collection VARCHAR(120))
+CREATE PROCEDURE newBook(title VARCHAR(500), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis TEXT(50000000), externalId INT, collection VARCHAR(120), number INT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -642,8 +643,8 @@ BEGIN
 
         SELECT mediaid INTO mediaidForeign FROM media
         WHERE media.title=title AND media.releaseDate=releaseDate;
-        INSERT INTO books(mediaid, collection)
-        VALUES(mediaidForeign, collection);
+        INSERT INTO books(mediaid, collection, number)
+        VALUES(mediaidForeign, collection, number);
         COMMIT;
     END;
 END //

@@ -1,6 +1,11 @@
 package populator.books;
 
+import api.helpers.request.BookRequestHelper;
+import api.services.MediaService;
 import database.DatabaseConnection;
+import me.tongfei.progressbar.ProgressBar;
+import me.tongfei.progressbar.ProgressBarBuilder;
+import me.tongfei.progressbar.ProgressBarStyle;
 import org.jooq.tools.json.JSONArray;
 import org.jooq.tools.json.JSONParser;
 import org.jooq.tools.json.ParseException;
@@ -24,6 +29,15 @@ import static src.main.java.model.Tables.MEDIA;
  * @author juagallop1
  **/
 public class BookPopulator {
+
+    private static MediaService mediaService = new MediaService();
+
+    public static final ProgressBarBuilder pbb = new ProgressBarBuilder()
+        .setTaskName("Populating books...")
+        .setStyle(ProgressBarStyle.COLORFUL_UNICODE_BLOCK)
+        .setUpdateIntervalMillis(100)
+        .setMaxRenderedLength(100)
+        .setUnit(" books", 1);
 
     private static List<Media> getAll() throws SQLException {
         List<Media> result = new ArrayList<>();
@@ -50,10 +64,30 @@ public class BookPopulator {
             .toList();
     }
 
+    private static void add(List<FetchedBook> books) throws SQLException {
+        for (var book: ProgressBar.wrap(books, pbb)) {
+            var brh = new BookRequestHelper(
+                1,
+                null,
+                book.title(),
+                book.datePublished() == null ? "1900-01-01" : book.datePublished(),
+                book.coverLink(),
+                null,
+                book.description(),
+                book.id(),
+                book.series()
+            );
+            var dbBook = mediaService.postBook(brh);
+        }
+    }
+
     public static void populate() throws SQLException, IOException, ParseException {
         var ids = getAll().stream()
             .map(Media::getExternalid)
             .toList();
-        var books = fetchBooks();
+        var books = fetchBooks().stream()
+            .filter(book -> !ids.contains(book.id()))
+            .toList();
+        add(books);
     }
 }

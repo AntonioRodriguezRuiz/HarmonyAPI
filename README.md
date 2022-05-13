@@ -10,7 +10,6 @@
 * [Resources](#resources)
 * [Operations](#operations)
 * [Usage suggestions](#usage-suggestions)
-* [Local deployment](#local-deployment)
 
 
 # Introduction
@@ -441,6 +440,3 @@ If you want to go above and beyond:
 All POJO classes inside the src.main.java.model package are generated from the Harmony database.
 These are provided from the repository and updated if the model changes. Use them as needed.
 
-# Local deployment
-If for some reason you'd rather do operations on a locally hosted version of the API, follow these steps. 
-We strongly suggest the use of IntelliJ IDEA. It is free for us as part of the GitHub Student package. Use [this form](https://www.jetbrains.com/shop/eform/students).

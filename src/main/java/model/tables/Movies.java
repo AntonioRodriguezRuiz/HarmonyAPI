@@ -48,11 +48,6 @@ public class Movies extends TableImpl<MoviesRecord> {
      */
     public final TableField<MoviesRecord, Integer> MEDIAID = createField(DSL.name("mediaid"), SQLDataType.INTEGER.nullable(false), this, "");
 
-    /**
-     * The column <code>harmony.movies.tmdbid</code>.
-     */
-    public final TableField<MoviesRecord, Integer> TMDBID = createField(DSL.name("tmdbid"), SQLDataType.INTEGER.defaultValue(DSL.field("NULL", SQLDataType.INTEGER)), this, "");
-
     private Movies(Name alias, Table<MoviesRecord> aliased) {
         this(alias, aliased, null);
     }
@@ -147,11 +142,11 @@ public class Movies extends TableImpl<MoviesRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row3 type methods
+    // Row2 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row3<Integer, Integer, Integer> fieldsRow() {
-        return (Row3) super.fieldsRow();
+    public Row2<Integer, Integer> fieldsRow() {
+        return (Row2) super.fieldsRow();
     }
 }

@@ -133,7 +133,8 @@ public class MediaService {
                             movie.getReleasedate(),
                             movie.getCoverimage(),
                             movie.getBackgroundimage(),
-                            movie.getSynopsis());
+                            movie.getSynopsis(),
+                            movie.getExternalId());
                     break;
                 case "series":
                     series = (SeriesRequestHelper) media;
@@ -142,7 +143,8 @@ public class MediaService {
                             series.getReleasedate(),
                             series.getCoverimage(),
                             series.getBackgroundimage(),
-                            series.getSynopsis());
+                            series.getSynopsis(),
+                            series.getExternalId());
                     break;
                 case "books":
                     book = (BookRequestHelper) media;
@@ -152,7 +154,9 @@ public class MediaService {
                             book.getCoverimage(),
                             book.getBackgroundimage(),
                             book.getSynopsis(),
-                            book.getCollection());
+                            book.getExternalId(),
+                            book.getCollection(),
+                            book.getNumber());
                     break;
                 case "videogames":
                     videogame = (VideogameRequestHelper) media;
@@ -162,6 +166,7 @@ public class MediaService {
                             videogame.getCoverimage(),
                             videogame.getBackgroundimage(),
                             videogame.getSynopsis(),
+                            videogame.getExternalId(),
                             videogame.getCompany());
                     break;
             }
@@ -189,7 +194,7 @@ public class MediaService {
         try (Connection conn = DriverManager.getConnection(GlobalValues.URL, GlobalValues.USER, GlobalValues.PASSWORD)) {
             DSLContext create = DSL.using(conn, GlobalValues.DIALECT, GlobalValues.SETTINGS);
 
-            MediaRequestHelper newMedia = new MediaRequestHelper(null, null, null, null, null, null, null);
+            MediaRequestHelper newMedia = new MediaRequestHelper(null, null, null, null, null, null, null, null);
             newMedia.setMediaid(media.getMediaid());
 
             newMedia.setTitle(media.getTitle() != null ? media.getTitle() : oldMedia.getTitle());
@@ -197,6 +202,7 @@ public class MediaService {
             newMedia.setCoverimage(media.getCoverimage() != null ? media.getCoverimage() : oldMedia.getCoverimage());
             newMedia.setBackgroundimage(media.getBackgroundimage() != null ? media.getBackgroundimage() : oldMedia.getBackgroundimage());
             newMedia.setSynopsis(media.getSynopsis() != null ? media.getSynopsis() : oldMedia.getSynopsis());
+            newMedia.setExternalId(media.getExternalId() != null ? media.getExternalId() : oldMedia.getExternalid());
 
             create.update(MEDIA)
                     .set(MEDIA.TITLE, newMedia.getTitle())
@@ -204,6 +210,7 @@ public class MediaService {
                     .set(MEDIA.COVERIMAGE, newMedia.getCoverimage())
                     .set(MEDIA.BACKGROUNDIMAGE, newMedia.getBackgroundimage())
                     .set(MEDIA.SYNOPSIS, newMedia.getSynopsis())
+                    .set(MEDIA.EXTERNALID, newMedia.getExternalId())
                     .where(MEDIA.MEDIAID.eq(newMedia.getMediaid()))
                     .execute();
 

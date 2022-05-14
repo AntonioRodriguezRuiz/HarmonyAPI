@@ -60,12 +60,13 @@ CREATE TABLE admins(
 
 CREATE TABLE media(
                       mediaid INT NOT NULL UNIQUE AUTO_INCREMENT,
-                      title VARCHAR(120) NOT NULL,
+                      title VARCHAR(500) NOT NULL,
                       releaseDate DATE NOT NULL,
                       coverImage VARCHAR(120) NOT NULL,
                       backgroundImage VARCHAR(120) NOT NULL,
-                      synopsis VARCHAR(1500) NOT NULL,
+                      synopsis TEXT(50000000) NOT NULL,
                       avgRating FLOAT(3),
+                      externalId INT,
 
                       PRIMARY KEY (mediaid),
 
@@ -76,7 +77,7 @@ CREATE TABLE media(
 CREATE TABLE videogames(
                            videogameid INT NOT NULL UNIQUE AUTO_INCREMENT,
                            mediaid INT NOT NULL UNIQUE,
-                           company VARCHAR(60) NOT NULL,
+                           company VARCHAR(600) NOT NULL,
 
                            PRIMARY KEY (videogameid),
 
@@ -107,6 +108,7 @@ CREATE TABLE books(
                       bookid INT NOT NULL UNIQUE AUTO_INCREMENT,
                       mediaid INT NOT NULL UNIQUE,
                       collection VARCHAR(120),
+                      number INT,
 
                       PRIMARY KEY (bookid),
                       FOREIGN KEY (mediaid) REFERENCES media(mediaid) ON DELETE CASCADE
@@ -375,44 +377,44 @@ BEGIN
 END//
 
 DROP PROCEDURE IF EXISTS newSeries;
-CREATE PROCEDURE newSeries(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500))
+CREATE PROCEDURE newSeries(title VARCHAR(500), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis TEXT(50000000), externalId INT)
 BEGIN
-START TRANSACTION;
-tblock: BEGIN
+    START TRANSACTION;
+    tblock: BEGIN
         DECLARE mediaidForeign INT;
 
         DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING
-BEGIN
-GET DIAGNOSTICS CONDITION 1 @text = MESSAGE_TEXT;
-SET @text = CONCAT('[Procedure newSeries] Transaction aborted --> ', @text);
-ROLLBACK;
-SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @text;
-END;
+            BEGIN
+                GET DIAGNOSTICS CONDITION 1 @text = MESSAGE_TEXT;
+                SET @text = CONCAT('[Procedure newSeries] Transaction aborted --> ', @text);
+                ROLLBACK;
+                SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @text;
+            END;
 
         IF coverImage IS NOT NULL AND backgroundImage IS NOT NULL THEN
-            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis)
-            VALUES(title, releaseDate, coverImage, backgroundImage, synopsis);
+            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis, externalId)
+            VALUES(title, releaseDate, coverImage, backgroundImage, synopsis, externalId);
         ELSEIF coverImage IS NOT NULL THEN
-            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis)
-            VALUES(title, releaseDate,coverImage, 'img/bkg/default', synopsis);
+            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis, externalId)
+            VALUES(title, releaseDate,coverImage, 'img/bkg/default', synopsis, externalId);
         ELSEIF backgroundImage IS NOT NULL THEN
-            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis)
-            VALUES(title, releaseDate,'img/bkg/default', backgroundImage, synopsis);
-ELSE
-            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis)
-            VALUES(title, releaseDate,'img/bkg/default', 'img/bkg/default', synopsis);
-END IF;
+            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis, externalId)
+            VALUES(title, releaseDate,'img/bkg/default', backgroundImage, synopsis, externalId);
+        ELSE
+            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis, externalId)
+            VALUES(title, releaseDate,'img/bkg/default', 'img/bkg/default', synopsis, externalId);
+        END IF;
 
-SELECT mediaid INTO mediaidForeign FROM media
-WHERE media.title=title AND media.releaseDate=releaseDate;
-INSERT INTO series(mediaid)
-VALUES(mediaidForeign);
-COMMIT;
-END;
+        SELECT mediaid INTO mediaidForeign FROM media
+        WHERE media.title=title AND media.releaseDate=releaseDate;
+        INSERT INTO series(mediaid)
+        VALUES(mediaidForeign);
+        COMMIT;
+    END;
 END //
 
 DROP PROCEDURE IF EXISTS newSeason;
-CREATE PROCEDURE newSeason(title VARCHAR(120), releaseDate DATE, seasonNo INT, noEpisodes INT)
+CREATE PROCEDURE newSeason(title VARCHAR(500), releaseDate DATE, seasonNo INT, noEpisodes INT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -437,28 +439,28 @@ END //
 DROP PROCEDURE IF EXISTS newSeasonById;
 CREATE PROCEDURE newSeasonById(mediaid INT, seasonNo INT, noEpisodes INT)
 BEGIN
-START TRANSACTION;
-tblock: BEGIN
+    START TRANSACTION;
+    tblock: BEGIN
         DECLARE seriesidForeign INT;
 
         DECLARE EXIT HANDLER FOR SQLEXCEPTION, SQLWARNING
-BEGIN
-GET DIAGNOSTICS CONDITION 1 @text = MESSAGE_TEXT;
-SET @text = CONCAT('[Procedure newSeason] Transaction aborted --> ', @text);
-ROLLBACK;
-SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @text;
-END;
-SELECT S.seriesid INTO seriesidForeign FROM media
-                                                JOIN series S ON media.mediaid = S.mediaid
-WHERE media.mediaid=mediaid;
-INSERT INTO seasons(seriesid, seasonNo, noEpisodes)
-VALUES(seriesidForeign, seasonNo, noEpisodes);
-COMMIT;
-END;
+            BEGIN
+                GET DIAGNOSTICS CONDITION 1 @text = MESSAGE_TEXT;
+                SET @text = CONCAT('[Procedure newSeason] Transaction aborted --> ', @text);
+                ROLLBACK;
+                SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @text;
+            END;
+        SELECT S.seriesid INTO seriesidForeign FROM media
+                                                        JOIN series S ON media.mediaid = S.mediaid
+        WHERE media.mediaid=mediaid;
+        INSERT INTO seasons(seriesid, seasonNo, noEpisodes)
+        VALUES(seriesidForeign, seasonNo, noEpisodes);
+        COMMIT;
+    END;
 END //
 
 DROP PROCEDURE IF EXISTS newEpisode;
-CREATE PROCEDURE newEpisode(title VARCHAR(120), releaseDate DATE, seasonNo INT, episodeName VARCHAR(60), episodeNo INT)
+CREATE PROCEDURE newEpisode(title VARCHAR(500), releaseDate DATE, seasonNo INT, episodeName VARCHAR(60), episodeNo INT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -505,7 +507,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newVideogame;
-CREATE PROCEDURE newVideogame(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500), company VARCHAR(60))
+CREATE PROCEDURE newVideogame(title VARCHAR(500), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis TEXT(50000000), externalId INT, company VARCHAR(600))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -520,17 +522,17 @@ BEGIN
             END;
 
         IF coverImage IS NOT NULL AND backgroundImage IS NOT NULL THEN
-            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis)
-            VALUES(title, releaseDate, coverImage, backgroundImage, synopsis);
+            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis, externalId)
+            VALUES(title, releaseDate, coverImage, backgroundImage, synopsis, externalId);
         ELSEIF coverImage IS NOT NULL THEN
-            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis)
-            VALUES(title, releaseDate, coverImage, 'img/bkg/default', synopsis);
+            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis, externalId)
+            VALUES(title, releaseDate, coverImage, 'img/bkg/default', synopsis, externalId);
         ELSEIF backgroundImage IS NOT NULL THEN
-            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis)
-            VALUES(title, releaseDate, 'img/bkg/default', backgroundImage, synopsis);
+            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis, externalId)
+            VALUES(title, releaseDate, 'img/bkg/default', backgroundImage, synopsis, externalId);
         ELSE
-            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis)
-            VALUES(title, releaseDate, 'img/bkg/default', 'img/bkg/default', synopsis);
+            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis, externalId)
+            VALUES(title, releaseDate, 'img/bkg/default', 'img/bkg/default', synopsis, externalId);
         END IF;
 
         SELECT mediaid INTO mediaidForeign FROM media
@@ -560,7 +562,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newVideogamePlatform;
-CREATE PROCEDURE newVideogamePlatform(platformName VARCHAR(60), title VARCHAR(120), releaseDate DATE)
+CREATE PROCEDURE newVideogamePlatform(platformName VARCHAR(60), title VARCHAR(500), releaseDate DATE)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -602,7 +604,7 @@ BEGIN
             END;
         SELECT V.videogameid INTO videogameidForeign FROM media
                                                               JOIN videogames V ON media.mediaid = V.mediaid
-                                                                WHERE media.mediaid=mediaid;
+        WHERE media.mediaid=mediaid;
         INSERT INTO videogameplatforms(videogameid, platformid)
         VALUES(videogameidForeign, platformid);
         COMMIT;
@@ -610,7 +612,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newBook;
-CREATE PROCEDURE newBook(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500), collection VARCHAR(120))
+CREATE PROCEDURE newBook(title VARCHAR(500), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis TEXT(50000000), externalId INT, collection VARCHAR(120), number INT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -625,29 +627,29 @@ BEGIN
             END;
 
         IF coverImage IS NOT NULL AND backgroundImage IS NOT NULL THEN
-            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis)
-            VALUES(title, releaseDate, coverImage, backgroundImage, synopsis);
+            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis, externalId)
+            VALUES(title, releaseDate, coverImage, backgroundImage, synopsis, externalId);
         ELSEIF coverImage IS NOT NULL THEN
-            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis)
-            VALUES(title, releaseDate,coverImage, 'img/bkg/default', synopsis);
+            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis, externalId)
+            VALUES(title, releaseDate,coverImage, 'img/bkg/default', synopsis, externalId);
         ELSEIF backgroundImage IS NOT NULL THEN
-            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis)
-            VALUES(title, releaseDate,'img/bkg/default', backgroundImage, synopsis);
+            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis, externalId)
+            VALUES(title, releaseDate,'img/bkg/default', backgroundImage, synopsis, externalId);
         ELSE
-            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis)
-            VALUES(title, releaseDate,'img/bkg/default', 'img/bkg/default', synopsis);
+            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis, externalId)
+            VALUES(title, releaseDate,'img/bkg/default', 'img/bkg/default', synopsis, externalId);
         END IF;
 
         SELECT mediaid INTO mediaidForeign FROM media
         WHERE media.title=title AND media.releaseDate=releaseDate;
-        INSERT INTO books(mediaid, collection)
-        VALUES(mediaidForeign, collection);
+        INSERT INTO books(mediaid, collection, number)
+        VALUES(mediaidForeign, collection, number);
         COMMIT;
     END;
 END //
 
 DROP PROCEDURE IF EXISTS newMovie;
-CREATE PROCEDURE newMovie(title VARCHAR(120), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis VARCHAR(1500))
+CREATE PROCEDURE newMovie(title VARCHAR(500), releaseDate DATE, coverImage VARCHAR(120), backgroundImage VARCHAR(120), synopsis TEXT(50000000), externalId INT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -662,17 +664,17 @@ BEGIN
             END;
 
         IF coverImage IS NOT NULL AND backgroundImage IS NOT NULL THEN
-            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis)
-            VALUES(title, releaseDate, coverImage, backgroundImage, synopsis);
+            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis, externalId)
+            VALUES(title, releaseDate, coverImage, backgroundImage, synopsis, externalId);
         ELSEIF coverImage IS NOT NULL THEN
-            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis)
-            VALUES(title, releaseDate,coverImage, 'img/bkg/default', synopsis);
+            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis, externalId)
+            VALUES(title, releaseDate,coverImage, 'img/bkg/default', synopsis, externalId);
         ELSEIF backgroundImage IS NOT NULL THEN
-            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis)
-            VALUES(title, releaseDate,'img/bkg/default', backgroundImage, synopsis);
+            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis, externalId)
+            VALUES(title, releaseDate,'img/bkg/default', backgroundImage, synopsis, externalId);
         ELSE
-            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis)
-            VALUES(title, releaseDate,'img/bkg/default', 'img/bkg/default', synopsis);
+            INSERT INTO media(title, releaseDate, coverImage, backgroundImage, synopsis, externalId)
+            VALUES(title, releaseDate,'img/bkg/default', 'img/bkg/default', synopsis, externalId);
         END IF;
 
         SELECT mediaid INTO mediaidForeign FROM media
@@ -703,7 +705,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newMediaGenre;
-CREATE PROCEDURE newMediaGenre(title VARCHAR(120), releaseDate DATE, genre VARCHAR(50))
+CREATE PROCEDURE newMediaGenre(title VARCHAR(500), releaseDate DATE, genre VARCHAR(50))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -886,7 +888,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newPersonMovie;
-CREATE PROCEDURE newPersonMovie(personname VARCHAR(60), date DATE, title VARCHAR(120), releaseDate DATE, role VARCHAR(120), roletype TINYINT)
+CREATE PROCEDURE newPersonMovie(personname VARCHAR(60), date DATE, title VARCHAR(500), releaseDate DATE, role VARCHAR(120), roletype TINYINT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -918,7 +920,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newPersonBook;
-CREATE PROCEDURE newPersonBook(personname VARCHAR(60), date DATE, title VARCHAR(120), releaseDate DATE, role VARCHAR(120))
+CREATE PROCEDURE newPersonBook(personname VARCHAR(60), date DATE, title VARCHAR(500), releaseDate DATE, role VARCHAR(120))
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -950,7 +952,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newPersonVideogame;
-CREATE PROCEDURE newPersonVideogame(personname VARCHAR(60), date DATE, title VARCHAR(120), releaseDate DATE, role VARCHAR(120), roletype TINYINT)
+CREATE PROCEDURE newPersonVideogame(personname VARCHAR(60), date DATE, title VARCHAR(500), releaseDate DATE, role VARCHAR(120), roletype TINYINT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -982,7 +984,7 @@ BEGIN
 END //
 
 DROP PROCEDURE IF EXISTS newPersonEpisode;
-CREATE PROCEDURE newPersonEpisode(personname VARCHAR(60), date DATE, title VARCHAR(120), releaseDate DATE, seasonNo INT, episodeNo INT, role VARCHAR(120), roletype TINYINT)
+CREATE PROCEDURE newPersonEpisode(personname VARCHAR(60), date DATE, title VARCHAR(500), releaseDate DATE, seasonNo INT, episodeNo INT, role VARCHAR(120), roletype TINYINT)
 BEGIN
     START TRANSACTION;
     tblock: BEGIN
@@ -1103,11 +1105,11 @@ CREATE TRIGGER updateAvgRating_onInsert
 BEGIN
     DECLARE newAvgRating FLOAT(3);
 
-SELECT AVG(rating) INTO newAvgRating FROM reviews
-WHERE reviews.mediaid=new.mediaid;
+    SELECT AVG(rating) INTO newAvgRating FROM reviews
+    WHERE reviews.mediaid=new.mediaid;
 
-UPDATE media SET avgRating=newAvgRating
-WHERE media.mediaid=new.mediaid;
+    UPDATE media SET avgRating=newAvgRating
+    WHERE media.mediaid=new.mediaid;
 END //
 
 CREATE TRIGGER updateAvgRating_onUpdate
@@ -1115,11 +1117,11 @@ CREATE TRIGGER updateAvgRating_onUpdate
 BEGIN
     DECLARE newAvgRating FLOAT(3);
 
-SELECT AVG(rating) INTO newAvgRating FROM reviews
-WHERE reviews.mediaid=new.mediaid;
+    SELECT AVG(rating) INTO newAvgRating FROM reviews
+    WHERE reviews.mediaid=new.mediaid;
 
-UPDATE media SET avgRating=newAvgRating
-WHERE media.mediaid=new.mediaid;
+    UPDATE media SET avgRating=newAvgRating
+    WHERE media.mediaid=new.mediaid;
 END //
 
 CREATE TRIGGER updateReviewLikes_onInsert
@@ -1127,11 +1129,11 @@ CREATE TRIGGER updateReviewLikes_onInsert
 BEGIN
     DECLARE newLikes INT;
 
-SELECT COUNT(*) INTO newLikes FROM reviewlikes
-WHERE reviewlikes.reviewid=new.reviewid;
+    SELECT COUNT(*) INTO newLikes FROM reviewlikes
+    WHERE reviewlikes.reviewid=new.reviewid;
 
-UPDATE reviews SET likes=newLikes
-WHERE reviews.reviewid=new.reviewid;
+    UPDATE reviews SET likes=newLikes
+    WHERE reviews.reviewid=new.reviewid;
 END //
 
 CREATE TRIGGER updateReviewLikes_onDelete
@@ -1139,46 +1141,31 @@ CREATE TRIGGER updateReviewLikes_onDelete
 BEGIN
     DECLARE newLikes INT;
 
-SELECT COUNT(*) INTO newLikes FROM reviewlikes
-WHERE reviewlikes.reviewid=old.reviewid;
+    SELECT COUNT(*) INTO newLikes FROM reviewlikes
+    WHERE reviewlikes.reviewid=old.reviewid;
 
-UPDATE reviews SET likes=newLikes
-WHERE reviews.reviewid=old.reviewid;
+    UPDATE reviews SET likes=newLikes
+    WHERE reviews.reviewid=old.reviewid;
 END //
 
-DELIMITER //
-CREATE OR REPLACE TRIGGER updateList_oninsert
+CREATE TRIGGER updateList_oninsert
     AFTER INSERT ON listmedia FOR EACH ROW
 BEGIN
 
-UPDATE lists SET modificationDate=CURTIME()
-WHERE lists.listid=new.listid;
+    UPDATE lists SET modificationDate=CURTIME()
+    WHERE lists.listid=new.listid;
 END //
 
-CREATE OR REPLACE TRIGGER updateList_ondelete
+CREATE TRIGGER updateList_ondelete
     AFTER DELETE ON listmedia FOR EACH ROW
 BEGIN
 
-UPDATE lists SET modificationDate=CURTIME()
-WHERE lists.listid=old.listid;
+    UPDATE lists SET modificationDate=CURTIME()
+    WHERE lists.listid=old.listid;
 END //
 DELIMITER ;
 
 /*
  File generated by autopopulate.py
  */
-CALL newMovie('Spider-Man', '2002-05-01', 'https://www.themoviedb.org/t/p/original/gh4cZbhZxyTbgxQPxD0dOudNPTn.jpg', 'https://www.themoviedb.org/t/p/original/sWvxBXNtCOaGdtpKNLiOqmwb10N.jpg', 'After being bitten by a genetically altered spider at Oscorp, nerdy but endearing high school student Peter Parker is endowed with amazing powers to become the superhero known as Spider-Man.');
-CALL newMovie('Spider-Man 3', '2007-05-01', 'https://www.themoviedb.org/t/p/original/63O5iixxXSmyOaBas7ek1tkeVra.jpg', 'https://www.themoviedb.org/t/p/original/6MQmtWk4cFwSDyNvIgoJRBIHUT3.jpg', 'The seemingly invincible Spider-Man goes up against an all-new crop of villains—including the shape-shifting Sandman. While Spider-Man’s superpowers are altered by an alien organism, his alter ego, Peter Parker, deals with nemesis Eddie Brock and also gets caught up in a love triangle.');
-CALL newMovie('The Amazing Spider-Man', '2012-06-23', 'https://www.themoviedb.org/t/p/original/gsIkMf1VErbF0xtrgXEZXqLgsBG.jpg', 'https://www.themoviedb.org/t/p/original/sLWUtbrpiLp23a0XDSiUiltdFPJ.jpg', 'Peter Parker is an outcast high schooler abandoned by his parents as a boy, leaving him to be raised by his Uncle Ben and Aunt May. Like most teenagers, Peter is trying to figure out who he is and how he got to be the person he is today. As Peter discovers a mysterious briefcase that belonged to his father, he begins a quest to understand his parents\' disappearance – leading him directly to Oscorp and the lab of Dr. Curt Connors, his father\'s former partner. As Spider-Man is set on a collision course with Connors\' alter ego, The Lizard, Peter will make life-altering choices to use his powers and shape his destiny to become a hero.');
-CALL newBook('booktest', '2012-06-23', null, null, 'this is a test for queries', 'testCollection');
-CALL newVideogame('videogameTest', '2012-06-23', null, null, 'this is a test for queries', 'testCompany');
-CALL newMovie('movieTest', '1999-05-01', null, null, 'test for oder');
-CALL newGenre('action');
-CALL newMediaGenre('Spider-Man', '2002-05-01', 'action');
-CALL newUser('antonioAdmin', 'e@e.com', 'antoniopassword', 1);
-CALL newUser('antonioUser', 'e@e2.com', 'antoniopassword', 0);
-CALL newPlatform('gameboy');
-CALL newPerson('andres', '2002-05-01', null);
-CALL newPersonBook('andres', '2002-05-01', 'booktest', '2012-06-23', 'author');
-CALL newPersonMovie('andres', '2002-05-01', 'Spider-Man', '2002-05-01', 'actor', 1);
-CALL newReview(1, 1, 5.0, 'decent');
+CALL newUser('admin', 'admin@administrator.admin', 'complicated_admin_password', 1);

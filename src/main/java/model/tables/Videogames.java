@@ -4,27 +4,17 @@
 package src.main.java.model.tables;
 
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row3;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.TableOptions;
-import org.jooq.UniqueKey;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
-
 import src.main.java.model.Harmony;
 import src.main.java.model.Keys;
 import src.main.java.model.tables.records.VideogamesRecord;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -61,7 +51,7 @@ public class Videogames extends TableImpl<VideogamesRecord> {
     /**
      * The column <code>harmony.videogames.company</code>.
      */
-    public final TableField<VideogamesRecord, String> COMPANY = createField(DSL.name("company"), SQLDataType.VARCHAR(60).nullable(false), this, "");
+    public final TableField<VideogamesRecord, String> COMPANY = createField(DSL.name("company"), SQLDataType.VARCHAR(600).nullable(false), this, "");
 
     private Videogames(Name alias, Table<VideogamesRecord> aliased) {
         this(alias, aliased, null);

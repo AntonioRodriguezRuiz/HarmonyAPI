@@ -12,12 +12,22 @@ public class BookResponseHelper extends MediaResponseHelper{
 
     private String collection;
 
+    private Integer number;
+
     public String getCollection() {
         return collection;
     }
 
     public void setCollection(String collection) {
         this.collection = collection;
+    }
+
+    public Integer getNumber() {
+        return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
     }
 
     public BookResponseHelper(Record record, List<Genres> genresList) {
@@ -30,6 +40,7 @@ public class BookResponseHelper extends MediaResponseHelper{
                 record.getValue(MEDIA.AVGRATING),
                 genresList);
         this.collection = record.getValue(BOOKS.COLLECTION);
+        this.number = record.getValue(BOOKS.NUMBER);
     }
 
 }

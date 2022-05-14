@@ -18,6 +18,7 @@ public class Books implements Serializable {
     private Integer bookid;
     private Integer mediaid;
     private String  collection;
+    private Integer number;
 
     public Books() {}
 
@@ -25,16 +26,19 @@ public class Books implements Serializable {
         this.bookid = value.bookid;
         this.mediaid = value.mediaid;
         this.collection = value.collection;
+        this.number = value.number;
     }
 
     public Books(
         Integer bookid,
         Integer mediaid,
-        String  collection
+        String  collection,
+        Integer number
     ) {
         this.bookid = bookid;
         this.mediaid = mediaid;
         this.collection = collection;
+        this.number = number;
     }
 
     /**
@@ -82,6 +86,21 @@ public class Books implements Serializable {
         return this;
     }
 
+    /**
+     * Getter for <code>harmony.books.number</code>.
+     */
+    public Integer getNumber() {
+        return this.number;
+    }
+
+    /**
+     * Setter for <code>harmony.books.number</code>.
+     */
+    public Books setNumber(Integer number) {
+        this.number = number;
+        return this;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -109,6 +128,12 @@ public class Books implements Serializable {
         }
         else if (!collection.equals(other.collection))
             return false;
+        if (number == null) {
+            if (other.number != null)
+                return false;
+        }
+        else if (!number.equals(other.number))
+            return false;
         return true;
     }
 
@@ -119,6 +144,7 @@ public class Books implements Serializable {
         result = prime * result + ((this.bookid == null) ? 0 : this.bookid.hashCode());
         result = prime * result + ((this.mediaid == null) ? 0 : this.mediaid.hashCode());
         result = prime * result + ((this.collection == null) ? 0 : this.collection.hashCode());
+        result = prime * result + ((this.number == null) ? 0 : this.number.hashCode());
         return result;
     }
 
@@ -129,6 +155,7 @@ public class Books implements Serializable {
         sb.append(bookid);
         sb.append(", ").append(mediaid);
         sb.append(", ").append(collection);
+        sb.append(", ").append(number);
 
         sb.append(")");
         return sb.toString();

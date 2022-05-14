@@ -4,14 +4,13 @@
 package src.main.java.model.routines;
 
 
-import java.time.LocalDate;
-
 import org.jooq.Parameter;
 import org.jooq.impl.AbstractRoutine;
 import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;
-
 import src.main.java.model.Harmony;
+
+import java.time.LocalDate;
 
 
 /**
@@ -25,7 +24,7 @@ public class Newbook extends AbstractRoutine<java.lang.Void> {
     /**
      * The parameter <code>harmony.newBook.title</code>.
      */
-    public static final Parameter<String> TITLE = Internal.createParameter("title", SQLDataType.VARCHAR(120), false, false);
+    public static final Parameter<String> TITLE = Internal.createParameter("title", SQLDataType.VARCHAR(500), false, false);
 
     /**
      * The parameter <code>harmony.newBook.releaseDate</code>.
@@ -45,12 +44,22 @@ public class Newbook extends AbstractRoutine<java.lang.Void> {
     /**
      * The parameter <code>harmony.newBook.synopsis</code>.
      */
-    public static final Parameter<String> SYNOPSIS = Internal.createParameter("synopsis", SQLDataType.VARCHAR(1500), false, false);
+    public static final Parameter<String> SYNOPSIS = Internal.createParameter("synopsis", SQLDataType.CLOB, false, false);
+
+    /**
+     * The parameter <code>harmony.newBook.externalId</code>.
+     */
+    public static final Parameter<Integer> EXTERNALID = Internal.createParameter("externalId", SQLDataType.INTEGER, false, false);
 
     /**
      * The parameter <code>harmony.newBook.collection</code>.
      */
     public static final Parameter<String> COLLECTION = Internal.createParameter("collection", SQLDataType.VARCHAR(120), false, false);
+
+    /**
+     * The parameter <code>harmony.newBook.number</code>.
+     */
+    public static final Parameter<Integer> NUMBER = Internal.createParameter("number", SQLDataType.INTEGER, false, false);
 
     /**
      * Create a new routine call instance
@@ -63,7 +72,9 @@ public class Newbook extends AbstractRoutine<java.lang.Void> {
         addInParameter(COVERIMAGE);
         addInParameter(BACKGROUNDIMAGE);
         addInParameter(SYNOPSIS);
+        addInParameter(EXTERNALID);
         addInParameter(COLLECTION);
+        addInParameter(NUMBER);
     }
 
     /**
@@ -102,9 +113,23 @@ public class Newbook extends AbstractRoutine<java.lang.Void> {
     }
 
     /**
+     * Set the <code>externalId</code> parameter IN value to the routine
+     */
+    public void setExternalid(Integer value) {
+        setValue(EXTERNALID, value);
+    }
+
+    /**
      * Set the <code>collection</code> parameter IN value to the routine
      */
     public void setCollection(String value) {
         setValue(COLLECTION, value);
+    }
+
+    /**
+     * Set the <code>number</code> parameter IN value to the routine
+     */
+    public void setNumber(Integer value) {
+        setValue(NUMBER, value);
     }
 }

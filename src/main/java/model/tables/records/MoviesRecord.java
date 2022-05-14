@@ -9,7 +9,6 @@ import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Row2;
 import org.jooq.impl.UpdatableRecordImpl;
-
 import src.main.java.model.tables.Movies;
 
 

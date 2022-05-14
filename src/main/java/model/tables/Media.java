@@ -4,30 +4,19 @@
 package src.main.java.model.tables;
 
 
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-
-import org.jooq.Check;
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row7;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.TableOptions;
-import org.jooq.UniqueKey;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
-
 import src.main.java.model.Harmony;
 import src.main.java.model.Keys;
 import src.main.java.model.tables.records.MediaRecord;
+
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -59,7 +48,7 @@ public class Media extends TableImpl<MediaRecord> {
     /**
      * The column <code>harmony.media.title</code>.
      */
-    public final TableField<MediaRecord, String> TITLE = createField(DSL.name("title"), SQLDataType.VARCHAR(120).nullable(false), this, "");
+    public final TableField<MediaRecord, String> TITLE = createField(DSL.name("title"), SQLDataType.VARCHAR(500).nullable(false), this, "");
 
     /**
      * The column <code>harmony.media.releaseDate</code>.
@@ -79,12 +68,17 @@ public class Media extends TableImpl<MediaRecord> {
     /**
      * The column <code>harmony.media.synopsis</code>.
      */
-    public final TableField<MediaRecord, String> SYNOPSIS = createField(DSL.name("synopsis"), SQLDataType.VARCHAR(1500).nullable(false), this, "");
+    public final TableField<MediaRecord, String> SYNOPSIS = createField(DSL.name("synopsis"), SQLDataType.CLOB.nullable(false), this, "");
 
     /**
      * The column <code>harmony.media.avgRating</code>.
      */
     public final TableField<MediaRecord, Double> AVGRATING = createField(DSL.name("avgRating"), SQLDataType.FLOAT.defaultValue(DSL.field("NULL", SQLDataType.FLOAT)), this, "");
+
+    /**
+     * The column <code>harmony.media.externalId</code>.
+     */
+    public final TableField<MediaRecord, Integer> EXTERNALID = createField(DSL.name("externalId"), SQLDataType.INTEGER.defaultValue(DSL.field("NULL", SQLDataType.INTEGER)), this, "");
 
     private Media(Name alias, Table<MediaRecord> aliased) {
         this(alias, aliased, null);
@@ -173,11 +167,11 @@ public class Media extends TableImpl<MediaRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row7 type methods
+    // Row8 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row7<Integer, String, LocalDate, String, String, String, Double> fieldsRow() {
-        return (Row7) super.fieldsRow();
+    public Row8<Integer, String, LocalDate, String, String, String, Double, Integer> fieldsRow() {
+        return (Row8) super.fieldsRow();
     }
 }

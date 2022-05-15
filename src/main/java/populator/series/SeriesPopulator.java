@@ -191,7 +191,6 @@ public class SeriesPopulator {
     }
 
     public static void populate(Integer limit) throws IOException, ParseException, SQLException {
-        System.out.println("Populating series...");
         var ids = getAll()
             .stream()
             .map(Media::getExternalid)

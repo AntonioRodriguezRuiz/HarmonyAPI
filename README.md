@@ -1,6 +1,7 @@
-<p align="center" width="100%">
-    <img width="66%" src="./assets/harmony.gif"> 
-</p>
+
+<center>
+    <img src="./assets/harmony.gif">
+</center>
 
 <h1 align=center>Harmony</h1>
 <p align="center">Harmony API Java server</p>
@@ -393,7 +394,7 @@ user who posted the item in the first place.
 | **user**     | 🛡GET, 🛡PUT, 🛡DELETE   | /api/v1/user/{id} |
 
 
-## User Tracker Operations (Unusable as of now)
+## User Tracker Operations
 | **Resource** | **Available operations** | **URI**                        |
 |--------------|--------------------------|--------------------------------|
 | **trackers** | GET, POST                | /api/v1/user/{userid}/tracking |

@@ -1,6 +1,6 @@
 
 <center>
-    <img src="./assets/harmony.gif">
+    <img width="67%" src="./assets/harmony.gif">
 </center>
 
 <h1 align=center>Harmony</h1>

@@ -1,7 +1,7 @@
 
-<center>
-    <img width="67%" src="./assets/harmony.gif">
-</center>
+<p align="center" width="67%">
+<img src="./assets/harmony.gif"> 
+</p>
 
 <h1 align=center>Harmony</h1>
 <p align="center">Harmony API Java server</p>

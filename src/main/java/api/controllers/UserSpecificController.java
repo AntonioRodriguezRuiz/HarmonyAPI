@@ -1,6 +1,7 @@
 package api.controllers;
 
 import api.helpers.request.UserRequestHelper;
+import api.helpers.request.UseridBodyHelper;
 import api.helpers.response.UserResponseHelper;
 import api.middlewares.UserMiddlewares;
 import api.services.UserService;
@@ -53,7 +54,6 @@ public class UserSpecificController {
     @PutMapping
     public ResponseEntity<UserRequestHelper> putUser(@PathVariable Integer userId, @RequestBody UserRequestHelper user) throws SQLException {
         UserMiddlewares.userExists(userId);
-        UserMiddlewares.isAccountOwner(userId);
         userSpecificService.putUser(userId, user);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -64,9 +64,10 @@ public class UserSpecificController {
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
     @DeleteMapping
-    public ResponseEntity<UserResponseHelper> deleteUser(@PathVariable Integer userId) throws SQLException {
+    public ResponseEntity<UserResponseHelper> deleteUser(@PathVariable Integer userId, @RequestBody UseridBodyHelper useridBodyHelper) throws SQLException {
+        useridBodyHelper.validate();
         UserMiddlewares.userExists(userId);
-        UserMiddlewares.isAccountOwnerOrAdmin(userId);
+        UserMiddlewares.isAccountOwnerOrAdmin(userId, useridBodyHelper.userid());
         UserMiddlewares.isNotAdmin(userId);
         userSpecificService.deleteUser(userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

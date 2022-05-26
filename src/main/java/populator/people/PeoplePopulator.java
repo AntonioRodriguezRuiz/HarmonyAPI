@@ -152,12 +152,15 @@ public class PeoplePopulator {
                 return null;
             }
         }
-        return new PeopleMediaRequestHelper(
-            1,
-            dbPerson.getPersonid(),
-            role,
-            roleType
-        );
+        if (dbPerson != null) {
+            return new PeopleMediaRequestHelper(
+                1,
+                dbPerson.getPersonid(),
+                role,
+                roleType
+            );
+        }
+        return null;
     }
 
     private static PeopleMediaRequestHelper addCast(PersonCast cast) {

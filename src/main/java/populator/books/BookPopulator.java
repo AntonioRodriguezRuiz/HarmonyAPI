@@ -82,7 +82,7 @@ public class BookPopulator {
                 book.description(),
                 book.id(),
                 book.series().isEmpty() ? null : book.series().replace("(", "").replace(")", "").split(" # ")[0],
-                book.series().isEmpty() || !book.series().contains("#") ? null : Integer.parseInt(
+                book.series().isEmpty() || !book.series().contains("#") || book.series().contains("Complete Collection") || book.series().contains(", Part ") ? null : Integer.parseInt(
                     book.series()
                         .replace("(", "")
                         .replace(")", "")

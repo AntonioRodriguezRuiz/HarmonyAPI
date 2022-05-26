@@ -1,6 +1,6 @@
 openapi: 3.0.0
 servers:
-  - url: https://harmonyapi.rocks
+  - url: https://harmonyapi.rocks/api/v1
     description: Harmony API
 info:
   description: |
@@ -11,7 +11,7 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 paths:
-  /api/v1/media:
+  /media:
     get:
       tags:
         - General Media Operations
@@ -54,7 +54,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Media'
-  /api/v1/media/videogames:
+  /media/videogames:
     post:
       tags:
         - General Media Operations
@@ -116,7 +116,7 @@ paths:
           description: Not enough permissions
         '404':
           description: Item doesn't exists
-  /api/v1/media/series:
+  /media/series:
     post:
       tags:
         - General Media Operations
@@ -176,7 +176,7 @@ paths:
           description: Not enough permissions
         '404':
           description: Item doesn't exists
-  /api/v1/media/movies:
+  /media/movies:
     post:
       tags:
         - General Media Operations
@@ -236,7 +236,7 @@ paths:
           description: Not enough permissions
         '404':
           description: Item doesn't exists
-  /api/v1/media/books:
+  /media/books:
     post:
       tags:
         - General Media Operations
@@ -298,7 +298,7 @@ paths:
           description: Not enough permissions
         '404':
           description: Item doesn't exists
-  /api/v1/media/{id}:
+  /media/{id}:
     get:
       tags:
         - Media Specific operations
@@ -347,7 +347,7 @@ paths:
           description: Not enough permissions
         '404':
           description: Item doesn't exists
-  /api/v1/media/{id}/genres:
+  /media/{id}/genres:
     post:
       tags:
         - Media Specific operations
@@ -386,7 +386,7 @@ paths:
           description: Not enough permissions
         '409':
           description: Media already has this genre
-  /api/v1/media/{id}/genres/{genreid}:
+  /media/{id}/genres/{genreid}:
     delete:
       tags:
         - Media Specific operations
@@ -420,7 +420,7 @@ paths:
           description: Not enough permissions
         '404':
           description: Item doesn't exists
-  /api/v1/media/{id}/platforms:
+  /media/{id}/platforms:
     post:
       tags:
         - Media Specific operations
@@ -454,7 +454,7 @@ paths:
           description: The media item is not a videogame
         '409':
           description: Item already exists
-  /api/v1/media/{id}/seasons:
+  /media/{id}/seasons:
     post:
       tags:
         - Media Specific operations
@@ -527,7 +527,7 @@ paths:
           description: Item doesn't exists
         '405':
           description: The media item is not a series
-  /api/v1/media/{id}/platforms/{platformid}:
+  /media/{id}/platforms/{platformid}:
     delete:
       tags:
         - Media Specific operations
@@ -563,7 +563,7 @@ paths:
           description: Item doesn't exists
         '405':
           description: The media item is not a videogame
-  /api/v1/media/{id}/{seasonid}:
+  /media/{id}/{seasonid}:
     get:
       tags:
         - Media Specific operations
@@ -726,7 +726,7 @@ paths:
           description: Item doesn't exists
         '405':
           description: The media item is not a season of a series
-  /api/v1/media/{id}/{seasonid}/{episodeid}:
+  /media/{id}/{seasonid}/{episodeid}:
     get:
       tags:
         - Media Specific operations
@@ -803,7 +803,7 @@ paths:
           description: Item doesn't exists
         '405':
           description: The media item is not a season of a series
-  /api/v1/media/{id}/reviews:
+  /media/{id}/reviews:
     get:
       tags:
         - Media Specific operations
@@ -896,7 +896,7 @@ paths:
           description: >-
             This person already has a review in this media. You can only perform
             put operations over it
-  /api/v1/media/{id}/people:
+  /media/{id}/people:
     get:
       tags:
         - Media Specific operations
@@ -955,7 +955,7 @@ paths:
           description: The media item is a series, series do not have people directly
         '409':
           description: This person is already in this media with the same role
-  /api/v1/media/{id}/people/{personid}:
+  /media/{id}/people/{personid}:
     delete:
       tags:
         - Media Specific operations
@@ -1002,7 +1002,7 @@ paths:
           description: Item doesn't exists
         '405':
           description: The media item is a series, series do not have people directly
-  /api/v1/media/{id}/{seasonid}/{episodeid}/people:
+  /media/{id}/{seasonid}/{episodeid}/people:
     get:
       tags:
         - Media Specific operations
@@ -1085,7 +1085,7 @@ paths:
           description: Not enough permissions
         '404':
           description: Item doesn't exists
-  /api/v1/media/{id}/{seasonid}/{episodeid}/people/{personid}:
+  /media/{id}/{seasonid}/{episodeid}/people/{personid}:
     delete:
       tags:
         - Media Specific operations
@@ -1142,7 +1142,7 @@ paths:
           description: Not enough permissions
         '404':
           description: Item doesn't exists
-  "/api/v1/genres":
+  "/genres":
     get:
       tags:
         - Genres General  Operations
@@ -1187,7 +1187,7 @@ paths:
           description: Not enough permissions
         '409':
           description: Item already exists
-  "/api/v1/genres/{id}":
+  "/genres/{id}":
     delete:
       tags:
         - Genres Specific Operations
@@ -1215,7 +1215,7 @@ paths:
           description: Not enough permissions
         '404':
           description: Item doesn't exists
-  /api/v1/platforms:
+  /platforms:
     get:
       tags:
         - Platforms General Operations
@@ -1260,7 +1260,7 @@ paths:
           description: Not enough permissions
         '409':
           description: This platform is already registered
-  /api/v1/platforms/{id}:
+  /platforms/{id}:
     delete:
       tags:
         - Platforms Specific Operations
@@ -1288,7 +1288,7 @@ paths:
           description: Not enough permissions
         '404':
           description: Item doesn't exists
-  "/api/v1/people":
+  "/people":
     get:
       tags:
         - People General Operations
@@ -1369,7 +1369,7 @@ paths:
           description: Not enough permissions
         '409':
           description: Item already exists
-  "/api/v1/people/{id}":
+  "/people/{id}":
     get:
       tags:
         - People Specific Operations
@@ -1418,7 +1418,7 @@ paths:
           description: Not enough permissions
         '404':
           description: Item doesn't exists
-  "/api/v1/user":
+  "/user":
     post:
       tags:
         - User General Operations
@@ -1441,7 +1441,7 @@ paths:
           description: Bad request
         '409':
           description: User already exists
-  "/api/v1/user/{userId}":
+  "/user/{userId}":
     get:
       tags:
         - User Specific Operations
@@ -1505,7 +1505,7 @@ paths:
           description: User deleted
         '404':
           description: User not found
-  "/api/v1/user/{userId}/tracking":
+  "/user/{userId}/tracking":
     get:
       tags:
         - User Trackers Operations
@@ -1576,7 +1576,7 @@ paths:
           description: User or media not found
         '409':
           description: Tracker already exists
-  "/api/v1/user/{userId}/lists":
+  "/user/{userId}/lists":
     get:
       tags:
         - User Lists Operations
@@ -1617,7 +1617,7 @@ paths:
           description: List created
         '404':
           description: User not found
-  "/api/v1/user/{userId}/lists/{listId}":
+  "/user/{userId}/lists/{listId}":
     get:
       tags:
         - List Specific Operations
@@ -1741,7 +1741,7 @@ paths:
           description: User not authorized to access the list
         '404':
           description: User or list not found
-  "/api/v1/user/{userId}/lists/{listId}/{mediaId}":
+  "/user/{userId}/lists/{listId}/{mediaId}":
     delete:
       tags:
         - List Specific Operations
@@ -1779,7 +1779,7 @@ paths:
           description: User not authorized to access the list
         '404':
           description: User or list not found
-  "/api/v1/reviews/{id}":
+  "/reviews/{id}":
     get:
       tags:
         - Review Specific Operations
@@ -1828,7 +1828,7 @@ paths:
           description: Not enough permissions
         '404':
           description: Item doesn't exists
-  "/api/v1/reviews/{id}/likes":
+  "/reviews/{id}/likes":
     post:
       tags:
         - Review Specific Operations
@@ -1860,7 +1860,7 @@ paths:
           description: Not enough permissions
         '409':
           description: You have already liked this
-  "/api/v1/reviews/{id}/likes/{likeid}":
+  "/reviews/{id}/likes/{likeid}":
     delete:
       tags:
         - Review Specific Operations
@@ -1894,7 +1894,7 @@ paths:
           description: Not enough permissions
         '404':
           description: Item doesn't exists
-  "/api/v1/reports":
+  "/reports":
     get:
       tags:
         - Reports General Operations
@@ -1946,7 +1946,7 @@ paths:
           description: Some parameter does not have a valid value
         '409':
           description: Item already exists
-  "/api/v1/reports/{id}":
+  "/reports/{id}":
     delete:
       tags:
         - Reports Specific Operations

@@ -647,7 +647,7 @@ paths:
     put:
       tags:
         - Media Specific operations
-      summary: Modifies an existing episode
+      summary: Modifies an existing season
       operationId: putEpisode
       parameters:
         - name: id

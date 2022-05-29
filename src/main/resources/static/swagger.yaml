@@ -1500,12 +1500,19 @@ paths:
           schema:
             type: integer
             format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UseridBodyHelper"
       responses:
         '204':
           description: User deleted
         '404':
           description: User not found
-  "/user/{userId}/tracking":
+        '403':
+          description: Not enough permissions
+  "/api/v1/user/{userId}/tracking":
     get:
       tags:
         - User Trackers Operations

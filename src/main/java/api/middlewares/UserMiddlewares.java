@@ -11,6 +11,7 @@ import src.main.java.model.tables.pojos.Admins;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Objects;
 
 import static src.main.java.model.Tables.ADMINS;
 import static src.main.java.model.Tables.USERS;
@@ -95,16 +96,18 @@ public class UserMiddlewares {
         }
     }
 
-    public static void isAccountOwner(Integer userid) throws SQLException {
-        // TODO: implement
+    public static void isAccountOwner(Integer userid, Integer requestId) {
+        if (!Objects.equals(userid, requestId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not authorized");
+        }
     }
 
-    public static void isAccountOwnerOrAdmin(Integer id) throws SQLException {
+    public static void isAccountOwnerOrAdmin(Integer userid, Integer requestId) throws SQLException {
         try {
-            isAccountOwner(id);
+            isAccountOwner(userid, requestId);
         }
         catch (ResponseStatusException e){
-            isAdmin(id);
+            isAdmin(requestId);
         }
     }
 }

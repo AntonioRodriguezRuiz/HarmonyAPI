@@ -71,6 +71,14 @@ public class BookPopulator {
     }
 
     private static void add(List<FetchedBook> books) throws SQLException {
+        var excluded = List.of(
+            "#",
+            "Complete Collection",
+            "Complete Series",
+            ", Part ",
+            ", part ",
+            "prequel"
+        );
         for (var book: ProgressBar.wrap(books, pbb)) {
             var brh = new BookRequestHelper(
                 1,
@@ -82,7 +90,7 @@ public class BookPopulator {
                 book.description(),
                 book.id(),
                 book.series().isEmpty() ? null : book.series().replace("(", "").replace(")", "").split(" # ")[0],
-                book.series().isEmpty() || !book.series().contains("#") || book.series().contains("Complete Collection") || book.series().contains(", Part ") ? null : Integer.parseInt(
+                book.series().isEmpty() || excluded.stream().anyMatch(book.series()::contains) ? null : Integer.parseInt(
                     book.series()
                         .replace("(", "")
                         .replace(")", "")
